@@ -9,6 +9,8 @@ metadata: {"clawdbot":{"emoji":"🫘","requires":{"bins":["beans"]},"install":[{
 
 A lightweight, flat-file issue tracker for humans and AI coding agents. Stores issues as markdown files in `.beans/` directory alongside your code.
 
+**IMPORTANT**: before you do anything else, run the `beans prime` command and heed its output, but also heed the exceptions at "When to create beans".
+
 ## Why beans?
 
 - **Simple** — No database, no server, just markdown files
@@ -32,8 +34,8 @@ go install github.com/hmans/beans@latest
 # Initialize beans in a project
 beans init
 
-# Verify setup
-beans status
+# Verify setup and integrity
+beans check
 ```
 
 ## Core Commands
@@ -43,47 +45,58 @@ beans status
 beans create "Implement user login"
 # Creates new bean with auto-generated ID
 
-beans create "Fix auth bug" --tag bug --tag urgent
-# Creates bean with tags
+beans create "Fix auth bug" --tag bug --tag urgent --type bug
+# Creates bean with tags and type
 
-beans create "Refactor API" --priority high
-# Creates bean with priority
+beans create "Refactor API" --priority high --status todo
+# Creates bean with priority and status
+
+beans create "Add onboarding flow" --body "Scope: screens + copy"
+# Adds body content
 ```
 
 ### List Beans
 ```bash
 beans list                    # List all beans
-beans list --open             # List only open beans
-beans list --closed           # List closed beans
 beans list --tag urgent       # Filter by tag
-beans list --assignee me      # Filter by assignee
+beans list --status todo      # Filter by status
+beans list --type feature     # Filter by type
+beans list --search "login"   # Full-text search (Bleve query syntax)
 ```
 
 ### Update Beans
 ```bash
-beans open <id>               # Mark bean as open
-beans close <id>              # Mark bean as closed
-beans edit <id> --title "New title"
-beans tag <id> --add bug --remove urgent
-beans assign <id> --to me
+beans update <id> --status in-progress
+beans update <id> --title "New title"
+beans update <id> --tag bug --remove-tag urgent
+beans update <id> --priority high --type feature
+beans update <id> --body "Updated scope notes"
 ```
 
 ### Show Bean Details
 ```bash
 beans show <id>               # Show full bean details
-beans show <id> --comments    # Include comments
+beans show <id> --body-only   # Only body content
+beans show <id> --raw         # Raw markdown (no styling)
 ```
 
-### Comments
+### Delete and Archive
 ```bash
-beans comment <id> "Added tests for this"
-beans comment <id> --file commit-message.txt
+beans delete <id>             # Delete bean (prompts unless --force)
+beans archive                 # Delete completed/scrapped beans
 ```
 
-### Search
+### Integrity and TUI
 ```bash
-beans search "login"          # Search in all beans
-beans search --tag bug        # Search with filters
+beans check                   # Validate config and bean graph
+beans check --fix             # Auto-fix broken links/self-references
+beans tui                     # Interactive terminal UI
+```
+
+### Roadmap and GraphQL
+```bash
+beans roadmap                 # Markdown roadmap from milestones/epics
+beans graphql '{ beans { id title status } }'
 ```
 
 ## beans prime
@@ -149,18 +162,31 @@ Add to Claude Code's system prompt or context:
 beans prime >> ~/.claude/context/beans.txt
 ```
 
+## When to create beans
+
+Create beans when:
+- the user requests a new feature which has no bean yet
+- the user requests refactorings, bugfixes or other changes which do not have beans
+- the user makes big changes to the repo structure
+
+**IMPORTANT: ALWAYS commit a newly created bean immediately after creation.** Do not wait until other work is done — the bean file itself should be committed in its own atomic commit right away (e.g. `git add .beans/<bean-file> && git commit -m "beans: create <bean-title>"`).
+
+Exceptions for not creating beans:
+- committing things via git
+- changing rules in AGENTS.md
+
 ## Workflow Example
 
 ```bash
 # 1. Start work on a feature
-beans create "Add dark mode support" --tag feature
+beans create "Add dark mode support" --tag ui --type feature
 
 # 2. Work on it, update progress
-beans comment <bean-id> "Started working on color scheme"
+beans update <bean-id> --status in-progress --body "Started working on color scheme"
 
 # 3. Complete the feature
-beans close <bean-id>
-beans comment <bean-id> "Dark mode implemented for all views"
+beans update <bean-id> --status completed
+beans update <bean-id> --body "Dark mode implemented for all views"
 ```
 
 ## Bean File Format
@@ -171,10 +197,9 @@ Beans are stored in `.beans/` as markdown:
 ---
 id: 12345678
 title: "Implement user login"
-status: open
+status: todo
 tags: [feature, auth]
 priority: high
-assignee: developer
 created: 2024-01-15T10:00:00Z
 updated: 2024-01-15T14:30:00Z
 ---
