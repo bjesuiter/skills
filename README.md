@@ -20,34 +20,25 @@ npx skills add bjesuiter/skills --all
 ```text
 skills/
 ├── agents/
+│   ├── AGENTS.md
 │   └── REPO_SETUP_INSTRUCTIONS.md
 └── skills/
     ├── agent-browser/
-    ├── antigravity-quota/
-    ├── apple-reminders/
     ├── beans/
-    ├── bridle/
-    ├── clawdcontrol/
-    ├── desk-reminder/
     ├── github-pr/
-    ├── housekeeping/
     ├── jb-tdd/
     ├── mcporter/
     ├── mole-mac-cleanup/
     ├── nb/
-    ├── notebook/
-    ├── open-loops/
-    ├── openhue/
     ├── oracle/
     ├── refine/
     ├── security-check/
     ├── summarize/
     ├── sweetlink/
-    ├── tmux/
-    └── wacli/
+    └── tmux/
 ```
 
-## Included Skills (22)
+## Included Skills (13)
 
 ### Development Tools
 - `jb-tdd` — Test-driven development workflow (red-green-refactor)
@@ -57,12 +48,6 @@ skills/
 - `security-check` — Red-team security review for code changes
 - `refine` — Code refinement and review workflows
 
-### Agent Management
-- `bridle` — Unified configuration manager for AI coding assistants
-- `clawdcontrol` — Control and manage Clawdbot via CLI
-- `mcporter` — MCP server/tool management CLI
-- `open-loops` — Find unfinished tasks and pending items
-
 ### Browser & Web
 - `agent-browser` — Rust-based headless browser automation CLI
 - `sweetlink` — Connect AI agent to real browser tab
@@ -70,19 +55,13 @@ skills/
 
 ### System & Productivity
 - `tmux` — Remote-control tmux sessions
-- `apple-reminders` — Create and manage Apple Reminders
-- `desk-reminder` — Track reminders for when JB is at desk
 - `mole-mac-cleanup` — Mac cleanup & optimization
-- `housekeeping` — Self-cleaning and maintenance tasks
 
-### Services & APIs
-- `antigravity-quota` — Check Antigravity account quotas
-- `openhue` — Control Philips Hue lights via OpenHue CLI
-- `wacli` — Send WhatsApp messages and sync history
+### Agent Tools
+- `mcporter` — MCP server/tool management CLI
 
 ### Notes & Knowledge
 - `nb` — Git-backed note management CLI
-- `notebook` — Local-first personal knowledge base (YAML)
 
 ## Local Validation
 
@@ -96,4 +75,4 @@ npx skills add . --skill jb-tdd -a codex -y
 
 ## Source
 
-These skills are maintained across JB's development environments. Some require specific CLIs to be installed.
+These skills are curated from JB's development workflows. Some require specific CLIs to be installed.
