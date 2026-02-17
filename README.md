@@ -9,7 +9,7 @@ Reusable agent skills compatible with the [`skills` CLI](https://github.com/verc
 npx skills add bjesuiter/skills --list
 
 # Install one skill
-npx skills add bjesuiter/skills --skill tdd -a codex -y
+npx skills add bjesuiter/skills --skill jb-tdd -a codex -y
 
 # Install all skills to all agents
 npx skills add bjesuiter/skills --all
@@ -22,13 +22,13 @@ skills/
 ├── agents/
 │   └── REPO_SETUP_INSTRUCTIONS.md
 └── skills/
-    └── tdd/
+    └── jb-tdd/
         └── SKILL.md
 ```
 
 ## Included Skills
 
-- `tdd` — test-driven development workflow (red-green-refactor)
+- `jb-tdd` — test-driven development workflow (red-green-refactor)
 
 ## Local Validation
 

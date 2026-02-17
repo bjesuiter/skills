@@ -1,5 +1,5 @@
 ---
-name: tdd
+name: jb-tdd
 description: Use red-green-refactor to implement features and bug fixes with tests first.
 ---
 
