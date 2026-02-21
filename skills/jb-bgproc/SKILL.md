@@ -1,5 +1,5 @@
 ---
-name: bgproc
+name: jb-bgproc
 description: Manage and inspect background processes for agents using the bgproc CLI. Use when asked to start, stop, list, clean, check status, or view logs for bgproc-managed processes, or when a task needs a JSON-outputting process manager.
 homepage: https://github.com/ascorbic/bgproc
 metadata: {"clawdbot":{"requires":{"bins":["bgproc"]},"install":[{"id":"bun","kind":"bun","package":"bgproc","label":"Install bgproc (bun)","command":"bun i -g bgproc"}]}}

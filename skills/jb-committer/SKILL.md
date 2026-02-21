@@ -1,5 +1,5 @@
 ---
-name: committer
+name: jb-committer
 description: Groups related git changes into coherent commits and drafts commit messages. Use when the user asks to commit, commit current changes, or create a commit.
 private: true
 allowed-tools: Bash(git:*)

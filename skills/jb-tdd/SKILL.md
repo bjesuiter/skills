@@ -1,6 +1,6 @@
 ---
 name: jb-tdd
-description: Use red-green-refactor to implement features and bug fixes with tests first.
+description: Use red-green-refactor to implement features and bug fixes with tests first. Only use if requested explicitely, for general tdd use mattpocock/skills/tdd
 ---
 
 # TDD (Red-Green-Refactor)
