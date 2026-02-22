@@ -17,34 +17,30 @@ npx skills add bjesuiter/skills --skill jb-tdd -a codex -y
 npx skills add bjesuiter/skills --all
 ```
 
-## Included Skills (21)
+## Included Skills (16)
 
 ### Core Development Workflows
 - `jb-tdd` — Test-driven development workflow (red-green-refactor)
 - `jb-refine-code` — Refactor pass focused on simplicity after changes
 - `jb-beansloop` — Automated workflow using beans issue tracker
-- `committer` — Git commit message generation and conventions
-- `beans` — Flat-file issue tracker stored in `.beans/` directory
+- `jb-committer` — Git commit grouping and commit message drafting
+- `jb-beans` — Flat-file issue tracker stored in `.beans/` directory
 
 ### Code Review & Quality
 - `security-check` — Red-team security review for code changes
-- `oracle` — Bundle a prompt + files for second-model review
-- `refine` — Code refinement and review workflows
 
 ### Browser & Web Testing
-- `agent-browser` — Rust-based headless browser automation CLI
-- `sweetlink` — Connect AI agent to real browser tab
+- `sweetlink` — Connect AI agent to a real browser tab
 - `jb-browser-testing` — Browser testing workflows and patterns
 
 ### Documentation & Research
 - `jb-docs-scraper` — Scrape documentation websites into markdown
-- `summarize` — Summarize URLs, PDFs, images, audio, YouTube
+- `summarize` — Summarize URLs, PDFs, images, audio, and YouTube
 
 ### Development Tools
 - `github-pr` — Fetch, preview, merge, and test GitHub PRs locally
 - `mcporter` — MCP server/tool management CLI
-- `tmux` — Remote-control tmux sessions
-- `bgproc` — Background process management
+- `jb-bgproc` — Background process management via `bgproc`
 
 ### Platform-Specific
 - `xcode` — Build, test, and manage Xcode projects and Swift packages
@@ -52,7 +48,6 @@ npx skills add bjesuiter/skills --all
 
 ### Utilities
 - `nb` — Git-backed note management CLI
-- `exe-dev` — exe.dev tooling and workflows
 
 ## Local Validation
 
