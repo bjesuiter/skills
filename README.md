@@ -17,7 +17,7 @@ npx skills add bjesuiter/skills --skill jb-tdd -a codex -y
 npx skills add bjesuiter/skills --all
 ```
 
-## Included Skills (16)
+## Included Skills (15)
 
 ### Core Development Workflows
 - `jb-tdd` — Test-driven development workflow (red-green-refactor)
@@ -38,7 +38,6 @@ npx skills add bjesuiter/skills --all
 - `summarize` — Summarize URLs, PDFs, images, audio, and YouTube
 
 ### Development Tools
-- `github-pr` — Fetch, preview, merge, and test GitHub PRs locally
 - `mcporter` — MCP server/tool management CLI
 - `jb-bgproc` — Background process management via `bgproc`
 
