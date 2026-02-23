@@ -57,17 +57,17 @@ From repository root:
 npx skills add . --list
 
 # install a specific skill to an agent
-npx skills add . --skill tdd -a codex -y
+npx skills add . --skill jb-tdd -a codex -y
 
 # optional: test global install
-npx skills add . --skill tdd -g -a pi -y
+npx skills add . --skill jb-tdd -g -a pi -y
 ```
 
 ## 5) Remote Validation (GitHub)
 
 ```bash
 npx skills add bjesuiter/skills --list
-npx skills add bjesuiter/skills --skill tdd -a codex -y
+npx skills add bjesuiter/skills --skill jb-tdd -a codex -y
 ```
 
 ## 6) Optional: Internal/WIP Skills
