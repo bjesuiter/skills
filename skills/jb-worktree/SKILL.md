@@ -70,12 +70,16 @@ wtp remove --with-branch feature/auth
 When the user asks to work in a separate branch or isolated checkout:
 
 1. Check whether the repo already has `.wtp.yml`; if not, prefer `wtp init`
-2. Check the current worktrees with `wtp list`
-3. Create or open the target worktree with `wtp add ...`
-4. Run commands inside it with either:
+2. Inspect repo lockfiles before editing hooks:
+   - if `bun.lock` or `bun.lockb` exists, use `bun install`
+   - if `pnpm-lock.yaml` exists, use `pnpm install --frozen-lockfile`
+   - otherwise, if the repo has a `package-lock.json` and no Bun lockfile, use `pnpm install` by default, and prefer `pnpm install --frozen-lockfile` when reproducibility matters
+3. Check the current worktrees with `wtp list`
+4. Create or open the target worktree with `wtp add ...`
+5. Run commands inside it with either:
    - `cd "$(wtp cd <name>)" && ...`
    - `wtp exec <name> -- <command>`
-5. When the work is done and merged, clean up with `wtp remove --with-branch <name>`
+6. When the work is done and merged, clean up with `wtp remove --with-branch <name>`
 
 Prefer:
 - `wtp add -b <branch>` for new work
@@ -96,7 +100,13 @@ It creates `.wtp.yml` in the repository root with a starter configuration and ex
 
 ## Recommended `.wtp.yml`
 
-`wtp init` gives you a starter file. Customize it like this when the project needs automatic setup for each new worktree:
+`wtp init` gives you a starter file. Customize the `post_create` install command based on the repo lockfile:
+
+- `bun.lock` or `bun.lockb` present → `bun install`
+- `pnpm-lock.yaml` present → `pnpm install --frozen-lockfile`
+- otherwise, `package-lock.json` present and no Bun lockfile → `pnpm install` by default, or `pnpm install --frozen-lockfile` for stricter reproducible installs
+
+Example for a Bun repo:
 
 ```yaml
 version: "1.0"
@@ -114,7 +124,55 @@ hooks:
       to: ".bin"
 
     - type: command
-      command: "npm ci"
+      command: "bun install"
+
+    - type: command
+      command: "npm run db:setup"
+```
+
+Example for a repo with `pnpm-lock.yaml`:
+
+```yaml
+version: "1.0"
+defaults:
+  base_dir: "../worktrees"
+
+hooks:
+  post_create:
+    - type: copy
+      from: ".env"
+      to: ".env"
+
+    - type: symlink
+      from: ".bin"
+      to: ".bin"
+
+    - type: command
+      command: "pnpm install --frozen-lockfile"
+
+    - type: command
+      command: "npm run db:setup"
+```
+
+Example for a repo with a pure `package-lock.json` setup:
+
+```yaml
+version: "1.0"
+defaults:
+  base_dir: "../worktrees"
+
+hooks:
+  post_create:
+    - type: copy
+      from: ".env"
+      to: ".env"
+
+    - type: symlink
+      from: ".bin"
+      to: ".bin"
+
+    - type: command
+      command: "pnpm install"
 
     - type: command
       command: "npm run db:setup"
