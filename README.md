@@ -17,7 +17,7 @@ npx skills add bjesuiter/skills --skill jb-tdd -a codex -y
 npx skills add bjesuiter/skills --all
 ```
 
-## Included Skills (15)
+## Included Skills (16)
 
 ### Core Development Workflows
 - `jb-tdd` — Test-driven development workflow (red-green-refactor)
@@ -40,6 +40,7 @@ npx skills add bjesuiter/skills --all
 ### Development Tools
 - `mcporter` — MCP server/tool management CLI
 - `jb-bgproc` — Background process management via `bgproc`
+- `jb-worktree` — Git worktree management via `wtp`
 
 ### Platform-Specific
 - `xcode` — Build, test, and manage Xcode projects and Swift packages
