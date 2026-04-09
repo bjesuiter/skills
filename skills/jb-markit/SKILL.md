@@ -1,6 +1,6 @@
 ---
 name: jb-markit
-description: Convert files, URLs, stdin, images, audio, and archives to markdown with the markit CLI. Use when the user wants PDFs, Office docs, webpages, feeds, spreadsheets, JSON/YAML, or media turned into markdown, or needs raw/JSON extraction for agents.
+description: Convert files, URLs, stdin, images, audio, archives, GitHub pages, and Apple iWork docs to markdown with the markit CLI. Use when the user wants PDFs, Office docs, webpages, feeds, spreadsheets, JSON/YAML, iWork files, or media turned into markdown, or needs raw/JSON extraction for agents.
 homepage: https://github.com/Michaelliv/markit
 metadata: {"clawdbot":{"emoji":"📝","requires":{"bins":["markit"]},"install":[{"id":"bun","kind":"bun","package":"markit-ai","bins":["markit"],"label":"Install markit (bun)"}]}}
 ---
@@ -8,6 +8,8 @@ metadata: {"clawdbot":{"emoji":"📝","requires":{"bins":["markit"]},"install":[
 # jb-markit
 
 Use `markit` to convert almost anything into markdown.
+
+> Tested and adjusted against `markit 0.5.0`.
 
 ## Install
 
@@ -20,6 +22,7 @@ bun add -g markit-ai
 - `markit <source> -q` → raw markdown only
 - `markit <source> --json` → structured output for parsing
 - `markit <source> -o output.md` → write markdown to a file
+- `markit <source> -i extracted-images/` → save extracted images to a directory
 - `cat file.pdf | markit -` → read from stdin
 
 ## Quick start
@@ -30,10 +33,15 @@ markit report.pdf
 markit document.docx
 markit slides.pptx
 markit data.xlsx
+markit proposal.pages
+markit deck.key
+markit budget.numbers
 
 # Web
 markit https://example.com/article
 markit https://en.wikipedia.org/wiki/Markdown
+markit https://github.com/user/repo
+markit https://gist.github.com/user/abcdef
 
 # Data / config
 markit data.csv
@@ -63,15 +71,18 @@ markit config set llm.provider anthropic
 export ANTHROPIC_API_KEY=sk-ant-...
 markit photo.jpg
 
-# Focus the extraction
+# Focus image description / extraction
 markit receipt.jpg -p "List all line items with prices as a table"
 markit whiteboard.jpg -p "Extract all text verbatim"
 markit diagram.png -p "Describe the architecture and data flow"
+
+# Save extracted images alongside markdown output
+markit report.pdf -i ./report-images -o report.md
 ```
 
 ## Common formats
 
-`markit` supports PDFs, DOCX, PPTX, XLSX, HTML, EPUB, Jupyter notebooks, RSS/Atom, CSV/TSV, JSON, YAML, XML/SVG, plain text, many code files, images, audio, ZIP archives, and URLs.
+`markit` supports PDFs, DOCX, PPTX, XLSX, HTML, EPUB, Jupyter notebooks, RSS/Atom, CSV/TSV, JSON, YAML, XML/SVG, Pages, Keynote, Numbers, plain text, many code files, images, audio, ZIP archives, GitHub URLs, Wikipedia pages, and general URLs.
 
 Use `markit formats` to see what the installed version supports.
 
@@ -92,6 +103,14 @@ Env vars override config. Common keys:
 - `ANTHROPIC_API_KEY`
 - `MARKIT_API_KEY`
 
+## Onboarding
+
+```bash
+markit onboard
+```
+
+Adds markit usage instructions to `CLAUDE.md` or `AGENTS.md`.
+
 ## Plugins
 
 ```bash
@@ -108,5 +127,6 @@ Plugin converters run before built-ins, so plugins can add new formats or overri
 
 - Prefer `-q` when you want clean markdown in pipelines.
 - Prefer `--json` when another tool or agent will parse the result.
-- Use `-p` to constrain image/audio extraction to the exact task.
+- Use `-p` to constrain image description/extraction to the exact task.
+- Use `-i` when you want extracted images written to a durable folder.
 - Use `-o` when the conversion should become a durable artifact in the repo.
