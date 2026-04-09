@@ -17,7 +17,7 @@ npx skills add bjesuiter/skills --skill jb-tdd -a codex -y
 npx skills add bjesuiter/skills --all
 ```
 
-## Included Skills (18)
+## Included Skills (19)
 
 ### Core Development Workflows
 - `jb-tdd` — Test-driven development workflow (red-green-refactor)
@@ -35,6 +35,7 @@ npx skills add bjesuiter/skills --all
 - `jb-chrome-mcp` — Chrome DevTools MCP via `mcporter` for existing Chrome tabs
 
 ### Documentation & Research
+- `jb-adr` — Create and manage Markdown Architectural Decision Records (MADR)
 - `jb-docs-scraper` — Scrape documentation websites into markdown
 - `jb-markit` — Convert files, URLs, and media into markdown with `markit`
 - `summarize` — Summarize URLs, PDFs, images, audio, and YouTube
