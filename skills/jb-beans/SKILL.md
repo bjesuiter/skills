@@ -7,16 +7,24 @@ metadata: {"clawdbot":{"emoji":"🫘","requires":{"bins":["beans"]},"install":[{
 
 # beans - Flat-File Issue Tracker
 
-A lightweight, flat-file issue tracker for humans and AI coding agents. Stores issues as markdown files in `.beans/` directory alongside your code.
+Use `beans` to track work as markdown files alongside a project.
 
-**IMPORTANT**: before you do anything else, run the `beans prime` command and heed its output, but also heed the exceptions at "When to create beans".
+## First step for agents
+
+Before starting work in a beans-enabled project, run:
+
+```bash
+beans prime
+```
+
+Read and follow its output. It may define project-specific workflow rules, issue types, statuses, and expectations for how agents should create/update beans.
 
 ## Why beans?
 
-- **Simple** — No database, no server, just markdown files
-- **AI-friendly** — Designed for AI coding agents
-- **Git-friendly** — Lives alongside your code in `.beans/`
-- **Portable** — Works with any editor/IDE
+- **Flat files** — issues live as markdown in `.beans/`
+- **Git-friendly** — changes can be reviewed and committed like code
+- **Agent-friendly** — supports `--json`, structured relationships, and context priming
+- **Portable** — no server or database required
 
 ## Installation
 
@@ -31,221 +39,391 @@ go install github.com/hmans/beans@latest
 ## Setup
 
 ```bash
-# Initialize beans in a project
+# Initialize beans in the current project
 beans init
 
-# Verify setup and integrity
+# Validate config and bean graph
 beans check
+
+# Show installed version
+beans version
 ```
 
-## Core Commands
+## Global flags
 
-### Create Beans
+Most commands support these global flags:
+
 ```bash
-beans create "Implement user login"
-# Creates new bean with auto-generated ID
-
-beans create "Fix auth bug" --tag bug --tag urgent --type bug
-# Creates bean with tags and type
-
-beans create "Refactor API" --priority high --status todo
-# Creates bean with priority and status
-
-beans create "Add onboarding flow" --body "Scope: screens + copy"
-# Adds body content
+--config <path>       # Use a specific .beans.yml
+--beans-path <path>   # Override the data directory
+--json                # Use structured machine-readable output where supported
 ```
 
-### List Beans
+For agent workflows, prefer `--json` whenever you plan to parse output.
+
+## Core workflow
+
 ```bash
-beans list                    # List all beans
-beans list --tag urgent       # Filter by tag
-beans list --status todo      # Filter by status
-beans list --type feature     # Filter by type
-beans list --search "login"   # Full-text search (Bleve query syntax)
+# 1. Inspect project-specific guidance
+beans prime
+
+# 2. Find existing work
+beans list --json --ready
+beans list --json -S "login"
+
+# 3. Create work if needed
+beans create --json "Add login screen" -t feature -s todo -d "Build the initial login UI"
+
+# 4. Start work
+beans update --json <id> -s in-progress
+
+# 5. Keep the bean current while working
+beans update --json <id> --body-append "## Notes\n\nStarted implementation"
+
+# 6. Finish work
+beans update --json <id> -s completed --body-append "## Summary of Changes\n\nImplemented the feature and validated behavior."
 ```
 
-### Update Beans
-```bash
-beans update <id> --status in-progress
-beans update <id> --title "New title"
-beans update <id> --tag bug --remove-tag urgent
-beans update <id> --priority high --type feature
-beans update <id> --body "Updated scope notes"
-```
+## Issue model
 
-### Show Bean Details
-```bash
-beans show <id>               # Show full bean details
-beans show <id> --body-only   # Only body content
-beans show <id> --raw         # Raw markdown (no styling)
-```
+### Types
 
-### Delete and Archive
-```bash
-beans delete <id>             # Delete bean (prompts unless --force)
-beans archive                 # Delete completed/scrapped beans
-```
+Current CLI-supported types:
 
-### Integrity and TUI
-```bash
-beans check                   # Validate config and bean graph
-beans check --fix             # Auto-fix broken links/self-references
-beans tui                     # Interactive terminal UI
-```
+- `milestone`
+- `epic`
+- `bug`
+- `feature`
+- `task`
 
-### Roadmap and GraphQL
-```bash
-beans roadmap                 # Markdown roadmap from milestones/epics
-beans graphql '{ beans { id title status } }'
-```
+### Statuses
 
-## beans prime
+Current CLI-supported statuses:
 
-The `beans prime` command outputs project context for AI agents:
+- `in-progress`
+- `todo`
+- `draft`
+- `completed`
+- `scrapped`
+
+### Priorities
+
+Current CLI-supported priorities:
+
+- `critical`
+- `high`
+- `normal`
+- `low`
+- `deferred`
+
+## Core commands
+
+### Prime the agent context
 
 ```bash
 beans prime
-# Outputs current beans, tags, and status for AI context
 ```
 
-### Integration with OpenCode
+Outputs instructions for AI coding agents, often including:
+- required workflow rules
+- project-specific types/statuses
+- command usage preferences
+- when to create, complete, or archive beans
 
-Copy this plugin to your OpenCode config:
+Always check this first in beans-enabled repos.
 
-```typescript
-// ~/.opencode/plugin/beans-prime.ts
-import type { Plugin } from "@opencode-ai/plugin";
-
-export const BeansPrimePlugin: Plugin = async ({ $, directory }) => {
-  let prime = undefined;
-
-  try {
-    const hasBeans = await $`which beans`.quiet();
-    const hasConfig = await $`test -f ${directory}/.beans.yml`.quiet();
-
-    if (hasBeans.exitCode === 0 && hasConfig.exitCode === 0) {
-      const result = await $`beans prime`.cwd(directory).quiet();
-      prime = result.stdout.toString();
-    }
-  } catch (e) {
-    // Silently skip if beans not available
-  }
-
-  return {
-    "experimental.chat.system.transform": async (_, output) => {
-      if (prime) output.system.push(prime);
-    },
-    "experimental.session.compacting": async (_, output) => {
-      if (prime) output.context.push(prime);
-    },
-  };
-};
-
-export default BeansPrimePlugin;
-```
-
-### Integration with Codex
-
-Set environment or add to AGENTS.md:
+### Create beans
 
 ```bash
-# In your repo's AGENTS.md:
-IMPORTANT: before you do anything else, run `beans prime` and heed its output.
+# Minimal
+beans create "Implement user login" -t feature
+
+# Agent-friendly
+beans create --json "Fix auth race" -t bug -s in-progress -p high -d "Repro under parallel refresh"
+
+# With tags
+beans create --json "Refactor API client" -t task --tag tech-debt --tag networking
+
+# With relationships
+beans create --json "Add billing UI" -t feature --parent <epic-id>
+beans create --json "Ship migration" -t task --blocked-by <other-id>
+beans create --json "Unblock deploy" -t task --blocking <other-id>
+
+# Read body from stdin or file
+printf 'Implementation notes' | beans create "Document rollout" -t task -d -
+beans create "Import fixtures" -t task --body-file notes.md
 ```
 
-### Integration with Claude Code
+Useful flags:
+- `-t, --type`
+- `-s, --status`
+- `-p, --priority`
+- `-d, --body`
+- `--body-file`
+- `--tag`
+- `--parent`
+- `--blocking`
+- `--blocked-by`
+- `--prefix`
+- `--json`
 
-Add to Claude Code's system prompt or context:
+### List beans
 
 ```bash
-# Run before coding session
-beans prime >> ~/.claude/context/beans.txt
+# List everything
+beans list
+beans list --json
+
+# Ready to start
+beans list --json --ready
+
+# Filter by status/type/tag/priority
+beans list --json -s todo -t bug
+beans list --json --tag urgent
+beans list --json -p high
+
+# Search
+beans list --json -S "login"
+beans list --json -S 'title:login'
+beans list --json -S 'body:authentication'
+beans list --json -S '"user login"'
+beans list --json -S 'login~'
+
+# Relationship filters
+beans list --json --parent <id>
+beans list --json --has-parent
+beans list --json --no-parent
+beans list --json --has-blocking
+beans list --json --no-blocking
+beans list --json --is-blocked
+
+# Other output modes
+beans list --json --full
+beans list --quiet
+beans list --sort updated
 ```
 
-## When to create beans
+Notes:
+- `--ready` excludes blocked, `in-progress`, `completed`, `scrapped`, and `draft` beans.
+- `--quiet` outputs only IDs, one per line.
+- Search uses Bleve query syntax.
 
-Create beans when:
-- the user requests a new feature which has no bean yet
-- the user requests refactorings, bugfixes or other changes which do not have beans
-- the user makes big changes to the repo structure
-
-**IMPORTANT: ALWAYS commit a newly created bean immediately after creation.** Do not wait until other work is done — the bean file itself should be committed in its own atomic commit right away (e.g. `git add .beans/<bean-file> && git commit -m "beans: create <bean-title>"`).
-
-Exceptions for not creating beans:
-- committing things via git
-- changing rules in AGENTS.md
-
-## Workflow Example
+### Show bean details
 
 ```bash
-# 1. Start work on a feature
-beans create "Add dark mode support" --tag ui --type feature
-
-# 2. Work on it, update progress
-beans update <bean-id> --status in-progress --body "Started working on color scheme"
-
-# 3. Complete the feature
-beans update <bean-id> --status completed
-beans update <bean-id> --body "Dark mode implemented for all views"
+beans show <id>
+beans show <id> <id2>
+beans show --json <id>
+beans show --body-only <id>
+beans show --raw <id>
+beans show --etag-only <id>
 ```
 
-## Bean File Format
+Use `--etag-only` when doing optimistic locking with updates.
 
-Beans are stored in `.beans/` as markdown:
+### Update beans
 
-```markdown
----
-id: 12345678
-title: "Implement user login"
-status: todo
-tags: [feature, auth]
-priority: high
-created: 2024-01-15T10:00:00Z
-updated: 2024-01-15T14:30:00Z
----
+```bash
+# Status/title/type/priority
+beans update --json <id> -s in-progress
+beans update --json <id> --title "New title"
+beans update --json <id> -t feature -p high
 
-## Description
+# Tags
+beans update --json <id> --tag urgent --tag auth
+beans update --json <id> --remove-tag urgent
 
-Implement user login with email and password.
+# Relationships
+beans update --json <id> --parent <epic-id>
+beans update --json <id> --remove-parent
+beans update --json <id> --blocked-by <other-id>
+beans update --json <id> --remove-blocked-by <other-id>
+beans update --json <id> --blocking <other-id>
+beans update --json <id> --remove-blocking <other-id>
 
-## Notes
+# Replace body entirely
+beans update --json <id> -d "Updated body"
+beans update --json <id> --body-file notes.md
 
-- Use existing auth infrastructure
-- Follow security best practices
+# Append to body
+beans update --json <id> --body-append "## Notes\n\nExtra context"
+printf '## Summary\n\nDone.' | beans update --json <id> --body-append -
+
+# Exact single replacement in body
+beans update --json <id> \
+  --body-replace-old "- [ ] Add tests" \
+  --body-replace-new "- [x] Add tests"
+
+# Combine metadata + body edits
+beans update --json <id> \
+  -s completed \
+  --body-append "## Summary of Changes\n\nImplemented and verified."
 ```
 
-## Configuration
+### Concurrency-safe updates
 
-Create `.beans.yml` in your project root:
+```bash
+ETAG=$(beans show <id> --etag-only)
+beans update --json <id> --if-match "$ETAG" -s in-progress
+```
 
-```yaml
-# .beans.yml
-directory: .beans
-format: markdown
-templates:
-  default: |
-    ---
-    id: {{.ID}}
-    title: "{{.Title}}"
-    status: open
-    created: {{.Created}}
-    ---
+Use `--if-match` to avoid overwriting concurrent edits.
 
-    {{.Description}}
+### Delete beans
+
+```bash
+beans delete <id>
+beans delete <id> <id2>
+beans delete --json <id>     # implies --force
+beans delete -f <id>
+```
+
+If other beans reference the target, beans warns and removes those references after confirmation. `-f` skips prompts and warnings.
+
+### Archive completed work
+
+```bash
+beans archive
+beans archive --json
+```
+
+Moves all `completed` and `scrapped` beans into `.beans/archive/`.
+
+Archive only when appropriate for the project workflow or when the user asks. Archived beans are preserved for project memory and remain visible in queries.
+
+### Validate configuration and integrity
+
+```bash
+beans check
+beans check --json
+beans check --fix
+```
+
+Checks for:
+- config errors
+- broken links
+- self-links
+- circular dependencies
+
+`--fix` can repair broken links and self-links automatically.
+
+### Generate roadmaps
+
+```bash
+beans roadmap
+beans roadmap --json
+beans roadmap --include-done
+beans roadmap --status todo
+beans roadmap --no-status completed
+beans roadmap --link-prefix https://example.com/beans/
+beans roadmap --no-links
+```
+
+Use this for milestone/epic rollups and markdown planning views.
+
+### Query with GraphQL
+
+```bash
+# The command is beans graphql; beans query is an alias
+beans graphql '{ beans { id title status } }'
+beans graphql --json '{ bean(id: "abc") { title body } }'
+beans graphql -v '{"id":"abc"}' 'query GetBean($id: ID!) { bean(id: $id) { title } }'
+beans graphql --schema
+```
+
+Examples:
+
+```bash
+# Actionable work
+beans graphql --json '{ beans(filter: { excludeStatus: ["completed", "scrapped"], isBlocked: false }) { id title status type } }'
+
+# High priority bugs
+beans graphql --json '{ beans(filter: { type: ["bug"], priority: ["critical", "high"] }) { id title } }'
+
+# Traverse relationships
+beans graphql --json '{ bean(id: "abc") { title parent { title } children { id title status } blockedBy { id title } } }'
+```
+
+### TUI
+
+```bash
+beans tui
+```
+
+Current CLI help indicates this has moved to `beans-tui`. Do not rely on `beans tui` for real workflows unless the separate `beans-tui` tool is installed/configured.
+
+## Relationships
+
+Beans support structured relationships:
+
+- **Parent**: hierarchy like milestone → epic → feature → task
+- **Blocking**: this bean blocks another bean
+- **Blocked-by**: this bean is blocked by another bean
+
+Examples:
+
+```bash
+beans update --json child-1 --parent epic-1
+beans update --json task-2 --blocked-by task-1
+beans update --json infra-1 --blocking release-1
+```
+
+## Recommended agent usage patterns
+
+### Always prefer JSON when parsing
+
+```bash
+beans list --json --ready
+beans show --json <id>
+beans create --json "Title" -t task
+beans update --json <id> -s in-progress
+```
+
+### Keep bean bodies current
+
+Use body content for:
+- checklists
+- implementation notes
+- reproduction steps
+- summaries of changes
+- reasons for scrapping work
+
+### Make narrow body replacements
+
+When updating checklists or notes, use exact replacement instead of rewriting the whole body when possible:
+
+```bash
+beans update <id> \
+  --body-replace-old "- [ ] Ship release" \
+  --body-replace-new "- [x] Ship release"
+```
+
+### Prefer relationships over ad-hoc text
+
+Use `--parent`, `--blocking`, and `--blocked-by` instead of only mentioning dependencies in freeform notes.
+
+## Integration notes
+
+### OpenCode
+
+The `beans prime` output can be injected into agent context via an OpenCode plugin.
+
+### Codex / Pi / Claude Code
+
+At minimum, add a rule to project instructions like:
+
+```text
+Before starting work in this repo, run `beans prime` and follow its output.
 ```
 
 ## Tips
 
-1. **Commit `.beans.yml`** — Share config with team
-2. **Ignore `.beans/*.md`** — Keep beans local or commit based on preference
-3. **Use tags consistently** — Create tag taxonomy early
-4. **Run `beans prime`** — Before starting AI-assisted work
-
-## Related Skills
-
-- **nb** — Notebook management for ideas and references
-- **github-pr** — PR workflow integration
-- **prd** — Product Requirements Documents
+1. Run `beans prime` first in beans-enabled projects
+2. Use `--json` for agent-readable output
+3. Use `beans version`, not `beans --version`
+4. Use `beans graphql` for advanced filtering and relationship traversal
+5. Treat `beans tui` as deprecated/moved unless `beans-tui` is available
+6. Use `beans check` after large edits or relationship changes
 
 ## Links
 
