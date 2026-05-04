@@ -41,6 +41,7 @@ Evaluate the "most important" bean based on the following criteria:
 5. Tiebreaker: highest priority, then most recent updatedAt
 
 After you found an issue to work on, mark it as `in-progress` and start working on it until the acceptance criteria are met.
+If installed, you MUST use the `tdd` skill by Matt Pocock to work on the issue.
 If you can't finish the current bean because you encounter an unresolveable issue, mark the current bean as `blocked` and link the follow-up bug/ticket. 
 
 ## Next Issue Mode (Manual)
@@ -80,6 +81,7 @@ Before marking any bean as completed, ensure the app still works:
 1. **Build**: Run the build command if the project has one (`npm run build`, `bun run build`, etc.)
 2. **Lint/Typecheck**: Run linting and type checking (`npm run lint`, `tsc --noEmit`, etc.)
 3. **Tests**: Run the test suite if available (`npm run test`, `bun run test`, etc.)
+4. **E2E Tests**: Run the e2e tests if available (script names in package.json like: e2e, e2e-<somePostfix>, <prefix>-e2e)
 4. **Manual Verification**: Visually or functionally verify your changes work as expected
 5. **GitHub Actions** (after commit/push): Check the pipeline for errors
 
