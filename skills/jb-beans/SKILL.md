@@ -2,7 +2,7 @@
 name: jb-beans
 description: Use the beans CLI to track issues/tasks alongside your code. Flat-file issue tracker that stores beans as markdown files in .beans/ directory. Integrates with Codex, OpenCode, and Claude Code via beans-prime.
 homepage: https://github.com/hmans/beans
-metadata: {"clawdbot":{"emoji":"🫘","requires":{"bins":["beans"]},"install":[{"id":"brew","kind":"brew","package":"hmans/beans/beans","label":"Install beans (brew)"}]}}
+metadata: {"clawdbot":{"emoji":"🫘","requires":{"bins":["beans"]},"install":[{"id":"bun","kind":"bun","package":"beans","bins":["beans"],"label":"Install beans (bun)","command":"bun i -g beans"},{"id":"brew","kind":"brew","package":"hmans/beans/beans","label":"Install beans (brew)"}]}}
 ---
 
 # beans - Flat-File Issue Tracker
@@ -29,6 +29,9 @@ Read and follow its output. It may define project-specific workflow rules, issue
 ## Installation
 
 ```bash
+# Via Bun
+bun i -g beans
+
 # Via Homebrew
 brew install hmans/beans/beans
 
@@ -45,21 +48,23 @@ beans init
 # Validate config and bean graph
 beans check
 
-# Show installed version
+# Show build/version info
 beans version
+
+# If the current build prints only a commit SHA, verify package semver
+bun pm ls -g beans
 ```
 
 ## Global flags
 
-Most commands support these global flags:
+All commands support these global flags:
 
 ```bash
 --config <path>       # Use a specific .beans.yml
 --beans-path <path>   # Override the data directory
---json                # Use structured machine-readable output where supported
 ```
 
-For agent workflows, prefer `--json` whenever you plan to parse output.
+Many subcommands also support `--json`. For agent workflows, prefer `--json` whenever the specific command offers it.
 
 ## Core workflow
 
@@ -346,11 +351,9 @@ beans graphql --json '{ bean(id: "abc") { title parent { title } children { id t
 
 ### TUI
 
-```bash
-beans tui
-```
+The current CLI does not expose a built-in `beans tui` command.
 
-Current CLI help indicates this has moved to `beans-tui`. Do not rely on `beans tui` for real workflows unless the separate `beans-tui` tool is installed/configured.
+Use the separate `beans-tui` tool if you want a terminal UI.
 
 ## Relationships
 
@@ -420,9 +423,9 @@ Before starting work in this repo, run `beans prime` and follow its output.
 
 1. Run `beans prime` first in beans-enabled projects
 2. Use `--json` for agent-readable output
-3. Use `beans version`, not `beans --version`
+3. Use `beans version`, not `beans --version`; if it prints a commit SHA instead of semver, verify the installed package version with `bun pm ls -g beans`
 4. Use `beans graphql` for advanced filtering and relationship traversal
-5. Treat `beans tui` as deprecated/moved unless `beans-tui` is available
+5. Use separate `beans-tui` tooling if you need a terminal UI
 6. Use `beans check` after large edits or relationship changes
 
 ## Links
