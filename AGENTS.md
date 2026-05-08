@@ -1,6 +1,65 @@
 # AGENTS.md - Skills Repository
 
-Agent-specific instructions for working with this skills repository.
+Agent instructions for this multi-skill repository.
+
+## Repo Layout
+
+```text
+.
+├── AGENTS.md                 # Agent instructions
+├── README.md                 # Public overview, install commands, skill list
+├── meta/                     # Repo setup notes
+├── skills/                   # Canonical public skills
+│   └── <skill-name>/
+│       ├── SKILL.md          # Required entrypoint
+│       ├── references/       # Optional long-form docs/templates/examples
+│       ├── scripts/          # Optional helpers
+│       └── assets/           # Optional static files
+└── .agents/skills/           # Local/private installed copies; not canonical
+```
+
+Create and edit public skills only under `skills/<skill-name>/`. Treat `.agents/skills/` as local agent state unless explicitly told otherwise.
+
+## Creating a Skill
+
+1. **Name it**
+   - Use kebab-case: `jb-example-tool`.
+   - Prefer `jb-` for personal workflow skills.
+   - Match folder name and frontmatter `name` exactly.
+
+2. **Create the entrypoint**
+
+   ```text
+   skills/<skill-name>/SKILL.md
+   ```
+
+   ```markdown
+   ---
+   name: <skill-name>
+   description: Use when <specific trigger/situation>; mentions required CLI/tool if any.
+   ---
+
+   # Skill Title
+
+   Use this skill when ...
+   ```
+
+3. **Keep `SKILL.md` focused**
+   - When to use / not use
+   - Prerequisites
+   - Core workflow
+   - Guardrails and failure modes
+   - Expected deliverables
+
+   Put bulky examples, API notes, templates, and helpers in `references/`, `scripts/`, or `assets/`, then link them from `SKILL.md` with relative paths.
+
+4. **Update docs**
+   - Add public skills to `README.md`.
+   - Update the README skill count.
+   - Document required CLIs/tools in the skill.
+
+5. **Validate**
+   - Run the validation workflow below before finishing, or state why it was not run.
 
 ## Validation Workflow
 
@@ -12,7 +71,7 @@ Skills copied from local dev environments may contain symlinks that break outsid
 
 ```bash
 cd /path/to/skills
-find skills/ -type l -xtype l -delete
+find -L skills/ -type l -delete
 ```
 
 This removes any broken symbolic links before validation.
@@ -51,7 +110,7 @@ This ensures the skill installs without errors.
 
 Before committing skill changes:
 
-- [ ] Remove broken symlinks: `find skills/ -type l -xtype l -delete`
+- [ ] Remove broken symlinks: `find -L skills/ -type l -delete`
 - [ ] Validate discovery: `npx skills add . --list` (all skills appear)
 - [ ] Test one install: `npx skills add . --skill <name> -a codex -y`
 - [ ] Update README.md if skill list changed
@@ -66,7 +125,7 @@ When copying skills from other locations (e.g., jb-home):
 cp -r /source/path/skills/* skills/
 
 # 2. Clean up symlinks
-find skills/ -type l -xtype l -delete
+find -L skills/ -type l -delete
 
 # 3. Validate
 npx skills add . --list
@@ -87,7 +146,7 @@ git commit -m "feat: import X skills from Y"
 
 **"Broken reference errors"**
 - Look for symlinks: `find skills/ -type l`
-- Remove broken ones: `find skills/ -type l -xtype l -delete`
+- Remove broken ones: `find -L skills/ -type l -delete`
 
 **"Internal skills hidden"**
 - Check if skill has `metadata.internal: true`
