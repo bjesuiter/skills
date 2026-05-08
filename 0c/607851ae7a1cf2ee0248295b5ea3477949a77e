@@ -1,0 +1,22 @@
+skills/jb-skill-preferences/SKILL.md
+  s_dbe4e3ad1cf0d4::t_bf54a499c76d7a 1-24,27-50,52-167
+  s_dbe4e3ad1cf0d4::t_3c55b88d228b7f 25-26
+README.md
+  s_dbe4e3ad1cf0d4::t_393e0eddbcd72b 20,54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "0c607851ae7a1cf2ee0248295b5ea3477949a77e",
+  "prompts": {},
+  "sessions": {
+    "s_dbe4e3ad1cf0d4": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019e0768-b063-721c-ab9a-23caf62e7f44",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Benjamin Jesuiter <bjesuiter@gmail.com>"
+    }
+  }
+}
