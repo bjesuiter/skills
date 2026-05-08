@@ -1,0 +1,22 @@
+AGENTS.md
+  s_4a45acdf184466::t_214fd0f55a3652 3-5,9-10,12,14-18,21,23,25-28,30,32-34,36-40,42,44-45,47-52,54,56-59,61-62
+  s_4a45acdf184466::t_3e31cd62c0e50a 6-8,13,19-20,22,24,29,31,35,41,43,46,53,55,60
+  s_4a45acdf184466::t_0f3facac3c98c6 74,113,128,149
+  s_4a45acdf184466::t_d7cce377cd6903 11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "65631c7a7bf4b81b6f268354b605208f2d39caa6",
+  "prompts": {},
+  "sessions": {
+    "s_4a45acdf184466": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019e0932-4e02-76cd-93e5-9eaa43ed96b2",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Benjamin Jesuiter <bjesuiter@gmail.com>"
+    }
+  }
+}
