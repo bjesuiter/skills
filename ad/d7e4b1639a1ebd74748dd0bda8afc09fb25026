@@ -1,0 +1,19 @@
+skills/jb-skill-preferences/SKILL.md
+  s_aea6d8adb15019::t_e6f8dd39938dd7 26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "add7e4b1639a1ebd74748dd0bda8afc09fb25026",
+  "prompts": {},
+  "sessions": {
+    "s_aea6d8adb15019": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019e0784-d4bd-721b-9df5-f8aaa935ac60",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Benjamin Jesuiter <bjesuiter@gmail.com>"
+    }
+  }
+}
