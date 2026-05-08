@@ -23,7 +23,7 @@ Use this exact GitHub Gist registry target:
 - filename: `jb-skill-preferences.json5`
 - description: `JB shared preferred AI skill registry`
 - bootstrap gist page: `https://gist.github.com/bjesuiter`
-- exact gist URL: unknown until the first registry is created; once known, update this skill to pin that exact URL.
+- exact gist URL: `https://gist.github.com/bjesuiter/98d5768dc360093affb8d8fdb064e45f`
 
 Treat the filename as canonical. Do not invent alternate filenames.
 
