@@ -1,11 +1,11 @@
 ---
-name: jb-skill-preferences
+name: jb-skill-prefs
 description: Manage JB's shared preferred AI skill registry in a GitHub Gist JSON5 file via gh CLI. Use to remember/update shared skill preferences, sync skillsets across machines, or install preferred skills for a topic into a Pi project.
 private: true
 skill_author: bjesuiter@gmail.com
 ---
 
-# JB Skill Preferences
+# JB Skill Prefs
 
 ## Use when
 
