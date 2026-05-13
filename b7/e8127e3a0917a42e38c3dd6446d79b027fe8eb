@@ -1,0 +1,21 @@
+README.md
+  s_43a548f1429d59::t_947910d442bab5 20,37
+skills/jb-pinchtab-testing/SKILL.md
+  s_43a548f1429d59::t_8c370028fe7d2e 1-145
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "b7e8127e3a0917a42e38c3dd6446d79b027fe8eb",
+  "prompts": {},
+  "sessions": {
+    "s_43a548f1429d59": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019e21d1-7d86-70e5-8bea-3d6ba20936a6",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Benjamin Jesuiter <bjesuiter@gmail.com>"
+    }
+  }
+}
