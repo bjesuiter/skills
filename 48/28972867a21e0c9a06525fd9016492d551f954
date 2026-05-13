@@ -1,0 +1,19 @@
+.gitignore
+  s_43a548f1429d59::t_26b951256cdbb9 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "4828972867a21e0c9a06525fd9016492d551f954",
+  "prompts": {},
+  "sessions": {
+    "s_43a548f1429d59": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019e21d1-7d86-70e5-8bea-3d6ba20936a6",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Benjamin Jesuiter <bjesuiter@gmail.com>"
+    }
+  }
+}
