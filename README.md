@@ -17,7 +17,7 @@ npx skills add bjesuiter/skills --skill jb-tdd -a codex -y
 npx skills add bjesuiter/skills --all
 ```
 
-## Included Skills (21)
+## Included Skills (22)
 
 ### Core Development Workflows
 - `jb-tdd` — Test-driven development workflow (red-green-refactor)
@@ -34,6 +34,7 @@ npx skills add bjesuiter/skills --all
 - `jb-browser-testing` — Browser testing workflows and patterns
 - `jb-chrome-mcp` — Chrome DevTools MCP via `mcporter` for existing Chrome tabs
 - `jb-pinchtab-mcp` — PinchTab native MCP via `mcporter` for long-lived PinchTab-managed browsers
+- `jb-pinchtab-testing` — Higher-level browser testing workflow for PinchTab-managed browsers via `jb-pinchtab-mcp`
 
 ### Documentation & Research
 - `jb-adr` — Create and manage Markdown Architectural Decision Records (MADR)
