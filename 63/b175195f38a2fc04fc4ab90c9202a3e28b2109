@@ -1,0 +1,19 @@
+README.md
+  s_965c4bc48631f4::t_7c035504b1df52 20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "63b175195f38a2fc04fc4ab90c9202a3e28b2109",
+  "prompts": {},
+  "sessions": {
+    "s_965c4bc48631f4": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019e3179-077d-748b-80ed-dae256e0db61",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Benjamin Jesuiter <bjesuiter@gmail.com>"
+    }
+  }
+}
