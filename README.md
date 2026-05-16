@@ -17,7 +17,7 @@ npx skills add bjesuiter/skills --skill jb-tdd -a codex -y
 npx skills add bjesuiter/skills --all
 ```
 
-## Included Skills (21)
+## Included Skills (22)
 
 ### Core Development Workflows
 - `jb-tdd` — Test-driven development workflow (red-green-refactor)
@@ -44,6 +44,7 @@ npx skills add bjesuiter/skills --all
 ### Development Tools
 - `mcporter` — MCP server/tool management CLI
 - `jb-bgproc` — Background process management via `bgproc`
+- `jb-tuna-script` — Create executable scripts for the Tuna macOS launcher
 - `jb-worktree` — Git worktree management via `wtp`
 
 ### Platform-Specific
