@@ -1,0 +1,19 @@
+skills/jb-browser-testing/SKILL.md
+  s_fca06f0c4669b2::t_568abef87afda7 3,14-16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "154157fb1d6fd5c3bbab614f78c65eff011579a9",
+  "prompts": {},
+  "sessions": {
+    "s_fca06f0c4669b2": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019e4004-7109-717d-8f42-8e77a8012902",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Benjamin Jesuiter <bjesuiter@gmail.com>"
+    }
+  }
+}
