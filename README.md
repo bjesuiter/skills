@@ -17,13 +17,14 @@ npx skills add bjesuiter/skills --skill jb-tdd -a codex -y
 npx skills add bjesuiter/skills --all
 ```
 
-## Included Skills (22)
+## Included Skills (23)
 
 ### Core Development Workflows
 - `jb-tdd` — Test-driven development workflow (red-green-refactor)
 - `jb-refine-code` — Refactor pass focused on simplicity after changes
 - `jb-beansloop` — Automated workflow using beans issue tracker
 - `jb-committer` — Git commit grouping and commit message drafting
+- `jb-release` — Generic release workflow; defers to repo-specific release instructions
 - `jb-beans` — Flat-file issue tracker stored in `.beans/` directory
 
 ### Code Review & Quality
@@ -53,7 +54,7 @@ npx skills add bjesuiter/skills --all
 
 ### Utilities
 - `nb` — Git-backed note management CLI
-- `jb-skill-preferences` — Shared preferred skill registry and project skill installer via GitHub Gist
+- `jb-skill-prefs` — Shared preferred skill registry and project skill installer via GitHub Gist
 
 ## Local Validation
 
