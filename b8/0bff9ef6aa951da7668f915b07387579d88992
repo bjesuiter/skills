@@ -1,0 +1,22 @@
+skills/jb-release/SKILL.md
+  s_0d916d2ee6860e::t_a8e7529e256711 1-78
+README.md
+  s_0d916d2ee6860e::t_5a6d9f5daaa0c0 57
+  s_0d916d2ee6860e::t_10303735e6c74c 20,27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "b80bff9ef6aa951da7668f915b07387579d88992",
+  "prompts": {},
+  "sessions": {
+    "s_0d916d2ee6860e": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019e73f4-9165-76b7-ba89-b7791a9a4255",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Benjamin Jesuiter <bjesuiter@gmail.com>"
+    }
+  }
+}
