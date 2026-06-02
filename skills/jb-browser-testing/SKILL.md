@@ -6,8 +6,6 @@ skill_author: bjesuiter@gmail.com
 
 # JB Browser Testing
 
-Private skill for personal use. Do not publish.
-
 ## Rules
 
 - **Primary**: Use the `jb-pinchtab-testing` skill / `pinchtab` CLI for browser debugging and testing whenever possible. It is more controllable and focused for JB workflows. Follow that skill's profile-selection rules before acting.
