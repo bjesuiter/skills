@@ -1,6 +1,6 @@
 ---
 name: security-check
-description: Red-team security review for code changes. Use when reviewing pending git changes, branch diffs, or new features for security vulnerabilities, permission gaps, injection risks, and attack vectors. Acts as a pen-tester analyzing code.
+description: Use when reviewing pending changes, branch diffs, or new features for concrete security risks, injection, auth, permissions, or attack paths.
 metadata:
   private: true
   clawdbot:

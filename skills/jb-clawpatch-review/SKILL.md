@@ -1,6 +1,6 @@
 ---
 name: jb-clawpatch-review
-description: Run Clawpatch semantic code review, findings reporting, explicit finding fixes, and revalidation for a repo. Use when the user mentions Clawpatch, clawpatch.ai, semantic feature review, repo-wide AI review, persistent findings, or asks to run clawpatch init/map/review/report/fix/revalidate.
+description: Use when the user mentions Clawpatch/clawpatch.ai, semantic feature review, repo-wide AI audit, persistent findings, or clawpatch init/map/review/report/fix/revalidate.
 ---
 
 # JB Clawpatch Review

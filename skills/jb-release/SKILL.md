@@ -1,6 +1,6 @@
 ---
 name: jb-release
-description: Generic release workflow for packages and apps. Use when the user asks to cut, prepare, publish, or tag a release, especially npm/package releases; defer to repo-specific release instructions when present.
+description: Use when the user asks to cut, prepare, publish, tag, or verify a release, especially npm/package releases.
 private: true
 allowed-tools: Bash(git:*), Bash(gh:*), Bash(npm:*), Bash(pnpm:*), Bash(yarn:*), Bash(bun:*)
 skill_author: bjesuiter@gmail.com

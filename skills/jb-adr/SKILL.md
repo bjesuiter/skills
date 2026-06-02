@@ -1,6 +1,6 @@
 ---
 name: jb-adr
-description: "Create and manage Markdown Architectural Decision Records (MADR). Use when documenting software design choices, tech stack decisions, architecture changes, or any decision that impacts code structure. Triggers on: 'adr', 'architectural decision', 'decision record', 'madr', 'design decision', 'tech decision', 'architecture decision'."
+description: Use when the user mentions ADR, MADR, decision record, architectural decision, design decision, tech decision, or documenting architecture choices.
 ---
 
 # MADR - Markdown Architectural Decision Records

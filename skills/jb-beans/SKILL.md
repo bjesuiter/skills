@@ -1,6 +1,6 @@
 ---
 name: jb-beans
-description: Use the beans CLI to track issues/tasks alongside your code. Flat-file issue tracker that stores beans as markdown files in .beans/ directory. Integrates with Codex, OpenCode, and Claude Code via beans-prime.
+description: Use when the repo has .beans or the user mentions beans, beans-prime, flat-file issues, task tracking, or issue status changes.
 homepage: https://github.com/hmans/beans
 metadata: {"clawdbot":{"emoji":"🫘","requires":{"bins":["beans"]},"install":[{"id":"bun","kind":"bun","package":"beans","bins":["beans"],"label":"Install beans (bun)","command":"bun i -g beans"},{"id":"brew","kind":"brew","package":"hmans/beans/beans","label":"Install beans (brew)"}]}}
 ---

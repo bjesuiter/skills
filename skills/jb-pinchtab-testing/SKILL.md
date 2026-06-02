@@ -1,6 +1,6 @@
 ---
 name: jb-pinchtab-testing
-description: Higher-level browser testing workflow for PinchTab-managed browsers using the PinchTab CLI directly. Use when asked to smoke-test a local web app, reproduce a frontend bug, verify a flow in a persistent browser session, or gather structured browser-test evidence through PinchTab.
+description: Use when smoke-testing a local web app, reproducing frontend bugs, verifying browser flows, or gathering evidence through PinchTab.
 homepage: https://github.com/pinchtab/pinchtab
 metadata: {"clawdbot":{"requires":{"bins":["pinchtab"]}}}
 skill_author: bjesuiter@gmail.com

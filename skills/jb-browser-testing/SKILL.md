@@ -1,6 +1,6 @@
 ---
 name: jb-browser-testing
-description: Private browser testing rules for jb workflows. Prefer PinchTab via the jb-pinchtab-testing skill for browser debugging/testing, use agent-browser only when PinchTab is unsuitable, and do not use playwriter or playwright-mcp.
+description: Use for JB browser-testing decisions: prefer PinchTab, choose agent-browser only when needed, and avoid playwriter/playwright-mcp.
 skill_author: bjesuiter@gmail.com
 private: true
 ---

@@ -1,6 +1,6 @@
 ---
 name: xcode
-description: Build, test, and manage Xcode projects and Swift packages. Use when the user mentions Xcode, iOS/macOS app development, simulators, Swift packages, or needs to build/test Apple platform apps. Triggers on "build", "run", "test", "simulator", "xcodebuild", "swift package", "iOS app", "macOS app".
+description: Use when the user mentions Xcode, xcodebuild, Swift packages, Apple simulators, iOS/macOS app builds, or Apple-platform tests.
 allowed-tools: Bash(bunx:*,mcporter:*)
 ---
 

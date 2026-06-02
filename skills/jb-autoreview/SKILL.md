@@ -1,6 +1,6 @@
 ---
 name: jb-autoreview
-description: Run a structured second-model code review with the bundled autoreview helper (Codex default, Claude optional) for dirty worktrees, branches, commits, or PRs before commit, merge, or ship.
+description: Use when the user asks for autoreview, Codex/Claude second-model review, or final review of dirty changes, a branch, commit, or PR before ship.
 ---
 
 # JB Autoreview

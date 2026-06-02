@@ -1,6 +1,6 @@
 ---
 name: jb-chrome-mcp
-description: Use mcporter to connect to Chrome DevTools MCP against a local Chrome with chrome://inspect/#remote-debugging enabled on 127.0.0.1:9222. Use when asked to use Chrome MCP/DevTools MCP via mcporter, inspect or automate existing Chrome tabs, or query console, network, screenshots, and performance through Chrome MCP.
+description: Use when the user asks for Chrome MCP/DevTools MCP via mcporter, existing Chrome tabs, console/network inspection, screenshots, or performance traces.
 homepage: https://github.com/ChromeDevTools/chrome-devtools-mcp
 metadata: {"clawdbot":{"requires":{"bins":["mcporter"]},"install":[{"id":"node","kind":"node","package":"mcporter","bins":["mcporter"],"label":"Install mcporter (node)"}]}}
 skill_author: bjesuiter@gmail.com

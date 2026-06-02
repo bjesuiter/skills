@@ -1,6 +1,6 @@
 ---
 name: jb-docs-scraper
-description: Scrape documentation websites into local markdown files for AI context. Takes a base URL and crawls the documentation, storing results in ./docs (or custom path). Uses crawl4ai with BFS deep crawling.
+description: Use when scraping docs websites into local markdown files, crawling docs, or building AI-readable docs context.
 ---
 
 # Documentation Scraper

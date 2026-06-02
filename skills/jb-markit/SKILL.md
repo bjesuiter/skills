@@ -1,6 +1,6 @@
 ---
 name: jb-markit
-description: Convert files, URLs, stdin, images, audio, archives, GitHub pages, and Apple iWork docs to markdown with the markit CLI. Use when the user wants PDFs, Office docs, webpages, feeds, spreadsheets, JSON/YAML, iWork files, or media turned into markdown, or needs raw/JSON extraction for agents.
+description: Use when converting PDFs, Office/iWork docs, webpages, feeds, spreadsheets, JSON/YAML, GitHub pages, images, audio, archives, or stdin to markdown.
 homepage: https://github.com/Michaelliv/markit
 metadata: {"clawdbot":{"emoji":"📝","requires":{"bins":["markit"]},"install":[{"id":"bun","kind":"bun","package":"markit-ai","bins":["markit"],"label":"Install markit (bun)"}]}}
 ---

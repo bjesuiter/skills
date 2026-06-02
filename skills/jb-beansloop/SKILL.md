@@ -1,6 +1,6 @@
 ---
 name: jb-beansloop
-description: Beans-driven Ralp loop for beans-enabled repos. Use either to work on one bean on user request or to work on all beans in a repo.
+description: Use when working one bean or all beans in a beans-enabled repo through the Ralp loop.
 skill_author: bjesuiter@gmail.com
 private: true
 ---

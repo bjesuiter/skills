@@ -1,6 +1,6 @@
 ---
 name: jb-refine-code
-description: Perform a refactor pass focused on simplicity after recent changes. Use when the user asks for a refactor/cleanup pass, simplification, or dead-code removal and expects build/tests to verify behavior.
+description: Use after code changes when the user asks for refactor, cleanup, simplification, dead-code removal, or behavior-preserving polish.
 ---
 
 # Refactor Pass

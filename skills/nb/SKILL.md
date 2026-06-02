@@ -1,6 +1,6 @@
 ---
 name: nb
-description: Manage notes, bookmarks, and notebooks using the nb CLI. Create, list, search, and organize notes across multiple notebooks with Git-backed versioning.
+description: Use when creating, listing, searching, bookmarking, or organizing notes with the nb CLI.
 author: Benjamin Jesuiter <bjesuiter@gmail.com>
 homepage: https://github.com/xwmx/nb
 metadata:

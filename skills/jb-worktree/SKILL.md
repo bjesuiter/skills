@@ -1,6 +1,6 @@
 ---
 name: jb-worktree
-description: Manage Git worktrees with the wtp CLI. Use when creating isolated branch worktrees, jumping between worktrees, bootstrapping per-worktree setup, or cleaning up merged branches.
+description: Use when creating, switching, bootstrapping, or cleaning Git worktrees with wtp.
 homepage: https://github.com/satococoa/wtp
 metadata: {"clawdbot":{"emoji":"🌳","requires":{"bins":["wtp"]},"install":[{"id":"brew","kind":"brew","formula":"satococoa/tap/wtp","bins":["wtp"],"label":"Install wtp (brew)"}]}}
 skill_author: bjesuiter

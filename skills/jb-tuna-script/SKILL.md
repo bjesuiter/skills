@@ -1,6 +1,6 @@
 ---
 name: jb-tuna-script
-description: Create simple executable scripts for the Tuna macOS launcher. Use when the user asks to add, write, create, or fix a Tuna script, Tuna launcher command, or script discoverable by Tuna.
+description: Use when adding, writing, fixing, or exposing a script for the Tuna macOS launcher.
 ---
 
 # JB Tuna Script

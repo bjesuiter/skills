@@ -1,6 +1,6 @@
 ---
 name: sweetlink
-description: Use SweetLink to connect your AI agent to a real browser tab. Like Playwright, but works in your current tab. Enables authentication, screenshots, smoke tests, and DevTools telemetry without headless automation.
+description: Use when the task needs a real authenticated browser tab via SweetLink for screenshots, smoke tests, or DevTools telemetry.
 homepage: https://github.com/steipete/sweetlink
 metadata: {"clawdbot":{"emoji":"🍭","requires":{"bins":["sweetlink"]},"install":[{"id":"node","kind":"node","package":"sweetlink","bins":["sweetlink"],"label":"Install SweetLink (pnpm)"}]}}
 ---

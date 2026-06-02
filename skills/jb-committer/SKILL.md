@@ -1,6 +1,6 @@
 ---
 name: jb-committer
-description: Groups related git changes into coherent commits and drafts commit messages. Use when the user asks to commit, commit current changes, or create a commit.
+description: Use when the user asks to commit, commit-current, commit-only, group git changes, or draft commit messages.
 private: true
 allowed-tools: Bash(git:*)
 skill_author: bjesuiter@gmail.com
