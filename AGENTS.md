@@ -119,6 +119,25 @@ Before committing skill changes:
 - [ ] Update README.md if skill list changed
 - [ ] Commit with descriptive message
 
+## Post-Commit Local Skill Update
+
+When committing one of JB's own workflow skills from this repo, update the installed local machine copy after the commit using the official preference-registry update rules.
+
+Workflow:
+
+1. Commit and push the repo change first.
+2. Read the canonical setup workflow from the preference registry Gist:
+
+   ```bash
+   gh gist view https://gist.github.com/bjesuiter/98d5768dc360093affb8d8fdb064e45f \
+     --filename jb-skill-preferences-setup.md \
+     --raw
+   ```
+
+3. Follow the setup doc's new-entry/exact-entry install rules for the changed skill, using global scope unless JB specified otherwise.
+4. Verify the installed skill reflects the committed change.
+5. Do not leave repo-local test installs under `.agents/skills/`.
+
 ## Importing Skills from Other Repos
 
 When copying skills from other locations (e.g., jb-home):
