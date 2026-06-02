@@ -106,6 +106,8 @@ npx skills add . --skill jb-tdd -a codex -y
 
 This ensures the skill installs without errors.
 
+When testing installs from this repo, clean up any skills installed only for testing afterwards. Do not leave test-installed skills in local/global agent skill directories unless the user explicitly wants to keep them.
+
 ## Pre-Commit Checklist
 
 Before committing skill changes:
@@ -113,6 +115,7 @@ Before committing skill changes:
 - [ ] Remove broken symlinks: `find -L skills/ -type l -delete`
 - [ ] Validate discovery: `npx skills add . --list` (all skills appear)
 - [ ] Test one install: `npx skills add . --skill <name> -a codex -y`
+- [ ] Clean up skills installed only for install testing
 - [ ] Update README.md if skill list changed
 - [ ] Commit with descriptive message
 
