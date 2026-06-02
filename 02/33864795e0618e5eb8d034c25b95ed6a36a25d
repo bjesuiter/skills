@@ -1,0 +1,40 @@
+skills/jb-clawpatch-review/SKILL.md
+  s_3f0fcc93c4ab1a::t_b6b0e901c6fb93 1-181
+skills/jb-autoreview/scripts/autoreview
+  ai_agent 1-1265
+skills/jb-autoreview/scripts/test-review-harness
+  ai_agent 1-16
+skills/jb-autoreview/SKILL.md
+  s_7bc9e02c454270::t_be9e6c4f716872 1-194
+skills/jb-autoreview/scripts/test-review-harness.py
+  ai_agent 1-199
+README.md
+  s_3f0fcc93c4ab1a::t_e3daf414aea655 20,32
+  s_7bc9e02c454270::t_a56cb2204262a7 31
+skills/jb-autoreview/scripts/test-review-harness.ps1
+  ai_agent 1-45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "0233864795e0618e5eb8d034c25b95ed6a36a25d",
+  "prompts": {},
+  "sessions": {
+    "s_3f0fcc93c4ab1a": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019e89f9-041e-7b15-8c36-8308efedf8b1",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Benjamin Jesuiter <bjesuiter@gmail.com>"
+    },
+    "s_7bc9e02c454270": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019e89e9-57b9-7823-b9c4-3da3db452d78",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Benjamin Jesuiter <bjesuiter@gmail.com>"
+    }
+  }
+}
