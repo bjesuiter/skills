@@ -1,0 +1,19 @@
+AGENTS.md
+  s_f9f904662d00ee::t_864765cec80eab 109-110,118
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "b89c169cd45a46c54d0062ad68af29cbf8429920",
+  "prompts": {},
+  "sessions": {
+    "s_f9f904662d00ee": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019e89a4-1c6b-7225-b8dc-b20dbad8be96",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Benjamin Jesuiter <bjesuiter@gmail.com>"
+    }
+  }
+}
