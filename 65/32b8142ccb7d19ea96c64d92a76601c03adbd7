@@ -1,0 +1,67 @@
+skills/security-check/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/jb-refine-code/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/jb-skill-prefs/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/summarize/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/jb-clawpatch-review/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/jb-worktree/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/jb-autoreview/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/jb-browser-testing/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/jb-beansloop/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/jb-adr/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/jb-bgproc/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/jb-beans/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/jb-tuna-script/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/jb-tdd/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/jb-markit/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/mcporter/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/mole-mac-cleanup/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/sweetlink/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/xcode/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/jb-release/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/jb-pinchtab-testing/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/jb-docs-scraper/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/jb-committer/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/jb-chrome-mcp/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+skills/nb/SKILL.md
+  s_3f0fcc93c4ab1a::t_f06aee3c4c01a3 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "6532b8142ccb7d19ea96c64d92a76601c03adbd7",
+  "prompts": {},
+  "sessions": {
+    "s_3f0fcc93c4ab1a": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019e89f9-041e-7b15-8c36-8308efedf8b1",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Benjamin Jesuiter <bjesuiter@gmail.com>"
+    }
+  }
+}
