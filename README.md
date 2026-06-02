@@ -17,7 +17,7 @@ npx skills add bjesuiter/skills --skill jb-tdd -a codex -y
 npx skills add bjesuiter/skills --all
 ```
 
-## Included Skills (23)
+## Included Skills (25)
 
 ### Core Development Workflows
 - `jb-tdd` — Test-driven development workflow (red-green-refactor)
@@ -28,6 +28,8 @@ npx skills add bjesuiter/skills --all
 - `jb-beans` — Flat-file issue tracker stored in `.beans/` directory
 
 ### Code Review & Quality
+- `jb-autoreview` — Structured second-model autoreview via Codex/Claude for local, branch, commit, and PR diffs
+- `jb-clawpatch-review` — Clawpatch semantic repo review, persistent findings reports, explicit fixes, and revalidation
 - `security-check` — Red-team security review for code changes
 
 ### Browser & Web Testing
