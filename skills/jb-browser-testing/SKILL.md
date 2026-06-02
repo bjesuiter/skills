@@ -1,8 +1,7 @@
 ---
 name: jb-browser-testing
-description: Use for JB browser-testing decisions: prefer PinchTab, choose agent-browser only when needed, and avoid playwriter/playwright-mcp.
+description: "Use for JB browser-testing decisions: prefer PinchTab, choose agent-browser only when needed, and avoid playwriter/playwright-mcp."
 skill_author: bjesuiter@gmail.com
-private: true
 ---
 
 # JB Browser Testing
