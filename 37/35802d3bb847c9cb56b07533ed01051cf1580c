@@ -1,0 +1,19 @@
+skills/jb-skill-prefs/SKILL.md
+  s_f9f904662d00ee::t_e0f21d08133029 3,10-13,16-19,21,24-28,31,37,40-42,45-55,64,66-75,78-81,84-97,99,101,104,107,109,111-117,119,121-124,130
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "3735802d3bb847c9cb56b07533ed01051cf1580c",
+  "prompts": {},
+  "sessions": {
+    "s_f9f904662d00ee": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019e89a4-1c6b-7225-b8dc-b20dbad8be96",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Benjamin Jesuiter <bjesuiter@gmail.com>"
+    }
+  }
+}
