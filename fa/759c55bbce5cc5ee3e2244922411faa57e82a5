@@ -1,0 +1,19 @@
+skills/jb-chrome-mcp/SKILL.md
+  s_8d185dada9b161::t_2188f50c77f3dc 12-16,33,36-42,59-61,66-71,81,84-91,106,112,118,124-130,136,142,148,154,160,178-199,203-210,214
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "fa759c55bbce5cc5ee3e2244922411faa57e82a5",
+  "prompts": {},
+  "sessions": {
+    "s_8d185dada9b161": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019eb629-ae83-7b16-a8a1-94cdf244d40c",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Benjamin Jesuiter <bjesuiter@gmail.com>"
+    }
+  }
+}
