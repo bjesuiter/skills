@@ -5,6 +5,7 @@ NAME="jb-chrome-mcp"
 HOST="127.0.0.1"
 PORT="9222"
 VERSION="${CHROME_DEVTOOLS_MCP_VERSION:-1.2.0}"
+USER_DATA_DIR="${CHROME_DEVTOOLS_MCP_USER_DATA_DIR:-${HOME}/Library/Application Support/Google/Chrome}"
 DESCRIPTION="Chrome DevTools MCP via local Chrome remote debugging"
 
 if ! command -v mcporter >/dev/null 2>&1; then
@@ -33,11 +34,14 @@ mcporter config add "${NAME}" \
   --stdio npx \
   --arg -y \
   --arg "chrome-devtools-mcp@${VERSION}" \
-  --arg --autoConnect \
+  --arg --auto-connect \
+  --arg --userDataDir \
+  --arg "${USER_DATA_DIR}" \
   --arg --no-usage-statistics \
   --description "${DESCRIPTION}" \
   --scope home >/dev/null
 
 echo "Configured mcporter server '${NAME}' using chrome-devtools-mcp@${VERSION}."
+echo "Using Chrome user data dir: ${USER_DATA_DIR}"
 echo "Verify with: mcporter list ${NAME} --schema"
 echo "If the first live mcporter call hangs, check Chrome for a permission prompt and click Allow."

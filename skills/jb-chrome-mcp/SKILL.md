@@ -48,9 +48,10 @@ The script:
 
 - verifies Chrome is listening on `127.0.0.1:9222`
 - installs or updates a saved home-level `mcporter` server named `jb-chrome-mcp`
-- configures `chrome-devtools-mcp@1.2.0` with `--autoConnect` by default
+- configures `chrome-devtools-mcp@1.2.0` with `--auto-connect`
+- passes `--userDataDir "$HOME/Library/Application Support/Google/Chrome"` so DevTools MCP reattaches to the user's real Chrome profile and tabs
 
-`--autoConnect` was more reliable for the `chrome://inspect/#remote-debugging` workflow than forcing `--browserUrl http://127.0.0.1:9222`.
+`--auto-connect` plus the real Chrome `--userDataDir` is more reliable for the `chrome://inspect/#remote-debugging` workflow than forcing `--browserUrl http://127.0.0.1:9222`.
 
 After bootstrapping, verify the tool list if needed:
 
@@ -59,6 +60,12 @@ mcporter list jb-chrome-mcp --schema
 ```
 
 This creates a saved home-level `mcporter` server named `jb-chrome-mcp`. That is what lets later calls use short names like `mcporter call jb-chrome-mcp.list_pages` instead of repeating the full `npx chrome-devtools-mcp ...` stdio config every time.
+
+Expected saved transport:
+
+```text
+npx -y chrome-devtools-mcp@1.2.0 --auto-connect --userDataDir "$HOME/Library/Application Support/Google/Chrome" --no-usage-statistics
+```
 
 Note: the first live `mcporter call` may trigger a Chrome permission prompt for the DevTools MCP connection. If a live call hangs, check Chrome for an **Allow** prompt before changing config or restarting processes.
 
@@ -112,6 +119,8 @@ mcporter config add jb-chrome-mcp \
   --arg chrome-devtools-mcp@1.2.0 \
   --arg --browserUrl \
   --arg http://127.0.0.1:9222 \
+  --arg --userDataDir \
+  --arg "$HOME/Library/Application Support/Google/Chrome" \
   --arg --no-usage-statistics \
   --scope home
 ```
