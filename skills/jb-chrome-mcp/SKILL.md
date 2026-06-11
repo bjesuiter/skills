@@ -48,7 +48,7 @@ The script:
 
 - verifies Chrome is listening on `127.0.0.1:9222`
 - installs or updates a saved home-level `mcporter` server named `jb-chrome-mcp`
-- configures `chrome-devtools-mcp` with `--autoConnect`
+- configures `chrome-devtools-mcp@1.2.0` with `--autoConnect` by default
 
 `--autoConnect` was more reliable for the `chrome://inspect/#remote-debugging` workflow than forcing `--browserUrl http://127.0.0.1:9222`.
 
@@ -109,7 +109,7 @@ If `--autoConnect` is unavailable or you are connecting to an older/manual Chrom
 mcporter config add jb-chrome-mcp \
   --stdio npx \
   --arg -y \
-  --arg chrome-devtools-mcp@latest \
+  --arg chrome-devtools-mcp@1.2.0 \
   --arg --browserUrl \
   --arg http://127.0.0.1:9222 \
   --arg --no-usage-statistics \

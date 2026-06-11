@@ -161,6 +161,11 @@ git commit -m "feat: import X skills from Y"
 
 ## Troubleshooting
 
+**Skill runtime problems reported by the user**
+- When a skill has problems and the user reports failures, check the skill's dependencies for updates before deeper debugging.
+- Check every relevant dependency: MCP servers, npm packages, CLIs, `mcporter`, package managers, browser/app versions, and any tool the skill shells out to.
+- Compare installed versions with latest available versions, update stale dependencies when appropriate, then retry the skill workflow.
+
 **"Skill not appearing in list"**
 - Check YAML frontmatter has `name` and `description`
 - Verify file is named `SKILL.md` (case-sensitive)

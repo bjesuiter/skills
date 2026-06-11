@@ -4,7 +4,7 @@ set -euo pipefail
 NAME="jb-chrome-mcp"
 HOST="127.0.0.1"
 PORT="9222"
-VERSION="${CHROME_DEVTOOLS_MCP_VERSION:-0.20.1}"
+VERSION="${CHROME_DEVTOOLS_MCP_VERSION:-1.2.0}"
 DESCRIPTION="Chrome DevTools MCP via local Chrome remote debugging"
 
 if ! command -v mcporter >/dev/null 2>&1; then
