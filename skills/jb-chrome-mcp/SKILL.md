@@ -11,6 +11,8 @@ private: true
 
 Private skill for using Chrome DevTools MCP through `mcporter` against the user's existing Chrome session.
 
+This skill defines JB-specific rules, bootstrap, safety, and recovery workflow only. For the full upstream tool catalog and exact arguments, read `references/chrome-devtools-mcp-tool-reference.md` instead of duplicating it here.
+
 Hard rule: reattach to the existing Chrome profile only. Do not silently switch to isolated Chrome, Playwright, Puppeteer, the Codex in-app browser, AppleScript, `osascript`, GUI scripting, or macOS `open` for browser control unless the user explicitly asks for an isolated/new browser.
 
 Screenshot/live UI bugs require this existing-Chrome path. `curl`, source inspection, Worker smoke tests, or local Playwright are supporting proof only; do not treat them as equivalent when the user showed a rendered browser problem or the page may depend on login/profile state.
@@ -65,16 +67,12 @@ Note: the first live `mcporter call` may trigger a Chrome permission prompt for 
 1. `list_pages`
 2. Confirm the list shows the user's real open tabs. If it shows a blank/default isolated Chrome, stop and say reattach failed.
 3. `select_page`
-4. `take_snapshot` before interacting
-5. Use current `uid` values only from the latest snapshot.
-6. Use `click`, `fill`, `press_key`, `navigate_page`, or `evaluate_script`
-7. Use diagnostics tools when needed:
-   - `list_console_messages`
-   - `list_network_requests`
-   - `get_network_request`
-   - `performance_start_trace`
-   - `performance_stop_trace`
-   - `lighthouse_audit`
+4. `take_snapshot` before interacting. Use current `uid` values only from the latest snapshot.
+5. Pick the tool from `references/chrome-devtools-mcp-tool-reference.md`:
+   - Prefer `fill_form` for multi-field forms.
+   - Use `handle_dialog` for page-level `alert`/`confirm`/`prompt`; use attach prompt recovery below only for native Chrome permission prompts.
+   - For performance, use trace tools for performance metrics; Lighthouse excludes performance.
+   - Do not use experimental-only tools (`click_at`, screencast) unless the server was configured with their required flags.
 
 ## Good defaults
 
@@ -82,83 +80,26 @@ Note: the first live `mcporter call` may trigger a Chrome permission prompt for 
 - Prefer `take_snapshot` over screenshots when text structure is enough.
 - Call `list_pages` first if the active tab is unclear.
 - Use `select_page` with `bringToFront: true` before interactive actions when tab focus matters.
-- For first live calls, prefer a timeout so the agent does not hang forever on a Chrome permission prompt:
+- For first live calls, use mcporter's built-in timeout so the agent gets a structured failure instead of hanging forever on a Chrome permission prompt:
 
 ```bash
-timeout 20s mcporter call jb-chrome-mcp.list_pages --args '{}' --output json
+mcporter call jb-chrome-mcp.list_pages --args '{}' --output json --timeout 20000
 ```
+
+Do not wrap `mcporter` in shell `timeout` for normal use; it can kill the client without a useful MCP error.
 
 - Avoid noisy recovery loops. Repeated MCP/browser restarts can trigger reconnect/login prompts and alerts. Try one recovery path, then pause and ask or report the verification gap.
 
-## Common commands
+## Command pattern
 
-First run:
+First run the bootstrap script, then use the saved server:
 
 ```bash
 ./scripts/ensure-jb-chrome-mcp.sh
+mcporter call jb-chrome-mcp.<tool_name> --args '<json-args>' --output json --timeout 20000
 ```
 
-Then use the saved server.
-
-List tabs:
-
-```bash
-mcporter call jb-chrome-mcp.list_pages --args '{}' --output json
-```
-
-Select a tab:
-
-```bash
-mcporter call jb-chrome-mcp.select_page --args '{"pageId":1,"bringToFront":true}' --output json
-```
-
-Take a text snapshot:
-
-```bash
-mcporter call jb-chrome-mcp.take_snapshot --args '{}' --output json
-```
-
-Click an element from the latest snapshot:
-
-```bash
-mcporter call jb-chrome-mcp.click --args '{"uid":"1_10","includeSnapshot":true}' --output json
-```
-
-Fill/type into an element:
-
-```bash
-mcporter call jb-chrome-mcp.fill --args '{"uid":"1_13","value":"text","includeSnapshot":true}' --output json
-```
-
-Evaluate JavaScript:
-
-```bash
-mcporter call jb-chrome-mcp.evaluate_script --args '{"function":"() => document.title"}' --output json
-```
-
-Show console messages:
-
-```bash
-mcporter call jb-chrome-mcp.list_console_messages --args '{}' --output json
-```
-
-Show network requests:
-
-```bash
-mcporter call jb-chrome-mcp.list_network_requests --args '{}' --output json
-```
-
-Start a performance trace:
-
-```bash
-mcporter call jb-chrome-mcp.performance_start_trace --args '{"reload":true,"autoStop":true}' --output json
-```
-
-Take a screenshot:
-
-```bash
-mcporter call jb-chrome-mcp.take_screenshot --args '{"fullPage":true,"filePath":"tmp/chrome-mcp.png"}' --output json
-```
+Use `references/chrome-devtools-mcp-tool-reference.md` for tool names, parameters, examples, and flag requirements.
 
 ## Fallback for explicit browser URL mode
 
@@ -186,7 +127,7 @@ PB="${PEEKABOO_BIN:-$HOME/bin/peekaboo}"
 "$PB" see --app frontmost --path /tmp/chrome-attach.png --json --annotate
 # If the UI shows Chrome "Allow remote debugging?", click only the visible Allow button.
 "$PB" click --coords <allow_x>,<allow_y> --json
-mcporter call jb-chrome-mcp.list_pages --args '{}' --output json
+mcporter call jb-chrome-mcp.list_pages --args '{}' --output json --timeout 20000
 ```
 
 Use coordinates from the current Peekaboo snapshot, not stale notes. Success means `list_pages` returns the user's real Chrome tabs.
@@ -197,6 +138,10 @@ Attach-alert rule: when the current snapshot clearly shows Chrome asking to allo
 
 Never print tokens/passwords from page DOM, network logs, or inputs. For token checks, return shape only: present/absent, length, status code, account/org name.
 
+`get_network_request` can return request/response bodies inline. Prefer file output args from the reference for large or potentially sensitive bodies, then summarize only safe shape/status details.
+
+Avoid debug logging by default. Do not enable `DEBUG=*`, `--logFile`, or verbose protocol logging unless explicitly debugging MCP internals and prepared to redact the output. Chrome DevTools MCP debug logs can include live URLs, request headers, cookies, auth tokens, post bodies, and other sensitive browser-session data from open tabs.
+
 ## Troubleshooting
 
 - If Chrome is not listening on `9222`, reopen `chrome://inspect/#remote-debugging` and turn it on again.
@@ -205,7 +150,7 @@ Never print tokens/passwords from page DOM, network logs, or inputs. For token c
 
 ```bash
 mcporter daemon restart
-mcporter call jb-chrome-mcp.list_pages --args '{}' --output json
+mcporter call jb-chrome-mcp.list_pages --args '{}' --output json --timeout 20000
 ```
 
 - If `list_pages` returns a connection error, retry with the persisted config form instead of ad-hoc stdio.
