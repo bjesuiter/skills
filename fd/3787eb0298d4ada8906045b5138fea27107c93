@@ -1,0 +1,23 @@
+skills/jb-chrome-mcp/scripts/ensure-jb-chrome-mcp.sh
+  s_8d185dada9b161::t_dba2733517e3da 7
+AGENTS.md
+  s_8d185dada9b161::t_bcbefabbf590b4 164-168
+skills/jb-chrome-mcp/SKILL.md
+  s_8d185dada9b161::t_bb78dc41aea18f 51,112
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "fd3787eb0298d4ada8906045b5138fea27107c93",
+  "prompts": {},
+  "sessions": {
+    "s_8d185dada9b161": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019eb629-ae83-7b16-a8a1-94cdf244d40c",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Benjamin Jesuiter <bjesuiter@gmail.com>"
+    }
+  }
+}
