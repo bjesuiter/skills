@@ -1,0 +1,31 @@
+skills/jb-chrome-mcp/SKILL.md
+  s_95ab743cc3a4bc::t_3da16f5b2a68cb 14-15,70-75,93,95,99,102,141
+  s_8d185dada9b161::t_dd210992dd2891 83,86,89-90,130,153
+  s_8d185dada9b161::t_9b60b8e54a4165 143-144
+skills/jb-chrome-mcp/references/chrome-devtools-mcp-tool-reference.md
+  s_95ab743cc3a4bc::t_3da16f5b2a68cb 1-648
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "da2748085610787186b3d5bbc004dbf1422d92bf",
+  "prompts": {},
+  "sessions": {
+    "s_8d185dada9b161": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019eb629-ae83-7b16-a8a1-94cdf244d40c",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Benjamin Jesuiter <bjesuiter@gmail.com>"
+    },
+    "s_95ab743cc3a4bc": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019eb650-802f-7cfe-b617-83ac9fcc72bc",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Benjamin Jesuiter <bjesuiter@gmail.com>"
+    }
+  }
+}
