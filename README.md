@@ -17,7 +17,7 @@ npx skills add bjesuiter/skills --skill jb-tdd -a codex -y
 npx skills add bjesuiter/skills --all
 ```
 
-## Included Skills (25)
+## Included Skills (26)
 
 ### Core Development Workflows
 - `jb-tdd` — Test-driven development workflow (red-green-refactor)
@@ -43,6 +43,7 @@ npx skills add bjesuiter/skills --all
 - `jb-docs-scraper` — Scrape documentation websites into markdown
 - `jb-markit` — Convert files, URLs, and media into markdown with `markit`
 - `summarize` — Summarize URLs, PDFs, images, audio, and YouTube
+- `jb-mdn` — Query MDN Web Docs and browser compatibility through the official MDN MCP server using persistent `mcporter` config
 
 ### Development Tools
 - `mcporter` — MCP server/tool management CLI
