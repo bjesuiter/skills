@@ -14,6 +14,8 @@ Author: bjesuiter
 
 Use this skill to design, implement, or run a GitHub Actions release pipeline that starts from **non-semantic release-attempt tags** instead of canonical version tags.
 
+This is an **opinionated JB workflow skill**, not a generic GitHub release best-practices skill. Preserve these preferences unless the user explicitly asks to change them.
+
 Only use it when one of these is true:
 
 - the repo already contains JB's release-attempt workflow, usually `.github/workflows/jb-release-v1.yaml`
@@ -74,6 +76,51 @@ Before editing, read repo-specific release docs and workflows:
 - repo-local skills such as `.pi/skills/release/SKILL.md`
 
 Repo-specific instructions win.
+
+## Prepare the release-attempt commit
+
+Before pushing a `release-attempt/*` tag, prepare the commit that the attempt tag will point at. Adapt the local release workflow, but keep the canonical release mutation inside CI.
+
+1. **Identify release type and target**
+   - Confirm the package/app to release if the repo has multiple packages.
+   - Determine the intended bump: `patch`, `minor`, or `major`.
+   - If the user did not specify the bump, ask before creating an attempt tag.
+   - Do not infer the bump from conventional commits unless repo docs explicitly require that.
+
+2. **Inspect current release state**
+   - Check clean/dirty git state with `git status --short`.
+   - Fetch tags and find the latest canonical release tag: `git tag --sort=-version:refname | head`.
+   - Review commits since the last canonical release tag: `git log <last-tag>..HEAD --oneline`.
+   - Read the current version from `package.json` or the repo's version source.
+   - Check package metadata, publish scripts, and existing release workflow behavior.
+
+3. **Prepare only attempt/setup changes locally**
+   - If setting up this flow, add or update the workflow, helper script, docs, and package scripts.
+   - If the flow already exists, normally do not edit release files before the attempt.
+   - Locally update `CHANGELOG.md` from commit messages since the last canonical `v*` release tag, but put the entry under a placeholder `vNEXT` heading.
+   - This changelog-writing step usually needs an LLM/editorial pass, so do it locally before the attempt unless the repo has explicitly configured an LLM-capable CI changelog step.
+   - The CI release flow should only replace the `vNEXT` changelog heading with the final version number in the release commit, unless LLM changelog generation is explicitly set up in CI.
+   - Do **not** locally bump `package.json`, lockfiles, or platform manifests just to start an attempt; the CI success path should create the release commit containing those version changes.
+   - Do **not** create a canonical `vNEXT` tag locally.
+
+4. **Verify before triggering CI**
+   - Run the repo's normal cheap/local checks before creating the attempt tag:
+     - lint
+     - tests
+     - build/typecheck
+   - Prefer existing package scripts over inventing new commands.
+   - If a check cannot be run, record why before triggering the attempt.
+
+5. **Commit and push the attempt base**
+   - Commit only the setup/docs/helper changes needed for the release attempt, if any.
+   - Use a non-versioned message, for example `ci: add release attempt workflow` or `docs: document release attempts`.
+   - Push the commit to `main` before tagging.
+   - The release-attempt tag should point at this pushed `main` commit.
+
+6. **Trigger with an attempt tag**
+   - Create and push `release-attempt/<bump>/from-<current-version>/<UTC timestamp>`.
+   - The expected current version in the tag is the guard that prevents accidentally releasing from a stale checkout.
+   - After pushing, inspect the GitHub Actions run with `gh run list` / `gh run watch`.
 
 ## Workflow shape
 
@@ -168,6 +215,8 @@ For changelogs, choose one based on repo preference:
 - existing manual `CHANGELOG.md` format
 - generated notes from commits since last canonical `v*` tag
 - no changelog update if the repo does not maintain one
+
+Default for this opinionated workflow: prepare the changelog locally from commit messages since the last canonical `v*` tag under a `vNEXT` heading, because this normally needs an LLM/editorial pass. CI should only replace `vNEXT` with the final version number unless the repo explicitly has LLM changelog generation configured in CI.
 
 If ambiguous, ask whether changelog updates should be automatic and what source to use.
 
