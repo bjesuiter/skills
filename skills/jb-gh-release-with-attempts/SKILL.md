@@ -1,6 +1,6 @@
 ---
 name: jb-gh-release-with-attempts
-description: "Use when setting up or running GitHub Actions releases with disposable release-attempt tags: release-attempt/patch|minor|major/from-VERSION/TIMESTAMP. Encodes JB's preference for explicit CLI-triggered release intent, matrix build verification before canonical v* tags, GitHub Release assets, and optional npm publish only after successful builds."
+description: "Use only when the repo already has JB's release-attempt GitHub workflow (usually .github/workflows/jb-release-v1.yaml) or the user explicitly asks to set up that workflow. Runs GitHub Actions releases with disposable release-attempt/patch|minor|major/from-VERSION/TIMESTAMP tags before canonical v* tags."
 private: true
 allowed-tools: Bash(git:*), Bash(gh:*), Bash(npm:*), Bash(pnpm:*), Bash(yarn:*), Bash(bun:*), Bash(deno:*)
 skill_author: bjesuiter@gmail.com
@@ -13,6 +13,13 @@ Author: bjesuiter
 ## Purpose
 
 Use this skill to design, implement, or run a GitHub Actions release pipeline that starts from **non-semantic release-attempt tags** instead of canonical version tags.
+
+Only use it when one of these is true:
+
+- the repo already contains JB's release-attempt workflow, usually `.github/workflows/jb-release-v1.yaml`
+- the user explicitly asks to set up this GitHub Actions release-attempt workflow
+
+If neither is true and the user asks for a normal/local release, use `jb-local-release` instead.
 
 JB's preference: releases should be explicit and easy to trigger from the CLI, but failed native/package builds must not leave broken `v*` tags or consumed semantic versions.
 
