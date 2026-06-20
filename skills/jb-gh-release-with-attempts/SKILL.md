@@ -2,7 +2,7 @@
 name: jb-gh-release-with-attempts
 description: "Use when setting up or running GitHub Actions releases with disposable release-attempt tags: release-attempt/patch|minor|major/from-VERSION/TIMESTAMP. Encodes JB's preference for explicit CLI-triggered release intent, matrix build verification before canonical v* tags, GitHub Release assets, and optional npm publish only after successful builds."
 private: true
-allowed-tools: Bash(git:*), Bash(gh:*), Bash(npm:*), Bash(pnpm:*), Bash(yarn:*), Bash(bun:*)
+allowed-tools: Bash(git:*), Bash(gh:*), Bash(npm:*), Bash(pnpm:*), Bash(yarn:*), Bash(bun:*), Bash(deno:*)
 skill_author: bjesuiter@gmail.com
 ---
 
