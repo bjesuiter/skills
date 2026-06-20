@@ -1,6 +1,6 @@
 ---
 name: jb-gh-release-with-attempts
-description: "Use only when the repo already has JB's release-attempt GitHub workflow (usually .github/workflows/jb-release-v1.yaml) or the user explicitly asks to set up that workflow. Runs GitHub Actions releases with disposable release-attempt/patch|minor|major/from-VERSION/TIMESTAMP tags before canonical v* tags."
+description: "Opinionated JB GitHub Actions release-attempt workflow. Use only when the repo already has .github/workflows/jb-release-v1.yaml (or equivalent JB release-attempt workflow) or the user explicitly asks to set it up. Do not use for ordinary local releases; use jb-local-release instead."
 private: true
 allowed-tools: Bash(git:*), Bash(gh:*), Bash(npm:*), Bash(pnpm:*), Bash(yarn:*), Bash(bun:*), Bash(deno:*)
 skill_author: bjesuiter@gmail.com
@@ -19,6 +19,7 @@ This is an **opinionated JB workflow skill**, not a generic GitHub release best-
 Only use it when one of these is true:
 
 - the repo already contains JB's release-attempt workflow, usually `.github/workflows/jb-release-v1.yaml`
+- the repo contains an equivalent workflow that triggers on `release-attempt/*` tags
 - the user explicitly asks to set up this GitHub Actions release-attempt workflow
 
 If neither is true and the user asks for a normal/local release, use `jb-local-release` instead.
@@ -94,9 +95,9 @@ Before pushing a `release-attempt/*` tag, prepare the commit that the attempt ta
    - Read the current version from `package.json` or the repo's version source.
    - Check package metadata, publish scripts, and existing release workflow behavior.
 
-3. **Prepare only attempt/setup changes locally**
+3. **Prepare only attempt-safe changes locally**
    - If setting up this flow, add or update the workflow, helper script, docs, and package scripts.
-   - If the flow already exists, normally do not edit release files before the attempt.
+   - If the flow already exists, the normal local release-prep change is `CHANGELOG.md` only.
    - Locally update `CHANGELOG.md` from commit messages since the last canonical `v*` release tag, but put the entry under a placeholder `vNEXT` heading.
    - This changelog-writing step usually needs an LLM/editorial pass, so do it locally before the attempt unless the repo has explicitly configured an LLM-capable CI changelog step.
    - The CI release flow should only replace the `vNEXT` changelog heading with the final version number in the release commit, unless LLM changelog generation is explicitly set up in CI.
@@ -124,7 +125,7 @@ Before pushing a `release-attempt/*` tag, prepare the commit that the attempt ta
 
 ## Workflow shape
 
-Create `.github/workflows/release.yml` or adapt the repo's release workflow with this trigger:
+Create `.github/workflows/jb-release-v1.yaml` or adapt the repo's equivalent JB release-attempt workflow with this trigger:
 
 ```yaml
 on:
@@ -145,7 +146,7 @@ The workflow should:
 6. Fail early if `from-<version>` is present and does not match the current version.
 7. Compute `NEXT` from `patch | minor | major`.
 8. Assert canonical tag `vNEXT` does not already exist.
-9. Update version files (`package.json`, lockfile, platform manifests) and optionally changelog.
+9. Update version files (`package.json`, lockfile, platform manifests) and replace the local `CHANGELOG.md` `vNEXT` heading with the final version number.
 10. Run all checks and matrix builds.
 11. Package release assets and checksums.
 12. Only after all required jobs succeed:
@@ -201,7 +202,7 @@ set ts (date -u +%Y%m%dT%H%M%SZ)
 set tag release-attempt/$bump/from-$version/$ts
 git tag $tag
 git push origin $tag
-gh run list --workflow release.yml --limit 5
+gh run list --workflow jb-release-v1.yaml --limit 5
 ```
 
 Validate bump input strictly: only `patch`, `minor`, and `major` unless the user explicitly asks for prerelease support.
