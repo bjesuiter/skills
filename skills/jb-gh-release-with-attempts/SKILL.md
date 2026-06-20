@@ -125,7 +125,7 @@ Before pushing a `release-attempt/*` tag, prepare the commit that the attempt ta
 
 ## Workflow shape
 
-Create `.github/workflows/jb-release-v1.yaml` or adapt the repo's equivalent JB release-attempt workflow with this trigger:
+Create `.github/workflows/jb-release-v1.yaml` or adapt the repo's equivalent JB release-attempt workflow with this release trigger:
 
 ```yaml
 on:
@@ -136,20 +136,44 @@ on:
       - "release-attempt/major/from-*/*"
 ```
 
+If the user wants dry-run mode, also allow the same workflow to run on normal pushes with an explicit dry-run path. A dry run should execute checks/build/package logic but must not push release commits, create canonical `v*` tags, create GitHub Releases, upload public release assets, or publish packages.
+
+Recommended dry-run behavior:
+
+- On `release-attempt/*` tags: `dry_run=false` and parse bump/version guard from the tag.
+- On ordinary branch pushes: `dry_run=true`.
+- If not run via a `release-attempt/*` tag, assume the next patch version for planning/checking only.
+- Mark logs/summaries clearly as dry run, including the hypothetical `vNEXT`.
+
+Example trigger shape:
+
+```yaml
+on:
+  push:
+    branches: [main]
+    tags:
+      - "release-attempt/patch/from-*/*"
+      - "release-attempt/minor/from-*/*"
+      - "release-attempt/major/from-*/*"
+```
+
 The workflow should:
 
-1. Parse `bump` from `GITHUB_REF_NAME`.
-2. Parse optional expected current version from the `from-<version>` segment.
-3. Checkout the commit pointed to by the attempt tag.
-4. Fetch full history and tags.
-5. Read current version from the package manifest or project-specific version source.
-6. Fail early if `from-<version>` is present and does not match the current version.
-7. Compute `NEXT` from `patch | minor | major`.
-8. Assert canonical tag `vNEXT` does not already exist.
-9. Update version files (`package.json`, lockfile, platform manifests) and replace the local `CHANGELOG.md` `vNEXT` heading with the final version number.
-10. Run all checks and matrix builds.
-11. Package release assets and checksums.
-12. Only after all required jobs succeed:
+1. Determine whether this is a release attempt or dry run.
+2. For release attempts, parse `bump` from `GITHUB_REF_NAME`.
+3. For dry runs not triggered by `release-attempt/*`, set `bump=patch`.
+4. Parse optional expected current version from the `from-<version>` segment when present.
+5. Checkout the pushed commit.
+6. Fetch full history and tags.
+7. Read current version from the package manifest or project-specific version source.
+8. Fail early if `from-<version>` is present and does not match the current version.
+9. Compute `NEXT` from `patch | minor | major`.
+10. Assert canonical tag `vNEXT` does not already exist.
+11. Update version files (`package.json`, lockfile, platform manifests) and replace the local `CHANGELOG.md` `vNEXT` heading with the final version number in the workflow workspace.
+12. Run all checks and matrix builds.
+13. Package release assets and checksums.
+14. In dry-run mode, stop after verification/package simulation and write a summary of what would be released.
+15. Only after all required jobs succeed in non-dry-run mode:
     - create release commit `chore(release): vNEXT`
     - push release commit to `main`
     - create canonical tag `vNEXT` on that release commit
@@ -157,7 +181,7 @@ The workflow should:
     - upload assets/checksums
     - publish npm/package registry artifact only if requested or documented
 
-If any required check/build/package step fails, the workflow must not create `vNEXT` or a GitHub Release.
+If any required check/build/package step fails, the workflow must not create `vNEXT` or a GitHub Release. Dry-run mode must never create persistent release side effects, even when all checks pass.
 
 ## GitHub permissions
 
@@ -282,6 +306,8 @@ But note: JB generally prefers CLI-pushed `release-attempt/*` tags because GitHu
 Before finishing implementation:
 
 - `release-attempt/*` trigger patterns match the actual tag format.
+- Dry-run branch pushes are explicitly detected and cannot create release commits, canonical tags, GitHub Releases, or package publishes.
+- Non-attempt dry runs assume a patch bump only for planning/checking.
 - Helper script creates tags in exactly that format.
 - Workflow checks expected current version before doing expensive work.
 - Workflow fails if `vNEXT` already exists.
