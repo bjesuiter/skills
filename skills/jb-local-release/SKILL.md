@@ -1,18 +1,18 @@
 ---
-name: jb-release
-description: Use when the user asks to cut, prepare, publish, tag, or verify a release, especially npm/package releases.
+name: jb-local-release
+description: "Use when the user asks to run a local release flow: prepare version/changelog changes, run local checks, commit, tag, and optionally publish only when explicitly requested."
 private: true
 allowed-tools: Bash(git:*), Bash(gh:*), Bash(npm:*), Bash(pnpm:*), Bash(yarn:*), Bash(bun:*)
 skill_author: bjesuiter@gmail.com
 ---
 
-# JB Release
+# JB Local Release
 
 Author: bjesuiter
 
 ## Purpose
 
-Use this as the **generic release skill** when preparing a release, cutting a package release, updating a changelog, tagging a version, or publishing artifacts.
+Use this as the **local release workflow skill** when preparing a release from the current checkout: update version/changelog files, run local verification, commit, tag, and only publish when explicitly requested or documented.
 
 ## Precedence
 
@@ -22,9 +22,9 @@ Repo-specific instructions win. Before acting, check for release guidance in:
 - package manager scripts in `package.json`
 - project-specific skills or docs, such as `docs/release*`, `.github/*`, or maintainer notes
 
-If specific instructions exist, follow them instead of this generic workflow. Use this skill only to fill gaps.
+If specific instructions exist, follow them instead of this generic workflow. Use this skill only to fill gaps for local release preparation.
 
-## Generic release workflow
+## Local release workflow
 
 1. **Identify release type and target**
    - Confirm the package/app to release if the repo has multiple packages.

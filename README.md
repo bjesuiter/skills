@@ -24,7 +24,7 @@ npx skills add bjesuiter/skills --all
 - `jb-refine-code` — Refactor pass focused on simplicity after changes
 - `jb-beansloop` — Automated workflow using beans issue tracker
 - `jb-committer` — Git commit grouping and commit message drafting
-- `jb-release` — Generic release workflow; defers to repo-specific release instructions
+- `jb-local-release` — Local release workflow; prepares version/changelog/checks/commit/tag and defers to repo-specific instructions
 - `jb-beans` — Flat-file issue tracker stored in `.beans/` directory
 
 ### Code Review & Quality
