@@ -41,7 +41,7 @@ JB macOS default: prefer built-in Varlock `keychain()` for personal secrets, bec
 }
 ```
 
-5. For macOS secrets, start with `KEY=keychain(prompt)`; optionally replace with `keychain(service="...", account="...")`.
+5. For macOS secrets, choose a Keychain flow deliberately; default new repos to Varlock-native `keychain(prompt)`.
 6. Prefer Varlock provider plugins before custom shell glue.
 7. Document bootstrap/run commands.
 
@@ -71,6 +71,30 @@ API_KEY=keychain(service="my-app-api-key", account="jb")
 ```
 
 Do not put the selector in the selected file. Fresh Mac restore: clone, create `.env.local` with `DEV_ENV=jb`, let iCloud Keychain/provider auth supply secrets.
+
+## macOS Keychain flows
+
+Preferred new-repo flow: use Varlock-native Keychain so VarlockEnclave gets compatible Keychain access.
+
+```env
+KEY=keychain(prompt)
+# then optionally:
+KEY=keychain(service="varlock", account="<project-slug>:<profile>:KEY")
+```
+
+Use project/profile-scoped accounts. Avoid one global item keyed only by env var name. Validate with `varlock load` and no `VarlockEnclave has access` errors.
+
+Existing seeded-item migration flow: if secrets already exist via `/usr/bin/security` or prompt migration is too much friction, bridge through `exec(...)`:
+
+```fish
+security add-generic-password -U -s varlock -a "<project-slug>:<profile>:KEY" -w <value>
+```
+
+```env
+KEY=exec("security find-generic-password -s varlock -a \"<project-slug>:<profile>:KEY\" -w")
+```
+
+This still keeps plaintext out of git and uses macOS Keychain, but bypasses VarlockEnclave. Verify item presence without values: `security find-generic-password -s varlock -a "<account>" >/dev/null`; verify resolution with `varlock load >/dev/null`.
 
 ## Monorepos
 
@@ -125,7 +149,8 @@ Report:
 - Varlock strategy and whether SOPS/age is needed
 - files changed
 - run wrappers added
-- local secret source
+- local secret source and Keychain strategy (`keychain(...)` vs `exec(security)`)
+- Keychain service/account naming convention
 - CI secret names
 - local load/run smoke-test result
 - SOPS re-key/decrypt evidence if used
