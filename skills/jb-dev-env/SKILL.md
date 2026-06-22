@@ -17,8 +17,8 @@ Use **Varlock first**:
 
 Repo modes:
 
-- Shared/team repos: commit `.env.schema`; gitignore real env files. Each developer creates local env files using their own source.
-- Solo/private repos: may commit env files containing non-secret resolver references (`keychain(...)`, Bitwarden/1Password/provider refs, `exec(...)`). Do not commit plaintext secrets.
+- Shared/team repos: commit `.env.schema` and optional per-user/per-profile env files containing non-secret resolver references (`.env.jb`, `.env.alice`). Each developer keeps only their selector local.
+- Solo/private repos: same pattern works well; commit resolver refs, not plaintext secrets.
 - Avoid machine-local `varlock(local:...)` by default; it is device-bound and not portable across JB's Macs.
 - Shared secret repos: commit SOPS/age encrypted blobs and wire Varlock to them via provider/plugin/`exec(...)`.
 
@@ -44,6 +44,33 @@ JB macOS default: prefer built-in Varlock `keychain()` for personal secrets, bec
 5. For macOS secrets, start with `KEY=keychain(prompt)`; optionally replace with `keychain(service="...", account="...")`.
 6. Prefer Varlock provider plugins before custom shell glue.
 7. Document bootstrap/run commands.
+
+## Local profile routing
+
+Use Varlock environments to commit portable per-user/per-profile resolver refs while keeping the local profile selector gitignored. This is especially useful in multi-user repos because each person can commit/share their own non-secret references without sharing plaintext secrets.
+
+Committed `.env.schema`:
+
+```env
+# @currentEnv=$DEV_ENV
+# ---
+# @type=enum(development, jb, test, production)
+DEV_ENV=development
+```
+
+Gitignored `.env.local`:
+
+```env
+DEV_ENV=jb
+```
+
+Committed `.env.jb` or `.env.<user>`:
+
+```env
+API_KEY=keychain(service="my-app-api-key", account="jb")
+```
+
+Do not put the selector in the selected file. Fresh Mac restore: clone, create `.env.local` with `DEV_ENV=jb`, let iCloud Keychain/provider auth supply secrets.
 
 ## Monorepos
 
