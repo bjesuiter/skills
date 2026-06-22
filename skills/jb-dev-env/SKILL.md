@@ -12,7 +12,7 @@ Build secure, reproducible dev envs without putting secrets in git or app code.
 Use **Varlock first**:
 
 - Commit `.env.schema`: required vars, types, sensitivity, AI-safe config context.
-- Keep app code Varlock-agnostic. Wrap commands with `varlock run -- ...`.
+- Keep app code Varlock-agnostic. Wrap commands with `varlock run -- ...`. If the project is an npm project, install varlock as dev dependency. If it's not, use npx to run varlock directly in necessary scripts.
 - Use SOPS/age only for committed encrypted secret blobs / multi-recipient GitOps secrets.
 
 Repo modes:
@@ -41,13 +41,14 @@ JB macOS default: prefer built-in Varlock `keychain()` for personal secrets, bec
 }
 ```
 
-5. For macOS secrets, choose a Keychain flow deliberately; default new repos to Varlock-native `keychain(prompt)`.
-6. Prefer Varlock provider plugins before custom shell glue.
-7. Document bootstrap/run commands.
+5. When migrating old repos, prefer Local profile routing: commit `.env.<profile>` resolver refs and keep only `.env.local` as the gitignored profile selector.
+6. For macOS secrets, choose a Keychain flow deliberately; default new repos to Varlock-native `keychain(prompt)`.
+7. Prefer Varlock provider plugins before custom shell glue.
+8. Document bootstrap/run commands.
 
 ## Local profile routing
 
-Use Varlock environments to commit portable per-user/per-profile resolver refs while keeping the local profile selector gitignored. This is especially useful in multi-user repos because each person can commit/share their own non-secret references without sharing plaintext secrets.
+Prefer this pattern when migrating old repos. Use Varlock environments to commit portable per-user/per-profile resolver refs while keeping the local profile selector gitignored. This is especially useful for fresh-machine clones and multi-user repos: secret references live in git, while each machine only needs a tiny `.env.local` selector and synced Keychain/provider auth.
 
 Committed `.env.schema`:
 
@@ -70,7 +71,7 @@ Committed `.env.jb` or `.env.<user>`:
 API_KEY=keychain(service="my-app-api-key", account="jb")
 ```
 
-Do not put the selector in the selected file. Fresh Mac restore: clone, create `.env.local` with `DEV_ENV=jb`, let iCloud Keychain/provider auth supply secrets.
+Do not put the selector in the selected file. Fresh Mac restore: clone, create `.env.local` with `DEV_ENV=jb`, let iCloud Keychain/provider auth supply secrets from the committed refs.
 
 ## macOS Keychain flows
 
@@ -84,7 +85,7 @@ KEY=keychain(service="varlock", account="<project-slug>:<profile>:KEY")
 
 Use project/profile-scoped accounts. Avoid one global item keyed only by env var name. Validate with `varlock load` and no `VarlockEnclave has access` errors.
 
-Existing seeded-item migration flow: if secrets already exist via `/usr/bin/security` or prompt migration is too much friction, bridge through `exec(...)`:
+Existing seeded-item fallback: if secrets already exist via `/usr/bin/security` or prompt migration is too much friction, bridge through `exec(...)` temporarily:
 
 ```fish
 security add-generic-password -U -s varlock -a "<project-slug>:<profile>:KEY" -w <value>
@@ -94,7 +95,7 @@ security add-generic-password -U -s varlock -a "<project-slug>:<profile>:KEY" -w
 KEY=exec("security find-generic-password -s varlock -a \"<project-slug>:<profile>:KEY\" -w")
 ```
 
-This still keeps plaintext out of git and uses macOS Keychain, but bypasses VarlockEnclave. Verify item presence without values: `security find-generic-password -s varlock -a "<account>" >/dev/null`; verify resolution with `varlock load >/dev/null`.
+This keeps plaintext out of git, but it is a fallback: it bypasses VarlockEnclave and `security`-created items may be incompatible with Varlock-native `keychain(...)` ACLs. Prefer migrating to `keychain(prompt)` over time. Verify item presence without values: `security find-generic-password -s varlock -a "<account>" >/dev/null`; verify resolution with `varlock load >/dev/null`.
 
 ## Monorepos
 
@@ -149,7 +150,7 @@ Report:
 - Varlock strategy and whether SOPS/age is needed
 - files changed
 - run wrappers added
-- local secret source and Keychain strategy (`keychain(...)` vs `exec(security)`)
+- local secret source and Keychain strategy (`keychain(...)` preferred vs `exec(security)` fallback)
 - Keychain service/account naming convention
 - CI secret names
 - local load/run smoke-test result
