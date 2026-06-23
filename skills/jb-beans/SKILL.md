@@ -1,8 +1,7 @@
 ---
 name: jb-beans
 description: Use when the repo has .beans or the user mentions beans, beans-prime, flat-file issues, task tracking, or issue status changes.
-homepage: https://github.com/hmans/beans
-metadata: {"clawdbot":{"emoji":"🫘","requires":{"bins":["beans"]},"install":[{"id":"bun","kind":"bun","package":"beans","bins":["beans"],"label":"Install beans (bun)","command":"bun i -g beans"},{"id":"brew","kind":"brew","package":"hmans/beans/beans","label":"Install beans (brew)"}]}}
+metadata: {"clawdbot":{"emoji":"🫘","requires":{"bins":["beans"]},"install":[{"id":"brew","kind":"brew","package":"hmans/beans/beans","label":"Install beans (brew)"},{"id":"go","kind":"go","package":"github.com/hmans/beans@latest","bins":["beans"],"label":"Install beans (Go)","command":"go install github.com/hmans/beans@latest"}]}}
 ---
 
 # beans - Flat-File Issue Tracker
@@ -29,15 +28,28 @@ Read and follow its output. It may define project-specific workflow rules, issue
 ## Installation
 
 ```bash
-# Via Bun
-bun i -g beans
-
 # Via Homebrew
 brew install hmans/beans/beans
 
 # Via Go
 go install github.com/hmans/beans@latest
 ```
+
+Do not install `beans` via `bun i -g beans`, `bunx beans`, or `npx beans`.
+The npm package named `beans` is an unrelated legacy Node package and can fail
+with errors like `Cannot find module 'coffee-script'`.
+
+If `beans` fails unexpectedly, check whether a stale npm/Bun binary is shadowing
+the real CLI:
+
+```bash
+which -a beans
+beans version
+```
+
+Use an absolute path to a working Homebrew/Go binary when needed, for example
+`/opt/homebrew/bin/beans` or `~/.homebrew/bin/beans`, then fix PATH outside the
+task if desired.
 
 ## Setup
 
@@ -50,9 +62,6 @@ beans check
 
 # Show build/version info
 beans version
-
-# If the current build prints only a commit SHA, verify package semver
-bun pm ls -g beans
 ```
 
 ## Global flags
@@ -423,7 +432,7 @@ Before starting work in this repo, run `beans prime` and follow its output.
 
 1. Run `beans prime` first in beans-enabled projects
 2. Use `--json` for agent-readable output
-3. Use `beans version`, not `beans --version`; if it prints a commit SHA instead of semver, verify the installed package version with `bun pm ls -g beans`
+3. Use `beans version`, not `beans --version`; if it errors with `Cannot find module 'coffee-script'`, a stale npm/Bun package is shadowing the real CLI
 4. Use `beans graphql` for advanced filtering and relationship traversal
 5. Use separate `beans-tui` tooling if you need a terminal UI
 6. Use `beans check` after large edits or relationship changes
