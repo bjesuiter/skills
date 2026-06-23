@@ -1,0 +1,56 @@
+---
+title: Bun
+description: How to integrate Varlock with a Bun-powered JavaScript project
+image: https://varlock.dev/og-images/integrations/bun.png
+---
+
+[Skip to content](#%5Ftop) 
+
+# Bun
+
+For the most part, Varlock just works with Bun the same way it works with Node.js, and other JavaScript integrations work the same way.
+
+### Conflicts with Bun’s .env loading
+
+[Section titled “Conflicts with Bun’s .env loading”](#conflicts-with-buns-env-loading)
+
+Bun does its own automatic loading of `.env` files, based on the current value of `NODE_ENV` (or `BUN_ENV`), which it defaults to `development` if not set. This causes problems when bun decides to load `.env.development` and passes those env vars into varlock.
+
+The best way to fix this is to [disable bun’s automatic loading of .env files](https://bun.com/docs/runtime/environment-variables#disabling-automatic-env-loading) in your `bunfig.toml` file:
+
+bunfig.toml
+
+```
+env = false
+```
+
+You may also use the `--no-env-file` CLI flag when invoking scripts with `bun`/`bunx`.
+
+Note that if you are building a standalone executable using `bun build`, you can use the `--no-compile-autoload-dotenv` flag to disable this behavior in the final executable.
+
+### Using a preload script (optional)
+
+[Section titled “Using a preload script (optional)”](#using-a-preload-script-optional)
+
+One option we have with bun is to use a [preload script](https://bun.com/docs/runtime/bunfig#preload), configured in `bunfig.toml`. If you do this, you will no longer have to use `bun run varlock run -- yourscript` or use `import 'varlock/auto-load'` in your code!
+
+bunfig.toml
+
+```
+preload = ["varlock/auto-load"]
+```
+
+Do not use preload with framework integrations
+
+Note that you should not do this if using a framework integration, as those integrations watch your `.env` files to trigger live-reloading.
+
+Sign up for our email list
+
+![](https://varlock-pixel-art.dmno.workers.dev/icons/scroll.png)
+
+Come chat with us
+
+[Join our Discord!](https://chat.dmno.dev)
+
+  
+© 2026 [DMNO Inc.](https://dmno.io) All rights reserved.

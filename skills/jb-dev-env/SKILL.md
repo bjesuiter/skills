@@ -32,6 +32,7 @@ JB macOS default: prefer built-in Varlock `keychain()` for personal secrets, bec
    - `.env.schema`, `.env*`, `.gitignore`, package scripts, `turbo.json`
    - CI/workflow files such as `.github/workflows/*`
    - Dockerfiles, compose files, and deployment config for Vercel/Cloudflare/Netlify/etc.
+   - runtime config such as `bunfig.toml`, `deno.json`, `deno.jsonc`
    - existing env loaders: `dotenv`, `@next/env`, `cross-env`, `env-cmd`, `direnv`, custom bootstrap code
    - `.sops.yaml`, `secrets*`, encrypted secret blobs
 2. Define/adjust `.env.schema`; mark sensitive vars explicitly.
@@ -57,6 +58,14 @@ JB macOS default: prefer built-in Varlock `keychain()` for personal secrets, bec
 ## Env loader migration
 
 Prefer command wrappers over app-code env bootstrapping: `varlock run -- <command>` should be the default boundary where env enters the process. Avoid adding new `dotenv`/`@next/env`/custom preload code unless the framework genuinely requires it. When migrating, check for double-loading and remove or bypass old loaders only when behavior stays equivalent.
+
+## Runtime env-loading conflicts
+
+If the repo uses Bun, read [references/varlock-bun.md](references/varlock-bun.md) before changing env loading. Bun auto-loads `.env` files based on `NODE_ENV`/`BUN_ENV`, which can conflict with Varlock by injecting `.env.development` values before Varlock resolves config. Prefer disabling Bun automatic env loading with `env = false` in `bunfig.toml`, or use `--no-env-file` for `bun`/`bunx` invocations. For standalone `bun build` executables, consider `--no-compile-autoload-dotenv`.
+
+Bun preload (`preload = ["varlock/auto-load"]`) is optional, but do not use it with framework integrations that watch `.env` files for live reload.
+
+If the repo uses Deno, note there is no official Varlock Deno integration page yet. Do not invent a Deno policy; inspect how the repo loads env vars and ask JB for the current Deno rule when needed.
 
 ## Profile selector routing
 
