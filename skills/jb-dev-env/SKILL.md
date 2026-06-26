@@ -49,15 +49,15 @@ JB macOS default: prefer built-in Varlock `keychain()` for personal secrets, bec
 }
 ```
 
-5. When migrating old repos, prefer Profile selector routing: commit `.env.<profile>` resolver refs and keep only `.env.local` as the gitignored profile selector.
+5. When migrating old repos, prefer Profile selector routing: commit `.env.<profile>` resolver refs and keep only `.env.local` as the gitignored profile selector. If possible inline this DEV_ENV profile selection directly into the package.json commands. This avoids the need for creating a .env.local file in freshly cloned repos. 
 6. Avoid adding new app-code dotenv loading by default. Remove or bypass double-loading where safe; let `varlock run -- ...` inject env for commands.
-7. For macOS secrets, choose a Keychain flow deliberately; default new repos to Varlock-native `keychain(prompt)`.
+7. For macOS secrets, choose a Keychain flow deliberately; default new repos to Varlock-native `keychain(...)` refs created by `varlock keychain import` or `varlock keychain set` (Varlock >= 1.9.0).
 8. Prefer Varlock provider plugins before custom shell glue.
 9. Document bootstrap/run commands.
 
 ## Env loader migration
 
-Prefer command wrappers over app-code env bootstrapping: `varlock run -- <command>` should be the default boundary where env enters the process. Avoid adding new `dotenv`/`@next/env`/custom preload code unless the framework genuinely requires it. When migrating, check for double-loading and remove or bypass old loaders only when behavior stays equivalent.
+Prefer command wrappers over app-code env bootstrapping: `varlock run -- <command>` should be the default boundary where env enters the process, as long as not defined otherwise inside a repo. Avoid adding new `dotenv`/`@next/env`/custom preload code unless the framework genuinely requires it. When migrating, check for double-loading and remove or bypass old loaders only when behavior stays equivalent.
 
 ## Runtime env-loading conflicts
 
@@ -96,27 +96,72 @@ Do not put the selector in the selected file. Fresh Mac restore: clone, create `
 
 ## macOS Keychain flows
 
-Preferred new-repo flow: use Varlock-native Keychain so VarlockEnclave gets compatible Keychain access.
+Varlock >= 1.9.0 has native `varlock keychain` subcommands. Prefer them over `/usr/bin/security` for creating/importing secrets because they create Keychain items with Varlock-compatible helper access.
+
+Preferred new-repo flow: use Varlock-native Keychain refs with project/profile-scoped accounts.
+
+```fish
+varlock keychain set API_KEY --project <project-slug> --profile jb --write-to .env.jb
+```
+
+This stores the secret in macOS Keychain and writes a resolver ref like:
 
 ```env
-KEY=keychain(prompt)
-# then optionally:
-KEY=keychain(service="varlock", account="<project-slug>:<profile>:KEY")
+API_KEY=keychain(service="varlock", account="<project-slug>:jb:API_KEY")
 ```
 
 Use project/profile-scoped accounts. Avoid one global item keyed only by env var name. Validate with `varlock load` and no `VarlockEnclave has access` errors.
 
-Existing seeded-item fallback: if secrets already exist via `/usr/bin/security` or prompt migration is too much friction, bridge through `exec(...)` temporarily:
+### Import plaintext env files into Keychain
+
+When migrating a plaintext env file, use `varlock keychain import` instead of `security add-generic-password` plus manual ref fixes.
+
+Import in place:
 
 ```fish
-security add-generic-password -U -s varlock -a "<project-slug>:<profile>:KEY" -w <value>
+varlock keychain import .env --project <project-slug> --profile jb
 ```
+
+Import from a plaintext source and write resolver refs to a committed per-profile file:
+
+```fish
+varlock keychain import .env --project <project-slug> --profile jb --write-to .env.jb
+```
+
+Use `--force` only when intentionally overwriting existing Keychain items or refs. After importing, remove plaintext secret files from git/history as needed and keep only resolver refs committed.
+
+Useful metadata-only checks:
+
+```fish
+varlock keychain list varlock
+varlock keychain list <project-slug>
+```
+
+Do not print resolved secret values. Verify resolution with `varlock load >/dev/null`.
+
+### Fix permissions for older `security`-created items
+
+If secrets already exist because they were created with `/usr/bin/security`, do not bridge through `exec(security ...)` unless absolutely necessary. Prefer converting refs to `keychain(...)` and granting Varlock helper access:
+
+```fish
+varlock keychain fix-access --account "<project-slug>:<profile>:KEY"
+```
+
+Or fix every explicit `keychain(...)` ref in an env file:
+
+```fish
+varlock keychain fix-access --path .env.jb
+```
+
+If the item is in a non-default Keychain, add `--keychain Login` or the appropriate Keychain name. Then validate with `varlock load >/dev/null`.
+
+Temporary fallback only: if permission fixing or migration is blocked, bridge through `exec(...)` for the shortest possible time:
 
 ```env
 KEY=exec("security find-generic-password -s varlock -a \"<project-slug>:<profile>:KEY\" -w")
 ```
 
-This keeps plaintext out of git, but it is a fallback: it bypasses VarlockEnclave and `security`-created items may be incompatible with Varlock-native `keychain(...)` ACLs. Prefer migrating to `keychain(prompt)` over time. Verify item presence without values: `security find-generic-password -s varlock -a "<account>" >/dev/null`; verify resolution with `varlock load >/dev/null`.
+This keeps plaintext out of git, but it bypasses VarlockEnclave and can expose values through shell execution. Replace it with `keychain(...)` plus `varlock keychain fix-access` or re-import via `varlock keychain import` as soon as possible.
 
 ## Monorepos
 
@@ -138,7 +183,7 @@ For recipient modes, SSH-agent-backed vault flows, and re-key commands, read [re
 
 Portability depends on the resolver:
 
-- `keychain(...)`: preferred on JB's Macs; portable if matching Keychain items sync via iCloud Keychain, otherwise recreate via `keychain(prompt)`.
+- `keychain(...)`: preferred on JB's Macs; portable if matching Keychain items sync via iCloud Keychain, otherwise recreate via `varlock keychain set` or `varlock keychain import`.
 - `varlock(local:...)`: avoid by default; not portable, recreate on every machine.
 - cloud provider refs: portable after logging into that provider.
 - native SOPS/age: portable for recipients that hold a valid private key.
@@ -169,7 +214,7 @@ Report:
 - Varlock strategy and whether SOPS/age is needed
 - files changed
 - run wrappers added
-- local secret source and Keychain strategy (`keychain(...)` preferred vs `exec(security)` fallback)
+- local secret source and Keychain strategy (`varlock keychain` + `keychain(...)` preferred vs temporary `exec(security)` fallback)
 - Keychain service/account naming convention
 - CI secret names
 - local load/run smoke-test result
