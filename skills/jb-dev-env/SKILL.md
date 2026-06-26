@@ -49,7 +49,7 @@ JB macOS default: prefer built-in Varlock `keychain()` for personal secrets, bec
 }
 ```
 
-5. When migrating old repos, prefer Profile selector routing: commit `.env.<profile>` resolver refs and keep only `.env.local` as the gitignored profile selector. If possible inline this DEV_ENV profile selection directly into the package.json commands. This avoids the need for creating a .env.local file in freshly cloned repos. 
+5. When migrating old repos, prefer Profile selector routing: commit `.env.<profile>` resolver refs and, when possible, inline the `DEV_ENV` selector directly into `package.json` commands so fresh clones do not need a local `.env.local` selector. Keep `.env.local` only when scripts cannot safely encode the profile.
 6. Avoid adding new app-code dotenv loading by default. Remove or bypass double-loading where safe; let `varlock run -- ...` inject env for commands.
 7. For macOS secrets, choose a Keychain flow deliberately; default new repos to Varlock-native `keychain(...)` refs created by `varlock keychain import` or `varlock keychain set` (Varlock >= 1.9.0).
 8. Prefer Varlock provider plugins before custom shell glue.
@@ -69,7 +69,25 @@ If the repo uses Deno, note there is no official Varlock Deno integration page y
 
 ## Profile selector routing
 
-Prefer this pattern when migrating old repos. Use Varlock environments to commit portable per-user/per-profile resolver refs while keeping the local profile selector gitignored. This is especially useful for fresh-machine clones and multi-user repos: secret references live in git, while each machine only needs a tiny `.env.local` selector and synced Keychain/provider auth.
+Prefer this pattern when migrating old repos. Use Varlock environments to commit portable per-user/per-profile resolver refs. Secret references live in git, while the selected profile comes from either inline command env vars or a tiny gitignored `.env.local` selector.
+
+Prefer inline selectors in `package.json` when the repo's scripts are profile-specific. This avoids requiring a freshly cloned repo to create `.env.local` before common commands work:
+
+```json
+{
+  "scripts": {
+    "dev": "DEV_ENV=jb varlock run -- vite",
+    "build": "DEV_ENV=jb varlock run -- vite build",
+    "test": "DEV_ENV=test varlock run -- vitest"
+  }
+}
+```
+
+Use gitignored `.env.local` only when the profile must stay machine/user-selectable outside committed scripts:
+
+```env
+DEV_ENV=jb
+```
 
 Committed `.env.schema`:
 
@@ -80,19 +98,13 @@ Committed `.env.schema`:
 DEV_ENV=development
 ```
 
-Gitignored `.env.local`:
-
-```env
-DEV_ENV=jb
-```
-
 Committed `.env.jb` or `.env.<user>`:
 
 ```env
 API_KEY=keychain(service="my-app-api-key", account="jb")
 ```
 
-Do not put the selector in the selected file. Fresh Mac restore: clone, create `.env.local` with `DEV_ENV=jb`, let iCloud Keychain/provider auth supply secrets from the committed refs.
+Do not put the selector in the selected file. Fresh Mac restore with inline scripts: clone and run the script; iCloud Keychain/provider auth supplies secrets from the committed refs. Fresh Mac restore with `.env.local`: clone, create `.env.local` with `DEV_ENV=jb`, then run commands.
 
 ## macOS Keychain flows
 
