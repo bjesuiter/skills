@@ -19,7 +19,7 @@ Use **Varlock first**:
 
 Repo modes:
 
-- Shared/team repos: commit `.env.schema` and optional per-user/per-profile env files containing non-secret resolver references (`.env.jb`, `.env.alice`). Each developer keeps only their selector local.
+- Shared/team repos: commit `.env.schema` and optional per-user/per-profile env files containing non-secret resolver references (`.env.jb`, `.env.alice`, `.env.ops`). Select profiles inline in scripts when possible; use a gitignored selector only when it must stay local.
 - Solo/private repos: same pattern works well; commit resolver refs, not plaintext secrets.
 - Avoid machine-local `varlock(local:...)` by default; it is device-bound and not portable across JB's Macs.
 - Shared secret repos: commit SOPS/age encrypted blobs and wire Varlock to them via provider/plugin/`exec(...)`.
@@ -37,27 +37,28 @@ JB macOS default: prefer built-in Varlock `keychain()` for personal secrets, bec
    - `.sops.yaml`, `secrets*`, encrypted secret blobs
 2. Define/adjust `.env.schema`; mark sensitive vars explicitly.
 3. Ensure real env files are gitignored and not already tracked.
-4. Add run wrappers, e.g.:
+4. Add run wrappers. Inline `DEV_ENV` when the command has an obvious profile so fresh clones work without `.env.local`:
 
 ```json
 {
   "scripts": {
-    "dev": "varlock run -- vite",
-    "build": "varlock run -- vite build",
-    "test": "varlock run -- vitest"
+    "dev": "DEV_ENV=jb varlock run -- vite",
+    "build": "DEV_ENV=jb varlock run -- vite build",
+    "test": "DEV_ENV=test varlock run -- vitest",
+    "prod:db": "DEV_ENV=ops varlock run -- prod-db-cli"
   }
 }
 ```
 
-5. When migrating old repos, prefer Profile selector routing: commit `.env.<profile>` resolver refs and, when possible, inline the `DEV_ENV` selector directly into `package.json` commands so fresh clones do not need a local `.env.local` selector. Keep `.env.local` only when scripts cannot safely encode the profile.
+5. When migrating old repos, prefer Profile selector routing: commit `.env.<profile>` resolver refs and keep `.env.local` only when scripts cannot safely encode the profile.
 6. Avoid adding new app-code dotenv loading by default. Remove or bypass double-loading where safe; let `varlock run -- ...` inject env for commands.
-7. For macOS secrets, choose a Keychain flow deliberately; default new repos to Varlock-native `keychain(...)` refs created by `varlock keychain import` or `varlock keychain set` (Varlock >= 1.9.0).
+7. For macOS secrets, default to Varlock-native `keychain(...)` refs created by `varlock keychain import` or `varlock keychain set` (Varlock >= 1.9.0).
 8. Prefer Varlock provider plugins before custom shell glue.
 9. Document bootstrap/run commands.
 
 ## Env loader migration
 
-Prefer command wrappers over app-code env bootstrapping: `varlock run -- <command>` should be the default boundary where env enters the process, as long as not defined otherwise inside a repo. Avoid adding new `dotenv`/`@next/env`/custom preload code unless the framework genuinely requires it. When migrating, check for double-loading and remove or bypass old loaders only when behavior stays equivalent.
+Prefer command wrappers over app-code env bootstrapping: `varlock run -- <command>` should be the default boundary where env enters the process unless the repo has a clear existing convention. Avoid adding new `dotenv`/`@next/env`/custom preload code unless the framework genuinely requires it. When migrating, check for double-loading and remove or bypass old loaders only when behavior stays equivalent.
 
 ## Runtime env-loading conflicts
 
@@ -69,9 +70,9 @@ If the repo uses Deno, note there is no official Varlock Deno integration page y
 
 ## Profile selector routing
 
-Prefer this pattern when migrating old repos. Use Varlock environments to commit portable per-user/per-profile resolver refs. Secret references live in git, while the selected profile comes from either inline command env vars or a tiny gitignored `.env.local` selector.
+Use Varlock environments to commit portable per-user/per-purpose resolver refs. Secret references live in git; the selected profile comes from inline command env vars or, only when needed, a tiny gitignored `.env.local` selector.
 
-Prefer inline selectors in `package.json` when the repo's scripts are profile-specific. This avoids requiring a freshly cloned repo to create `.env.local` before common commands work:
+Prefer inline selectors in `package.json` when scripts have clear profiles. This avoids requiring a freshly cloned repo to create `.env.local` before common commands work:
 
 ```json
 {
@@ -90,7 +91,7 @@ Use gitignored `.env.local` only when the profile must stay machine/user-selecta
 DEV_ENV=jb
 ```
 
-Committed `.env.schema`:
+Define profiles in `.env.schema`:
 
 ```env
 # @currentEnv=$DEV_ENV
@@ -99,13 +100,13 @@ Committed `.env.schema`:
 DEV_ENV=development
 ```
 
-Committed `.env.jb` or `.env.<user>`:
+Commit personal/dev refs to `.env.jb` or `.env.<user>`:
 
 ```env
 API_KEY=keychain(service="varlock", account="<project-slug>:jb:API_KEY")
 ```
 
-For operational secrets that are not needed for normal app runs, create a default `ops` profile. Use it for deployment, production database investigation, incident/debug tooling, and other privileged commands. Keep these refs out of everyday `jb`/dev profiles:
+For operational secrets not needed in normal app runs, create a default `ops` profile. Use it for deployment, production database investigation, incident/debug tooling, and other privileged commands. Keep these refs out of everyday `jb`/dev profiles:
 
 ```env
 # .env.ops
@@ -113,7 +114,7 @@ PROD_DATABASE_URL=keychain(service="varlock", account="<project-slug>:ops:PROD_D
 PROD_DEPLOY_TOKEN=keychain(service="varlock", account="<project-slug>:ops:PROD_DEPLOY_TOKEN")
 ```
 
-Wire ops scripts with inline `DEV_ENV=ops` selectors so the privileged profile is only loaded for those commands.
+Wire ops scripts with inline `DEV_ENV=ops` selectors so the privileged profile loads only for those commands.
 
 Do not put the selector in the selected file. Fresh Mac restore with inline scripts: clone and run the script; iCloud Keychain/provider auth supplies secrets from the committed refs. Fresh Mac restore with `.env.local`: clone, create `.env.local` with `DEV_ENV=jb`, then run commands.
 
@@ -121,7 +122,7 @@ Do not put the selector in the selected file. Fresh Mac restore with inline scri
 
 Varlock >= 1.9.0 has native `varlock keychain` subcommands. Prefer them over `/usr/bin/security` for creating/importing secrets because they create Keychain items with Varlock-compatible helper access.
 
-Preferred new-repo flow: use Varlock-native Keychain refs with project/profile-scoped accounts.
+Use Varlock-native Keychain refs with project/profile-scoped accounts.
 
 ```fish
 varlock keychain set API_KEY --project <project-slug> --profile jb --write-to .env.jb
@@ -133,7 +134,7 @@ This stores the secret in macOS Keychain and writes a resolver ref like:
 API_KEY=keychain(service="varlock", account="<project-slug>:jb:API_KEY")
 ```
 
-Use project/profile-scoped accounts. Avoid one global item keyed only by env var name. Validate with `varlock load` and no `VarlockEnclave has access` errors.
+Avoid one global item keyed only by env var name. Validate with `varlock load` and no `VarlockEnclave has access` errors.
 
 ### Import plaintext env files into Keychain
 
