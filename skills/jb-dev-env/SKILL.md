@@ -78,7 +78,8 @@ Prefer inline selectors in `package.json` when the repo's scripts are profile-sp
   "scripts": {
     "dev": "DEV_ENV=jb varlock run -- vite",
     "build": "DEV_ENV=jb varlock run -- vite build",
-    "test": "DEV_ENV=test varlock run -- vitest"
+    "test": "DEV_ENV=test varlock run -- vitest",
+    "prod:db": "DEV_ENV=ops varlock run -- prod-db-cli"
   }
 }
 ```
@@ -94,15 +95,25 @@ Committed `.env.schema`:
 ```env
 # @currentEnv=$DEV_ENV
 # ---
-# @type=enum(development, jb, test, production)
+# @type=enum(development, jb, test, ops, production)
 DEV_ENV=development
 ```
 
 Committed `.env.jb` or `.env.<user>`:
 
 ```env
-API_KEY=keychain(service="my-app-api-key", account="jb")
+API_KEY=keychain(service="varlock", account="<project-slug>:jb:API_KEY")
 ```
+
+For operational secrets that are not needed for normal app runs, create a default `ops` profile. Use it for deployment, production database investigation, incident/debug tooling, and other privileged commands. Keep these refs out of everyday `jb`/dev profiles:
+
+```env
+# .env.ops
+PROD_DATABASE_URL=keychain(service="varlock", account="<project-slug>:ops:PROD_DATABASE_URL")
+PROD_DEPLOY_TOKEN=keychain(service="varlock", account="<project-slug>:ops:PROD_DEPLOY_TOKEN")
+```
+
+Wire ops scripts with inline `DEV_ENV=ops` selectors so the privileged profile is only loaded for those commands.
 
 Do not put the selector in the selected file. Fresh Mac restore with inline scripts: clone and run the script; iCloud Keychain/provider auth supplies secrets from the committed refs. Fresh Mac restore with `.env.local`: clone, create `.env.local` with `DEV_ENV=jb`, then run commands.
 
