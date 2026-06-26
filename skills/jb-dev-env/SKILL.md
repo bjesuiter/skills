@@ -165,7 +165,7 @@ Do not print resolved secret values. Verify resolution with `varlock load >/dev/
 
 ### Fix permissions for older `security`-created items
 
-If secrets already exist because they were created with `/usr/bin/security`, do not bridge through `exec(security ...)` unless absolutely necessary. Prefer converting refs to `keychain(...)` and granting Varlock helper access:
+If secrets already exist because they were created with `/usr/bin/security`, do not bridge through `exec(security ...)` unless absolutely necessary. Point env refs at them with `keychain(...)` first and try `varlock load`. If Varlock reports Keychain helper/access errors, grant Varlock helper access:
 
 ```fish
 varlock keychain fix-access --account "<project-slug>:<profile>:KEY"
@@ -177,7 +177,7 @@ Or fix every explicit `keychain(...)` ref in an env file:
 varlock keychain fix-access --path .env.jb
 ```
 
-If the item is in a non-default Keychain, add `--keychain Login` or the appropriate Keychain name. Then validate with `varlock load >/dev/null`.
+If the item is in a non-default Keychain, add `--keychain Login` or the appropriate Keychain name. Then retry `varlock load >/dev/null`.
 
 Temporary fallback only: if permission fixing or migration is blocked, bridge through `exec(...)` for the shortest possible time:
 
