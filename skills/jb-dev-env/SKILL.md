@@ -138,7 +138,7 @@ Avoid one global item keyed only by env var name. Validate with `varlock load` a
 
 ### Import plaintext env files into Keychain
 
-When migrating a plaintext env file, use `varlock keychain import` instead of `security add-generic-password` plus manual ref fixes.
+When migrating a plaintext env file, use `varlock keychain import`. Do not seed Keychain items with `security add-generic-password` and then hand-write/fix refs; that manual ref-fix workflow is unreliable right now.
 
 Import in place:
 
@@ -163,9 +163,16 @@ varlock keychain list <project-slug>
 
 Do not print resolved secret values. Verify resolution with `varlock load >/dev/null`.
 
-### Fix permissions for older `security`-created items
+### Existing `security`-created items
 
-If secrets already exist because they were created with `/usr/bin/security`, do not bridge through `exec(security ...)` unless absolutely necessary. Point env refs at them with `keychain(...)` first and try `varlock load`. If Varlock reports Keychain helper/access errors, grant Varlock helper access:
+Do not create a new Varlock migration by manually wiring `keychain(...)` refs to `/usr/bin/security`-created items. Manual ref fixes do not fully work right now. Prefer re-importing/recreating through Varlock-native commands so Varlock writes the refs and creates compatible items:
+
+```fish
+varlock keychain import .env --project <project-slug> --profile jb --write-to .env.jb
+varlock keychain set KEY --project <project-slug> --profile jb --write-to .env.jb
+```
+
+If a repo already has explicit `keychain(...)` refs pointing at older `security`-created items, first try `varlock load`. If Varlock reports Keychain helper/access errors, grant Varlock helper access:
 
 ```fish
 varlock keychain fix-access --account "<project-slug>:<profile>:KEY"
@@ -179,13 +186,13 @@ varlock keychain fix-access --path .env.jb
 
 If the item is in a non-default Keychain, add `--keychain Login` or the appropriate Keychain name. Then retry `varlock load >/dev/null`.
 
-Temporary fallback only: if permission fixing or migration is blocked, bridge through `exec(...)` for the shortest possible time:
+Temporary fallback only: if Varlock-native import/recreation is blocked, bridge through `exec(...)` for the shortest possible time:
 
 ```env
 KEY=exec("security find-generic-password -s varlock -a \"<project-slug>:<profile>:KEY\" -w")
 ```
 
-This keeps plaintext out of git, but it bypasses VarlockEnclave and can expose values through shell execution. Replace it with `keychain(...)` plus `varlock keychain fix-access` or re-import via `varlock keychain import` as soon as possible.
+This keeps plaintext out of git, but it bypasses VarlockEnclave and can expose values through shell execution. Replace it with Varlock-native `varlock keychain import` or `varlock keychain set` as soon as possible.
 
 ## Monorepos
 
