@@ -98,7 +98,7 @@ npx skills add . --list
 
 ### 3. Test Installation (Optional)
 
-Test that a skill can actually be installed. Local or global test installs from this repo must target only the coding agents configured in JB's preferred skills registry (`jb-skill-prefs`). Do not add extra agents ad hoc. Current configured agents are `codex`, `opencode`, and `pi`; do not install for `crush` unless the registry is explicitly updated first.
+Test that a skill can actually be installed. Local or global test installs from this repo must target only the coding agents configured in JB's preferred skills registry (`jb-skill-prefs`). Do not add extra agents ad hoc. Current configured agents are `codex`, `opencode`, and `pi`; do not install for `crush` or `devin` unless the registry is explicitly updated first.
 
 ```bash
 npx skills add . --skill jb-tdd --agent codex --agent opencode --agent pi -y
