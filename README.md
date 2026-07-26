@@ -17,7 +17,7 @@ npx skills add bjesuiter/skills --skill jb-tdd -a codex -y
 npx skills add bjesuiter/skills --all
 ```
 
-## Included Skills (29)
+## Included Skills (30)
 
 ### Core Development Workflows
 - `jb-tdd` — Test-driven development workflow (red-green-refactor)
@@ -46,6 +46,7 @@ npx skills add bjesuiter/skills --all
 - `jb-markit` — Convert files, URLs, and media into markdown with `markit`
 - `summarize` — Summarize URLs, PDFs, images, audio, and YouTube
 - `jb-mdn` — Query MDN Web Docs and browser compatibility through the official MDN MCP server using persistent `mcporter` config
+- `obsidian-vault` — Search, create, and organize notes in JB's Obsidian vault using verified portable path resolution
 
 ### Development Tools
 - `jb-dev-env` — Secure dev environment setup with Varlock schemas, macOS Keychain secrets, and optional SOPS/age GitOps secrets
