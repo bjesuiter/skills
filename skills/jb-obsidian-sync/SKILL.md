@@ -1,6 +1,6 @@
 ---
 name: "jb-obsidian-sync"
-description: "Use `ob` to connect, sync, inspect, create, and edit Obsidian Sync vaults headlessly as Markdown."
+description: "Use `ob` with explicit `TOOLS.md` vault paths to sync and edit Obsidian vaults headlessly."
 ---
 
 # JB Obsidian Sync
@@ -26,7 +26,8 @@ Do not use an Obsidian CLI whose purpose is merely to remote-control Obsidian De
 - Use `ob` to connect and synchronize Obsidian Sync vaults into the workspace.
 - After a vault is available locally, work directly on its Markdown files with normal filesystem tools.
 - Treat `ob sync` as bidirectional by default.
-- Do not assume a fixed vault path.
+- Resolve vault paths from the current request or `TOOLS.md`; never discover or infer them from vault contents.
+- Pass an explicit absolute `--path "$VAULT_PATH"` to every `ob` command that supports `--path`.
 - Do not confuse an Obsidian Sync checkout with an ordinary Git repository unless the local checkout actually uses Git.
 - Never put account passwords, MFA codes, vault passwords, recovery keys, encryption keys, or tokens in command arguments, logs, notes, tracked files, or chat.
 
@@ -44,26 +45,38 @@ With no credentials passed, `ob login` shows the current login status or prompts
 
 Use `ob sync-list-remote` to resolve a remote vault by ID or unique name. Prefer the immutable vault ID when names are duplicated or when recording durable configuration.
 
-Use `ob sync-list-local` to find already configured local checkouts and their paths before searching the filesystem.
+Use `ob sync-list-local` to audit the CLI's configured checkouts and compare them with `TOOLS.md`. Do not silently replace the path mapping in `TOOLS.md` from this output.
+
+## Vault path registry
+
+Treat `TOOLS.md` as the canonical registry for reusable local vault paths.
+
+For each configured vault, record:
+
+- canonical vault name
+- immutable remote vault ID
+- absolute local checkout path
+
+When setting up a new checkout, add or update its mapping in `TOOLS.md` only after `ob sync-setup` and `ob sync-status` succeed. Preserve unrelated tool notes.
+
+Do not store account passwords, vault passwords, encryption material, recovery keys, or tokens in `TOOLS.md`.
 
 ## Resolve a local vault checkout
 
 Use this order:
 
-1. An absolute workspace path explicitly supplied by JB for the current task.
-2. A matching entry from `ob sync-list-local`.
-3. A vault checkout path recorded in `TOOLS.md`.
-4. A bounded search inside the workspace for directories containing the configured Obsidian config directory, normally `.obsidian`.
+1. An explicit absolute path supplied by JB for the current task.
+2. The matching absolute path recorded in `TOOLS.md`.
 
-Verify that the directory exists. For an already configured checkout, confirm it with:
+If neither provides an unambiguous path, stop and ask JB. Do not search the filesystem and do not infer a vault from its contents.
+
+Verify that the directory exists, then confirm its sync configuration with the same explicit path:
 
 ```bash
 ob sync-status --path "$VAULT_PATH"
 ```
 
-- If exactly one matching vault exists, use it.
-- If multiple vaults exist and the intended one is unclear, ask JB which vault to use.
-- If none exists, report that no local checkout is connected. Do not invent a path.
+If the path in `TOOLS.md` disagrees with `ob sync-list-local` or `ob sync-status`, stop and report the mismatch instead of choosing one silently.
 
 `ob sync-status` reports the stored sync configuration; it is not a substitute for running `ob sync`.
 
@@ -73,8 +86,9 @@ When JB asks to clone, connect, or set up a remote vault:
 
 1. Confirm authentication with `ob login`.
 2. List remote vaults with `ob sync-list-remote`.
-3. Choose a clear vault-specific directory under the workspace and create it only when the requested setup requires it.
-4. Connect it interactively:
+3. Resolve an explicit absolute target path supplied by JB or agreed for the setup.
+4. Create that exact directory only when the requested setup requires it.
+5. Connect it interactively:
 
 ```bash
 ob sync-setup \
@@ -83,46 +97,46 @@ ob sync-setup \
   --device-name "Igris bj01-srv02"
 ```
 
-5. Omit `--password`; allow `ob` to prompt for the E2E vault password.
-6. Verify configuration with `ob sync-status --path "$VAULT_PATH"`.
-7. Run the initial one-time synchronization:
+6. Omit `--password`; allow `ob` to prompt for the E2E vault password.
+7. Verify configuration with `ob sync-status --path "$VAULT_PATH"`.
+8. Record the canonical name, remote ID, and absolute local path in `TOOLS.md`.
+9. Run the initial one-time synchronization:
 
 ```bash
 ob sync --path "$VAULT_PATH"
 ```
 
-8. Verify the checkout contents and record the stable path in `TOOLS.md` when it will be reused.
-
-Use `--config-dir <name>` only when the vault deliberately uses a non-default Obsidian configuration directory.
+10. Verify the checkout contents.
 
 ## Safe editing and synchronization workflow
 
 For every task that changes a synced vault:
 
-1. Resolve the checkout and inspect its configuration:
+1. Resolve the explicit checkout path from the request or `TOOLS.md`.
+2. Inspect its configuration:
 
 ```bash
 ob sync-status --path "$VAULT_PATH"
 ```
 
-2. Pull and reconcile current remote changes with a one-time bidirectional sync before editing:
+3. Pull and reconcile current remote changes with a one-time bidirectional sync before editing:
 
 ```bash
 ob sync --path "$VAULT_PATH"
 ```
 
-3. Inspect the target notes, then make the requested Markdown changes.
-4. Review the local files changed during the task. Do not alter unrelated notes or `.obsidian/` configuration.
-5. Run another one-time bidirectional sync:
+4. Inspect the target notes, then make the requested Markdown changes.
+5. Review the local files changed during the task. Do not alter unrelated files.
+6. Run another one-time bidirectional sync:
 
 ```bash
 ob sync --path "$VAULT_PATH"
 ```
 
-6. Run `ob sync-status --path "$VAULT_PATH"` again and inspect command output for failures or conflicts.
-7. Report the vault path, changed notes, and whether the final sync succeeded.
+7. Run `ob sync-status --path "$VAULT_PATH"` again and inspect command output for failures or conflicts.
+8. Report the explicit vault path, changed notes, and whether the final sync succeeded.
 
-Do not start `ob sync --continuous` for ordinary edits. Use continuous mode only when JB explicitly requests a long-running watcher; manage it as a background process and report how it can be stopped.
+Do not start `ob sync --continuous` for ordinary edits. Use continuous mode only when JB explicitly requests a long-running watcher; always pass `--path "$VAULT_PATH"`, manage it as a background process, and report how it can be stopped.
 
 ## Sync configuration
 
@@ -140,7 +154,6 @@ Supported settings include:
 - `--file-types image,audio,video,pdf,unsupported`
 - `--configs app,appearance,appearance-data,hotkey,core-plugin,core-plugin-data,community-plugin,community-plugin-data`
 - `--device-name <name>`
-- `--config-dir <name>`
 
 Never switch to `mirror-remote`: it reverts local changes. Use it only with JB's explicit approval after showing the impact. Do not change sync mode, conflict strategy, exclusions, file types, or configuration categories merely to complete a note edit.
 
@@ -165,7 +178,7 @@ ob sync-create-remote \
 5. Prefer Germany, specifically Frankfurt, when available; otherwise another German region, then an EU region.
 6. If E2EE cannot be enabled, stop instead of creating the vault.
 7. If the requested residency is unavailable, explain the available locations before choosing a materially different region.
-8. After creation, connect it with `ob sync-setup` and verify with a one-time `ob sync`.
+8. After creation, connect it to an explicit absolute path with `ob sync-setup`, record the mapping in `TOOLS.md`, and verify with `ob sync --path "$VAULT_PATH"`.
 
 ## Preserve Obsidian formatting
 
@@ -182,7 +195,7 @@ Prefer the vault's existing conventions when discoverable. Otherwise:
 
 ## Search notes
 
-Search filenames first, then content. Prefer `rg` and `rg --files`; fall back to `find` and `grep` if unavailable.
+Search filenames first, then content inside the explicitly resolved vault path. Prefer `rg` and `rg --files`; fall back to `find` and `grep` if unavailable.
 
 ```bash
 rg --files "$VAULT_PATH" -g '*.md' | rg -i 'keyword'
@@ -191,14 +204,14 @@ rg -il 'keyword' "$VAULT_PATH" -g '*.md'
 
 ## Create or update a note
 
-1. Complete the pre-edit sync workflow.
+1. Complete the pre-edit sync workflow with the explicit vault path.
 2. Search for an existing note with the same or overlapping purpose.
 3. Follow the vault's existing naming, frontmatter, and organization patterns.
 4. Use a Title Case filename when no stronger local convention exists.
 5. Write the note as a coherent unit of learning.
 6. Add relevant `[[wikilinks]]` and update an existing index note when appropriate.
 7. Preserve unrelated content in existing notes.
-8. Complete the post-edit sync and verification workflow.
+8. Complete the post-edit sync and verification workflow with the same explicit vault path.
 
 ## Find backlinks
 
@@ -216,8 +229,8 @@ rg --files "$VAULT_PATH" -g '*Index*.md'
 
 - Never overwrite an existing note blindly.
 - Never create or initialize a vault without explicit instruction.
-- Treat `.obsidian/` as application configuration; do not edit it unless JB explicitly asks for an Obsidian configuration change.
-- Keep edits scoped to the selected vault checkout.
+- Keep edits scoped to the explicitly selected vault checkout.
+- Stop on missing or conflicting path mappings.
 - Stop on authentication, encryption, locking, synchronization, or conflict errors.
 - Never resolve a conflict by discarding local or remote changes blindly.
 - Never run more than one `ob sync` instance for the same vault; the CLI locks each checkout.
