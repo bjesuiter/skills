@@ -46,7 +46,7 @@ npx skills add bjesuiter/skills --all
 - `jb-markit` — Convert files, URLs, and media into markdown with `markit`
 - `summarize` — Summarize URLs, PDFs, images, audio, and YouTube
 - `jb-mdn` — Query MDN Web Docs and browser compatibility through the official MDN MCP server using persistent `mcporter` config
-- `obsidian-vault` — Search, create, and organize notes in JB's Obsidian vault using verified portable path resolution
+- `jb-obsidian-sync` — Clone and synchronize Obsidian Sync vaults for direct Markdown access without Obsidian Desktop
 
 ### Development Tools
 - `jb-dev-env` — Secure dev environment setup with Varlock schemas, macOS Keychain secrets, and optional SOPS/age GitOps secrets
