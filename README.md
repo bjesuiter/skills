@@ -17,7 +17,7 @@ npx skills add bjesuiter/skills --skill jb-tdd -a codex -y
 npx skills add bjesuiter/skills --all
 ```
 
-## Included Skills (30)
+## Included Skills (29)
 
 ### Core Development Workflows
 - `jb-tdd` — Test-driven development workflow (red-green-refactor)
@@ -38,7 +38,10 @@ npx skills add bjesuiter/skills --all
 - `sweetlink` — Connect AI agent to a real browser tab
 - `jb-browser-testing` — Browser testing workflows and patterns
 - `jb-chrome-mcp` — Chrome DevTools MCP via `mcporter` for existing Chrome tabs
-- `jb-pinchtab-testing` — Higher-level browser testing workflow for PinchTab-managed browsers via the PinchTab CLI
+
+### Deprecated Skills (not installed)
+
+[`deprecated-skills/`](deprecated-skills/) retains retired skills for reference. These are outside `skills/`, so `npx skills add … --all` does not discover or install them. `jb-pinchtab-testing` was retired in favor of Vercel's `agent-browser`; see the [deprecation note](deprecated-skills/README.md).
 
 ### Documentation & Research
 - `jb-adr` — Create and manage Markdown Architectural Decision Records (MADR)

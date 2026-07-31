@@ -1,6 +1,6 @@
 ---
 name: jb-browser-testing
-description: "Use for JB browser-testing decisions: prefer PinchTab, choose agent-browser only when needed, and avoid playwriter/playwright-mcp."
+description: "Use for JB browser debugging and testing: prefer Vercel's agent-browser, but use jb-chrome-mcp when requested or as its fallback; avoid Playwriter and Playwright MCP."
 skill_author: bjesuiter@gmail.com
 ---
 
@@ -8,6 +8,9 @@ skill_author: bjesuiter@gmail.com
 
 ## Rules
 
-- **Primary**: Use the `jb-pinchtab-testing` skill / `pinchtab` CLI for browser debugging and testing whenever possible. It is more controllable and focused for JB workflows. Follow that skill's profile-selection rules before acting.
-- **Fallback**: Use the `agent-browser` skill (by vercel) only when PinchTab is unavailable or clearly unsuitable for the task.
+- **Primary**: Use Vercel's `agent-browser` skill / CLI for browser debugging and testing. Before issuing CLI commands, load its installed, version-matched workflow with `agent-browser skills get core`.
+- **Chrome DevTools MCP**: Use the `jb-chrome-mcp` skill when the user explicitly requests Chrome MCP/DevTools MCP. Otherwise, use it as the fallback when agent-browser is unavailable or clearly unsuitable—especially for inspecting the user's existing Chrome tabs or DevTools-specific diagnostics. Follow that skill's bootstrap and real-profile reattachment rules.
+- **Visible debugging**: Use `agent-browser --headed` when inspecting visual behavior, reproducing UI issues, or when the user needs to interact with the browser window.
+- **Prepared sessions**: Isolate work with a stable named `--session`. For a session that must survive relaunches (including an authenticated login), add `--restore`; reuse the same session name for every command. Check authenticated restoration with an appropriate `--restore-check-*` option when practical.
+- **Credentials and state**: Prefer the agent-browser auth vault for stored login credentials. For existing authenticated browser data, import a user-provided file with `cookies set --curl <file>` or load a state file. Never put passwords, cookies, tokens, or exported state contents in commands, chat, repository files, or commits; state files are secrets.
 - **Avoid**: Do not use `playwriter`, `playwright-mcp`, or `playwright - opencode (built-in)` for JB browser debugging workflows.
