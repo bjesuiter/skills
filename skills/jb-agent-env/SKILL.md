@@ -34,8 +34,7 @@ Treat filenames as canonical. Do not invent alternates.
 
 - `gh` installed and authenticated for gist read/write.
 - Registry is JSON5, not JSON.
-- Version 2+ uses top-level `resources` as the canonical flat registry.
-- Preserve legacy top-level `global` and `project` compatibility views until the documented breaking removal.
+- Version 3+ uses only the top-level `resources` flat registry; `global` and `project` topic trees are not supported.
 - Preserve comments and field order when editing existing JSON5.
 
 ## Read resources
@@ -73,9 +72,8 @@ gh gist list --limit 100 --filter 'jb-skill-preferences\.json5|JB shared preferr
    - `tags`: zero or more intended-use labels such as `devMachine`, `openclaw`, `appleDev`, or `webDev`
    - `installer`: the explicit command mechanism
 4. Deduplicate identical resources by merging their tags; never copy an entry merely because it has another use case.
-5. Keep legacy `global` and `project` views unchanged; they are compatibility-only and must not receive new entries.
-6. Validate JSON5.
-7. Write the updated registry back to the Gist.
+5. Validate JSON5.
+6. Write the updated registry back to the Gist.
 
 ```bash
 npx -y json5 --validate /path/to/jb-skill-preferences.json5
@@ -86,7 +84,7 @@ gh gist edit https://gist.github.com/bjesuiter/98d5768dc360093affb8d8fdb064e45f 
 
 ## Entry rules
 
-- `resources` is canonical; topic trees are deprecated compatibility views.
+- `resources` is the only registry representation; do not add `global` or `project` topic trees.
 - Use one resource per selected skill or extension so tags remain independently editable.
 - `scope` controls installation locality only; `tags` never imply an installer or scope.
 - `lifecycle: "experimental"` entries require `reviewAfter`; stable entries do not.
