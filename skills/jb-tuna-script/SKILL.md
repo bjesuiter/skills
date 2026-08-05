@@ -46,12 +46,12 @@ exec command arg1 arg2
 4. Make it executable: `chmod +x ~/Library/Scripts/<name>`.
 5. Verify by running `~/Library/Scripts/<name>` directly.
 
-## Example: PinchTab dashboard
+## Example: Agent Browser dashboard
 
 ```bash
 #!/usr/bin/env bash
-# @tuna.name pinchtab
-# @tuna.subtitle Open the PinchTab dashboard
+# @tuna.name browser dashboard
+# @tuna.subtitle Open the Agent Browser session dashboard
 # @tuna.icon symbol:rectangle.connected.to.line.below
 # @tuna.mode background
 # @tuna.input none
@@ -61,22 +61,17 @@ set -euo pipefail
 
 export PATH="$HOME/.homebrew/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
 
-exec pinchtab dashboard
+agent-browser dashboard start
+open http://localhost:4848
 ```
 
 Expected path:
 
 ```text
-~/Library/Scripts/pinchtab
+~/Library/Scripts/agent-browser-dashboard
 ```
 
-Expected verification output:
-
-```text
-Dashboard: http://127.0.0.1:9867
-  Token copied to clipboard — paste it on the login page.
-  Opened in your browser.
-```
+Verify that the dashboard opens at `http://localhost:4848`.
 
 ## Guardrails
 
