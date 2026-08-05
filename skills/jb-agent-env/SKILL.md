@@ -1,20 +1,20 @@
 ---
-name: jb-skill-prefs
-description: Use when adding, updating, removing, inspecting, or installing JB preferred skills from the shared Gist registry.
+name: jb-agent-env
+description: Manage JB's preferred agent environment from the shared Gist registry, including Markdown skills, Pi extensions, and CLIs. Use when adding, tagging, installing, updating, removing, or inspecting those resources.
 private: true
 skill_author: bjesuiter@gmail.com
 ---
 
-# JB Skill Prefs
+# JB Agent Environment
 
-This local skill is the **registry editor and resource locator**.
+This local skill is the **agent-environment registry editor and resource locator**.
 
 The portable **install/bootstrap/update workflow** lives in the Gist setup document. Do not duplicate that full workflow here.
 
 ## Use when
 
-- add a new preferred skill or skillset to JB's registry
-- update, remove, or inspect registry entries
+- add a new preferred agent-environment resource to JB's registry
+- update, remove, tag, or inspect registry resources
 - find the canonical registry/setup resources
 - after editing the registry, install exactly the newly added entry if JB asks
 

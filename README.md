@@ -17,7 +17,7 @@ npx skills add bjesuiter/skills --skill jb-tdd -a codex -y
 npx skills add bjesuiter/skills --all
 ```
 
-## Included Skills (29)
+## Included Skills (30)
 
 ### Core Development Workflows
 - `jb-tdd` — Test-driven development workflow (red-green-refactor)
@@ -64,7 +64,8 @@ npx skills add bjesuiter/skills --all
 
 ### Utilities
 - `nb` — Git-backed note management CLI
-- `jb-skill-prefs` — Shared preferred skill registry and project skill installer via GitHub Gist
+- `jb-agent-env` — Shared preferred agent-environment registry for Markdown skills, Pi extensions, and CLIs via GitHub Gist
+- `jb-preferred-skills` — Compatibility alias for `jb-agent-env`
 
 ## Local Validation
 
