@@ -34,7 +34,8 @@ Treat filenames as canonical. Do not invent alternates.
 
 - `gh` installed and authenticated for gist read/write.
 - Registry is JSON5, not JSON.
-- Preserve top-level `global` and `project` sections.
+- Version 2+ uses top-level `resources` as the canonical flat registry.
+- Preserve legacy top-level `global` and `project` compatibility views until the documented breaking removal.
 - Preserve comments and field order when editing existing JSON5.
 
 ## Read resources
@@ -63,19 +64,21 @@ gh gist list --limit 100 --filter 'jb-skill-preferences\.json5|JB shared preferr
 
 ## Registry editing workflow
 
-1. Decide whether the entry belongs under `global` or `project`:
-   - `global` = always-available/local-machine preferences.
-   - `project` = per-repo/topic preferences.
-   - Ask if unclear.
-2. Choose or confirm the topic key, e.g. `core`, `experimental`, `appleDev`, `designWork`, `devLibs`, `openclawDev`, `browser-testing`.
-3. Read the latest `jb-skill-preferences.json5` from the Gist.
-4. Make the smallest possible update.
-5. Deduplicate arrays. Prefer one `{ source, skills: [...] }` over repeated `{ source, skill }` entries for the same repo.
+1. Read the latest `jb-skill-preferences.json5` from the Gist.
+2. Add or update exactly one top-level `resources` entry per installable skill, Pi extension, or CLI.
+3. Set independent dimensions explicitly:
+   - `kind`: `skill`, `piExtension`, or `cli`
+   - `scope`: `global` or `project`
+   - `lifecycle`: `stable` or `experimental`
+   - `tags`: zero or more intended-use labels such as `devMachine`, `openclaw`, `appleDev`, or `webDev`
+   - `installer`: the explicit command mechanism
+4. Deduplicate identical resources by merging their tags; never copy an entry merely because it has another use case.
+5. Keep legacy `global` and `project` views unchanged; they are compatibility-only and must not receive new entries.
 6. Validate JSON5.
 7. Write the updated registry back to the Gist.
 
 ```bash
-npx -y json5 -c /path/to/jb-skill-preferences.json5
+npx -y json5 --validate /path/to/jb-skill-preferences.json5
 gh gist edit https://gist.github.com/bjesuiter/98d5768dc360093affb8d8fdb064e45f \
   --filename jb-skill-preferences.json5 \
   /path/to/jb-skill-preferences.json5
@@ -83,17 +86,14 @@ gh gist edit https://gist.github.com/bjesuiter/98d5768dc360093affb8d8fdb064e45f 
 
 ## Entry rules
 
-- `global.topics.*` = globally installed preferences.
-- `project.topics.*` = project-local preferences.
-- Omit empty arrays (`prompts: []`, `extensions: []`, etc.).
-- `description` = short topic summary.
-- `notes` = freeform context.
-- `reviewAfter` only for experimental topics; default window is three months.
-- `skill: "name"` = one selected skill.
-- `skills: ["a", "b"]` = multiple selected skills from the same repo.
-- `skill: "*"` requires `wildcard: true`.
-- Do not add `cli: "skills@latest"`; latest is the default.
-- Use `piExtensions` for Pi coding-agent-specific install sources; do not put them in generic `packages`.
+- `resources` is canonical; topic trees are deprecated compatibility views.
+- Use one resource per selected skill or extension so tags remain independently editable.
+- `scope` controls installation locality only; `tags` never imply an installer or scope.
+- `lifecycle: "experimental"` entries require `reviewAfter`; stable entries do not.
+- `skill: "name"` selects one skill; `skill: "*"` requires `wildcard: true`.
+- A source-only skill install uses `installer: { type: "skillsCli", selection: "source" }` and omits `skill`.
+- `kind: "piExtension"` requires `installer: { type: "pi" }`.
+- `kind: "cli"` requires an explicit `installer.command`; do not infer it from the source.
 - Use local absolute paths only when explicitly requested.
 
 ## Create registry if missing
@@ -121,11 +121,11 @@ For full machine bootstrap/update, always defer to `jb-skill-preferences-setup.m
 - This local skill manages the registry; the Gist setup md manages installs/updates.
 - Do not run full ensure/update mode when JB only asks to install a newly added skill.
 - Never prune locally installed skills without explicit confirmation.
-- Keep `global` and `project` semantics separate.
+- Keep `kind`, `scope`, `lifecycle`, and `tags` separate; tags are never categories.
 
 ## Example requests
 
 - "Remember that Apple projects should use my ASC and SwiftUI skills."
-- "Add my preferred GitHub skills to the shared registry as global preferences."
-- "Install the skill I just added to the registry."
-- "What preferred project skills do I already have for browser testing?"
+- "Tag this skill for both devMachine and openclaw use."
+- "Install the resource I just added to the registry."
+- "What preferred resources are tagged openclaw?"
