@@ -1,497 +1,87 @@
 ---
 name: xcode
-description: Use when the user mentions Xcode, xcodebuild, Swift packages, Apple simulators, iOS/macOS app builds, or Apple-platform tests.
-allowed-tools: Bash(bunx:*,mcporter:*)
+description: Build, test, run, inspect, or scaffold Xcode projects, Swift packages, Apple simulators, devices, and macOS apps through XcodeBuildMCP. Use when the user mentions Xcode, xcodebuild, Swift build/test, Apple-platform builds, simulators, devices, or UI testing.
 ---
 
-# Xcode Build MCP
+# XcodeBuildMCP
 
-Build, test, run, and manage Xcode projects and Swift packages via the XcodeBuildMCP server.
-
-## When to Use
-
-- User wants to build an iOS/macOS/watchOS/tvOS/visionOS app
-- User wants to run tests on simulator or device
-- User wants to launch an app on simulator or device
-- User mentions "xcodebuild", "swift build", "swift test"
-- User wants to scaffold a new iOS/macOS project
-- User wants to interact with iOS simulator (tap, type, screenshot)
-- User wants to capture logs from simulator or device
-- User wants to discover Xcode projects in a directory
-
-## Quick Reference
-
-All tools are called via mcporter using the XcodeBuildMCP server:
+Use XcodeBuildMCP through `mcporter` for Xcode and Swift work:
 
 ```bash
 bunx mcporter call --stdio "xcodebuildmcp" <tool_name> [args...]
 ```
 
-Assumes `mcporter` and `xcodebuildmcp` are installed globally; `bunx` runs the installed binaries and does not fetch them.
+Assume `mcporter` and `xcodebuildmcp` are installed globally. Here `bunx` runs installed binaries; it must not fetch untrusted replacements.
 
-## Session Defaults (IMPORTANT - Set First!)
+## Discover the environment
 
-Before using most build/test tools, you MUST set session defaults:
+Identify the target before building:
+
+```bash
+bunx mcporter call --stdio "xcodebuildmcp" doctor
+bunx mcporter call --stdio "xcodebuildmcp" discover_projs workspaceRoot="$(pwd)"
+bunx mcporter call --stdio "xcodebuildmcp" list_schemes
+bunx mcporter call --stdio "xcodebuildmcp" list_sims
+```
+
+For physical-device work, discover connected devices instead of assuming an identifier. Distinguish among an Xcode project, workspace, Swift package, simulator target, physical device, and macOS app; choose tools for that target family.
+
+## Set session defaults
+
+Set project/workspace, scheme, and destination defaults before most build and test calls:
 
 ```bash
 bunx mcporter call --stdio "xcodebuildmcp" session-set-defaults \
-  projectPath="/path/to/Project.xcodeproj" \
-  scheme="MyApp" \
-  simulatorName="iPhone 16"
+  projectPath="/path/to/App.xcodeproj" \
+  scheme="App" \
+  simulatorName="<discovered simulator>"
 ```
 
-Or for a workspace:
+For a workspace, use `workspacePath`; for an exact simulator or device, use its discovered identifier. Inspect defaults when behavior is surprising:
 
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" session-set-defaults \
-  workspacePath="/path/to/Project.xcworkspace" \
-  scheme="MyApp" \
-  simulatorId="DEVICE_UDID"
-```
-
-Check current defaults:
 ```bash
 bunx mcporter call --stdio "xcodebuildmcp" session-show-defaults
 ```
 
-Clear defaults:
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" session-clear-defaults all=true
-```
+Do not reuse stale defaults across unrelated repositories or targets.
 
-## Discovery Tools
+## Execute the requested workflow
 
-### Find Xcode Projects
+After setting the target:
 
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" discover_projs workspaceRoot="$(pwd)"
-```
+1. Select the matching simulator, device, macOS, or Swift-package tools.
+2. Build before attempting installation or launch unless a combined build-and-run tool applies.
+3. Run focused tests first, then broader tests when warranted.
+4. Preserve build output and surface actionable compiler/test failures.
+5. Use log-capture tools around reproductions when runtime evidence is needed, and stop the capture afterward.
 
-### List Schemes
+For scaffolding, confirm the destination, project name, platform, and bundle identifier. Do not overwrite an existing project implicitly.
 
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" list_schemes
-```
+## Simulator UI interaction
 
-### Doctor (Check Environment)
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" doctor
-```
-
-## Simulator Tools
-
-### List Simulators
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" list_sims
-```
-
-### Boot Simulator
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" boot_sim
-```
-
-### Open Simulator App
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" open_sim
-```
-
-### Build for Simulator
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" build_sim
-```
-
-### Build and Run on Simulator
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" build_run_sim
-```
-
-### Run Tests on Simulator
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" test_sim
-```
-
-### Get Built App Path (Simulator)
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" get_sim_app_path platform="iOS Simulator"
-```
-
-### Install App on Simulator
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" install_app_sim appPath="/path/to/App.app"
-```
-
-### Launch App on Simulator
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" launch_app_sim bundleId="com.example.MyApp"
-```
-
-### Stop App on Simulator
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" stop_app_sim bundleId="com.example.MyApp"
-```
-
-## Simulator UI Automation
-
-### Take Screenshot
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" screenshot
-```
-
-### Describe UI (Get View Hierarchy)
-
-Gets precise frame coordinates for all visible elements - USE THIS before any UI interactions:
+Build and launch the app, then inspect the current accessibility hierarchy before every interaction sequence:
 
 ```bash
 bunx mcporter call --stdio "xcodebuildmcp" describe_ui
 ```
 
-### Tap
+Prefer accessibility identifiers or labels. Use coordinates only from the latest hierarchy, never guessed from a screenshot or reused after the UI changes. Take screenshots when visual proof is material. Re-run `describe_ui` after navigation, dialogs, rotation, or other layout changes.
+
+## Use the live tool schema
+
+Tool names and arguments can change with XcodeBuildMCP versions. Do not rely on a copied catalog. Inspect the installed `mcporter` help and XcodeBuildMCP schema before using an unfamiliar operation:
 
 ```bash
-# Tap by coordinates (use describe_ui first to get coordinates)
-bunx mcporter call --stdio "xcodebuildmcp" tap x=100 y=200
-
-# Tap by accessibility ID
-bunx mcporter call --stdio "xcodebuildmcp" tap id="myButton"
-
-# Tap by label
-bunx mcporter call --stdio "xcodebuildmcp" tap label="Submit"
+bunx mcporter --help
+bunx mcporter list --stdio "xcodebuildmcp" --schema
 ```
 
-### Long Press
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" long_press x=100 y=200 duration=1000
-```
-
-### Swipe
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" swipe x1=100 y1=400 x2=100 y2=100
-```
-
-### Gesture Presets
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" gesture preset="scroll-down"
-# Presets: scroll-up, scroll-down, scroll-left, scroll-right, 
-#          swipe-from-left-edge, swipe-from-right-edge, 
-#          swipe-from-top-edge, swipe-from-bottom-edge
-```
-
-### Type Text
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" type_text text="Hello World"
-```
-
-### Press Button
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" button buttonType="home"
-# Types: apple-pay, home, lock, side-button, siri
-```
-
-### Key Press
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" key_press keyCode=40  # Return key
-# Common: 40=Return, 42=Backspace, 43=Tab, 44=Space
-```
-
-## Simulator Settings
-
-### Set Appearance (Dark/Light Mode)
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" set_sim_appearance mode="dark"
-```
-
-### Set Location
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" set_sim_location latitude=37.7749 longitude=-122.4194
-```
-
-### Reset Location
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" reset_sim_location
-```
-
-### Set Status Bar Network
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" sim_statusbar dataNetwork="5g"
-# Options: clear, hide, wifi, 3g, 4g, lte, lte-a, lte+, 5g, 5g+, 5g-uwb, 5g-uc
-```
-
-### Erase Simulator
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" erase_sims shutdownFirst=true
-```
-
-## Simulator Log Capture
-
-### Start Log Capture
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" start_sim_log_cap bundleId="com.example.MyApp"
-# Returns a logSessionId
-```
-
-### Stop Log Capture
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" stop_sim_log_cap logSessionId="SESSION_ID"
-```
-
-## Video Recording
-
-### Start Recording
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" record_sim_video start=true
-```
-
-### Stop Recording
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" record_sim_video stop=true outputFile="/path/to/output.mp4"
-```
-
-## Physical Device Tools
-
-### List Connected Devices
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" list_devices
-```
-
-### Build for Device
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" build_device
-```
-
-### Test on Device
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" test_device
-```
-
-### Install App on Device
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" install_app_device appPath="/path/to/App.app"
-```
-
-### Launch App on Device
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" launch_app_device bundleId="com.example.MyApp"
-```
-
-### Stop App on Device
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" stop_app_device processId=12345
-```
-
-### Device Log Capture
-
-```bash
-# Start
-bunx mcporter call --stdio "xcodebuildmcp" start_device_log_cap bundleId="com.example.MyApp"
-
-# Stop
-bunx mcporter call --stdio "xcodebuildmcp" stop_device_log_cap logSessionId="SESSION_ID"
-```
-
-## macOS Tools
-
-### Build macOS App
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" build_macos
-```
-
-### Build and Run macOS App
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" build_run_macos
-```
-
-### Test macOS App
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" test_macos
-```
-
-### Get macOS App Path
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" get_mac_app_path
-```
-
-### Launch macOS App
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" launch_mac_app appPath="/path/to/App.app"
-```
-
-### Stop macOS App
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" stop_mac_app appName="MyApp"
-```
-
-## Swift Package Tools
-
-### Build Package
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" swift_package_build packagePath="$(pwd)"
-```
-
-### Test Package
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" swift_package_test packagePath="$(pwd)"
-```
-
-### Run Package Executable
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" swift_package_run packagePath="$(pwd)"
-```
-
-### Clean Package
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" swift_package_clean packagePath="$(pwd)"
-```
-
-### List Running Packages
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" swift_package_list
-```
-
-### Stop Package Process
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" swift_package_stop pid=12345
-```
-
-## Project Scaffolding
-
-### Create New iOS Project
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" scaffold_ios_project \
-  projectName="MyApp" \
-  outputPath="$(pwd)" \
-  bundleIdentifier="com.example.myapp"
-```
-
-### Create New macOS Project
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" scaffold_macos_project \
-  projectName="MyMacApp" \
-  outputPath="$(pwd)" \
-  bundleIdentifier="com.example.mymacapp"
-```
-
-## Utility Tools
-
-### Clean Build
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" clean
-```
-
-### Show Build Settings
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" show_build_settings
-```
-
-### Get Bundle ID from App
-
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" get_app_bundle_id appPath="/path/to/App.app"
-```
-
-## Typical Workflows
-
-### Build and Test iOS App on Simulator
-
-```bash
-# 1. Discover projects
-bunx mcporter call --stdio "xcodebuildmcp" discover_projs workspaceRoot="$(pwd)"
-
-# 2. List simulators
-bunx mcporter call --stdio "xcodebuildmcp" list_sims
-
-# 3. Set session defaults
-bunx mcporter call --stdio "xcodebuildmcp" session-set-defaults \
-  projectPath="$(pwd)/MyApp.xcodeproj" \
-  scheme="MyApp" \
-  simulatorName="iPhone 16"
-
-# 4. Build and run
-bunx mcporter call --stdio "xcodebuildmcp" build_run_sim
-
-# 5. Run tests
-bunx mcporter call --stdio "xcodebuildmcp" test_sim
-```
-
-### UI Testing Flow
-
-```bash
-# 1. Build and launch app
-bunx mcporter call --stdio "xcodebuildmcp" build_run_sim
-
-# 2. Get UI hierarchy (ALWAYS do this before interacting)
-bunx mcporter call --stdio "xcodebuildmcp" describe_ui
-
-# 3. Take screenshot for visual reference
-bunx mcporter call --stdio "xcodebuildmcp" screenshot
-
-# 4. Interact with elements using coordinates from describe_ui
-bunx mcporter call --stdio "xcodebuildmcp" tap x=187 y=423
-
-# 5. Type text
-bunx mcporter call --stdio "xcodebuildmcp" type_text text="test@example.com"
-```
-
-## Error Handling
-
-| Error | Cause | Solution |
-|-------|-------|----------|
-| No project/workspace set | Session defaults not configured | Run `session-set-defaults` first |
-| Simulator not found | Invalid simulator name | Run `list_sims` to get valid names |
-| Build failed | Code errors or config issues | Check build output, run `doctor` |
-| App not installed | Build didn't complete | Run `build_sim` before `launch_app_sim` |
-
-## Tips
-
-1. **Always set session defaults first** - Most tools require project/scheme/simulator to be set
-2. **Use describe_ui before UI interactions** - Never guess coordinates from screenshots
-3. **Check doctor for environment issues** - Run `doctor` if tools aren't working
-4. **Use preferXcodebuild=true** if incremental builds fail - Falls back to standard xcodebuild
+Use the live schema for gestures, simulator settings, recording, logs, device operations, Swift packages, scaffolding, and utilities.
+
+## Diagnose failures
+
+- Missing project/workspace: inspect and set session defaults.
+- Unknown simulator/device: rediscover available destinations.
+- Environment or integration failure: run `doctor` and inspect the exact error.
+- Incremental-build issue: try the server's standard-xcodebuild preference only when supported by the live schema.
+- Build or test failure: diagnose the emitted compiler/test evidence rather than treating it as an MCP failure.

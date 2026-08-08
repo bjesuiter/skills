@@ -1,84 +1,54 @@
 ---
 name: summarize
-description: Use when the user asks to summarize URLs, files, PDFs, images, audio, or YouTube with the summarize CLI.
-homepage: https://summarize.sh
-metadata: {"clawdbot":{"emoji":"🧾","requires":{"bins":["summarize"]},"install":[{"id":"brew","kind":"brew","formula":"steipete/tap/summarize","bins":["summarize"],"label":"Install summarize (brew)"}]}}
+description: Use the summarize CLI when the user asks to summarize or extract content from URLs, local files, PDFs, images, audio, video, or YouTube.
 ---
 
 # Summarize
 
-Fast CLI to summarize URLs, local files, and YouTube links.
+Use `summarize` to extract or summarize web and local content.
 
-## Quick start
+## Workflow
 
-```bash
-summarize "https://example.com" --model google/gemini-3-flash-preview
-summarize "/path/to/file.pdf" --model google/gemini-3-flash-preview
-summarize "https://youtu.be/dQw4w9WgXcQ" --youtube auto
-```
-
-## OpenCode Zen (FREE models!)
-
-Use OpenCode Zen for free summarization with GLM 4.7:
+1. Confirm the input is a URL or an accessible local path.
+2. Run `summarize <input>` with the configured/default model.
+3. Add only the controls needed for the requested output.
+4. Return the summary or extracted content, noting any retrieval limitation.
 
 ```bash
-# Set env vars for OpenCode Zen
-export OPENAI_BASE_URL="https://opencode.ai/zen/v1"
-export OPENAI_API_KEY="<your-zen-api-key>"  # Get from https://opencode.ai/auth
-
-# Summarize with free GLM 4.7
-summarize "https://example.com" --model openai/glm-4.7-free
+summarize "https://example.com"
+summarize "/path/to/document.pdf"
+summarize "https://youtu.be/VIDEO_ID" --youtube auto
 ```
 
-### Free models on OpenCode Zen:
-| Model | Model ID |
-|-------|----------|
-| GLM 4.7 | `glm-4.7-free` |
-| Big Pickle | `big-pickle` |
-| Grok Code Fast 1 | `grok-code` |
-| MiniMax M2.1 | `minimax-m2.1-free` |
-| GPT 5 Nano | `gpt-5-nano` |
+Do not select or recommend a specific model unless the user requests one. If they do, inspect the installed CLI for currently supported model syntax before passing `--model`.
 
-### When using summarize with OpenCode Zen:
+## Output controls
+
+- Use `--length short|medium|long|xl|xxl|<chars>` to control summary size.
+- Use `--max-output-tokens <count>` for a hard output-token limit.
+- Use `--extract-only` to retrieve URL content without summarizing it.
+- Use `--json` when structured, machine-readable output is useful.
+
 ```bash
-OPENAI_BASE_URL="https://opencode.ai/zen/v1" OPENAI_API_KEY="$OPENCODE_ZEN_KEY" summarize "URL" --model openai/glm-4.7-free
+summarize "https://example.com" --length short
+summarize "/path/to/document.pdf" --max-output-tokens 1200 --json
+summarize "https://example.com" --extract-only
 ```
 
-## Model + keys
+## Authentication and extraction
 
-Set the API key for your chosen provider:
-- OpenAI: `OPENAI_API_KEY`
-- Anthropic: `ANTHROPIC_API_KEY`
-- xAI: `XAI_API_KEY`
-- Google: `GEMINI_API_KEY` (aliases: `GOOGLE_GENERATIVE_AI_API_KEY`, `GOOGLE_API_KEY`)
+Ensure the API key required by the configured model provider is available in the environment. Do not print or expose keys.
 
-Default model is `google/gemini-3-flash-preview` if none is set.
+For difficult or blocked pages, use the optional extraction service only when configured:
 
-## Useful flags
+- Set `FIRECRAWL_API_KEY`, then use `--firecrawl auto|off|always`.
+- Set `APIFY_API_TOKEN` when YouTube processing needs the Apify fallback.
 
-- `--length short|medium|long|xl|xxl|<chars>`
-- `--max-output-tokens <count>`
-- `--extract-only` (URLs only)
-- `--json` (machine readable)
-- `--firecrawl auto|off|always` (fallback extraction)
-- `--youtube auto` (Apify fallback if `APIFY_API_TOKEN` set)
+## Live discovery
 
-## Config
+Treat installed CLI help as authoritative because flags, providers, and models can change:
 
-Optional config file: `~/.summarize/config.json`
-
-```json
-{ "model": "openai/gpt-5.2" }
+```bash
+summarize --help
+summarize --help | rg -i 'model|provider|extract|youtube|firecrawl'
 ```
-
-For OpenCode Zen default:
-```json
-{
-  "model": "openai/big-pickle",
-  "baseUrl": "https://opencode.ai/zen/v1"
-}
-```
-
-Optional services:
-- `FIRECRAWL_API_KEY` for blocked sites
-- `APIFY_API_TOKEN` for YouTube fallback

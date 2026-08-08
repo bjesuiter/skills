@@ -11,16 +11,15 @@ These skills represent workflows, tools, and patterns JB actively uses in develo
 npx skills add bjesuiter/skills --list
 
 # Install one skill
-npx skills add bjesuiter/skills --skill jb-refine-code -a codex -y
+npx skills add bjesuiter/skills --skill jb-beans -a codex -y
 
 # Install all skills to all agents
 npx skills add bjesuiter/skills --all
 ```
 
-## Included Skills (29)
+## Included Skills (24)
 
 ### Core Development Workflows
-- `jb-refine-code` — Refactor pass focused on simplicity after changes
 - `jb-beansloop` — Automated workflow using beans issue tracker
 - `jb-committer` — Git commit grouping and commit message drafting
 - `jb-local-release` — Local release workflow; prepares version/changelog/checks/commit/tag and defers to repo-specific instructions
@@ -31,10 +30,8 @@ npx skills add bjesuiter/skills --all
 ### Code Review & Quality
 - `jb-autoreview` — Structured second-model autoreview via Codex/Claude for local, branch, commit, and PR diffs
 - `jb-clawpatch-review` — Clawpatch semantic repo review, persistent findings reports, explicit fixes, and revalidation
-- `security-check` — Red-team security review for code changes
 
 ### Browser & Web Testing
-- `sweetlink` — Connect AI agent to a real browser tab
 - `jb-browser-testing` — Browser testing workflows and patterns
 - `jb-chrome-mcp` — Chrome DevTools MCP via `mcporter` for existing Chrome tabs
 
@@ -43,7 +40,6 @@ npx skills add bjesuiter/skills --all
 [`deprecated-skills/`](deprecated-skills/) retains retired skills for reference. These are outside `skills/`, so `npx skills add … --all` does not discover or install them. `jb-pinchtab-testing` and `jb-tdd` have been superseded; see the [deprecation notes](deprecated-skills/README.md).
 
 ### Documentation & Research
-- `jb-adr` — Create and manage Markdown Architectural Decision Records (MADR)
 - `jb-docs-scraper` — Scrape documentation websites into markdown
 - `jb-markit` — Convert files, URLs, and media into markdown with `markit`
 - `summarize` — Summarize URLs, PDFs, images, audio, and YouTube
@@ -64,7 +60,6 @@ npx skills add bjesuiter/skills --all
 ### Utilities
 - `nb` — Git-backed note management CLI
 - `jb-agent-env` — Shared preferred agent-environment registry for Markdown skills, Pi extensions, and CLIs via GitHub Gist
-- `jb-preferred-skills` — Compatibility alias for `jb-agent-env`
 
 ## Local Validation
 
@@ -73,7 +68,7 @@ npx skills add bjesuiter/skills --all
 npx skills add . --list
 
 # Test install
-npx skills add . --skill jb-refine-code -a codex -y
+npx skills add . --skill jb-beans -a codex -y
 ```
 
 ## About

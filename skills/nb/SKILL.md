@@ -1,258 +1,78 @@
 ---
 name: nb
-description: Use when creating, listing, searching, bookmarking, or organizing notes with the nb CLI.
-author: Benjamin Jesuiter <bjesuiter@gmail.com>
-homepage: https://github.com/xwmx/nb
-metadata:
-  clawdbot:
-    emoji: "📓"
-    os: ["darwin", "linux"]
-    requires:
-      bins: ["nb"]
+description: Create, list, search, edit, organize, bookmark, or synchronize notes and todos with the `nb` CLI. Use whenever the user asks to work with an nb notebook or nb-managed content.
 ---
 
-# nb - Command Line Note-Taking
+# nb
 
-> ⚠️ **IMPORTANT:** Never edit files in nb git repos (`~/.nb/*`) by hand! Always use the `nb` CLI to ensure proper indexing and Git commits.
+Use the `nb` CLI for Git-backed notes, todos, bookmarks, and notebooks.
 
+## Storage safety
 
+Never edit, copy, move, delete, or commit files inside `~/.nb/*` directly. Always use `nb` commands so indexes and automatic Git history remain consistent. This applies to long notes and bulk operations too.
 
-A command line and local web note-taking, bookmarking, and archiving tool with plain text data storage, Git-backed versioning, and wiki-style linking.
+## Select a notebook
 
-## Quick Reference
-
-### Notebooks
+Inspect notebook context before mutating content:
 
 ```bash
-# List all notebooks
 nb notebooks
-
-# Switch to a notebook
-nb use <notebook>
-
-# Create a new notebook
-nb notebooks add <name>
-
-# Show current notebook
 nb notebooks current
+nb use <notebook>
 ```
 
-### Adding Notes
+Use the `nb <notebook>:` prefix when an operation should target a notebook other than the current one. Create a notebook only when requested or clearly required:
 
 ```bash
-# Add a note with title
-nb add -t "Title" -c "Content here"
+nb notebooks add <name>
+```
 
-# Add note to specific notebook
+## Core note workflow
+
+```bash
+# Create
+nb add -t "Title" -c "Content"
 nb <notebook>: add -t "Title" -c "Content"
 
-# Add note with tags
-nb add -t "Title" --tags tag1,tag2
-
-# Add note from file content
-nb add <notebook>:filename.md
-```
-
-### Listing Notes
-
-```bash
-# List notes in current notebook
+# Inspect and search
 nb list
-
-# List all notes (no limit)
-nb list -a
-
-# List notes in specific notebook
-nb <notebook>: list
-
-# List with excerpts
-nb list -e
-
-# List with tags shown
-nb list --tags
-```
-
-### Showing Notes
-
-```bash
-# Show note by ID or title
-nb show <id>
-nb show "<title>"
-
-# Show note from specific notebook
-nb show <notebook>:<id>
-
-# Print content (for piping)
-nb show <id> --print
-```
-
-### Searching Notes
-
-```bash
-# Search across all notebooks
+nb show <id-or-title>
 nb search "query"
 
-# Search in specific notebook
-nb <notebook>: search "query"
-
-# Search with AND/OR/NOT
-nb search "term1" --and "term2"
-nb search "term1" --or "term2"
-nb search "term1" --not "exclude"
-
-# Search by tag
-nb search --tag "tagname"
-```
-
-### Editing Notes
-
-```bash
-# Edit by ID
-nb edit <id>
-
-# Edit by title
-nb edit "<title>"
-
-# Append content
-nb edit <id> -c "New content to append"
-
-# Prepend content
-nb edit <id> -c "Content at top" --prepend
-
-# Overwrite content
-nb edit <id> -c "Replace all" --overwrite
-```
-
-### Deleting Notes
-
-```bash
-# Delete by ID (will prompt)
-nb delete <id>
-
-# Force delete without prompt
-nb delete <id> -f
-```
-
-### Moving/Renaming
-
-```bash
-# Move note to another notebook
+# Update and organize
+nb edit <id-or-title>
 nb move <id> <notebook>:
 
-# Rename a note
-nb move <id> new-filename.md
+# Synchronize configured remotes
+nb sync
 ```
 
-### Todos
+Quote titles containing spaces. Resolve ambiguous matches by listing or searching before editing, moving, or deleting. Let destructive commands prompt unless the user explicitly authorized non-interactive deletion.
+
+## Todos and bookmarks
+
+Use the dedicated command families rather than encoding these as ordinary notes:
 
 ```bash
-# Add a todo
-nb todo add "Task title"
-
-# Add todo with due date
-nb todo add "Task" --due "2026-01-15"
-
-# List open todos
+nb todo add "Task"
 nb todos open
-
-# List closed todos
-nb todos closed
-
-# Mark todo as done
 nb todo do <id>
 
-# Mark todo as not done
-nb todo undo <id>
-```
-
-### Bookmarks
-
-```bash
-# Add a bookmark
 nb bookmark <url>
-
-# Add with comment
-nb bookmark <url> -c "My comment"
-
-# Add with tags
-nb bookmark <url> --tags reference,dev
-
-# List bookmarks
 nb bookmark list
-
-# Search bookmarks
 nb bookmark search "query"
 ```
 
-### Git Operations
+Add tags, comments, or due dates when the request provides them. Use `nb sync` after changes only when synchronization is requested or established by the surrounding workflow.
+
+## Discover current syntax
+
+Do not rely on a copied flag catalog. Inspect the installed CLI for less-common operations such as tags, folders, Boolean search, imports, exports, Git checkpoints, renaming, or deletion:
 
 ```bash
-# Sync with remote
-nb sync
-
-# Create checkpoint (commit)
-nb git checkpoint "Message"
-
-# Check dirty status
-nb git dirty
-
-# Run any git command
-nb git status
-nb git log --oneline -5
+nb help
+nb help <command>
+nb version
 ```
 
-### Folders
-
-```bash
-# Add folder to notebook
-nb folders add <folder-name>
-
-# List folders
-nb folders
-
-# Add note to folder
-nb add <folder>/<filename>.md
-```
-
-## Common Patterns
-
-### Adding Note with Full Content
-
-For longer notes, create a temp file and import:
-
-```bash
-# Write content to temp file first, then copy to nb
-cp /tmp/note.md ~/.nb/<notebook>/
-cd ~/.nb/<notebook> && git add . && git commit -m "Add note"
-nb <notebook>: index rebuild
-```
-
-### Searching Across All
-
-```bash
-# Search everything
-nb search "term" --all
-
-# Search by type
-nb search "term" --type bookmark
-nb search "term" --type todo
-```
-
-## Data Location
-
-Notes are stored in `~/.nb/<notebook>/` as markdown files with Git versioning.
-
-```
-~/.nb/
-├── notebook-name-1/ # Your first notebook
-├── notebook-name-2/ # Your second notebook
-└── ...
-```
-
-## Tips
-
-1. Use `nb <notebook>:` prefix to work with specific notebooks
-2. IDs are numbers shown in `nb list`
-3. Titles can be used instead of IDs (quoted if spaces)
-4. All changes are automatically Git-committed
-5. Use `nb sync` to push/pull from remote repos
+Project: https://github.com/xwmx/nb
