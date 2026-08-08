@@ -12,6 +12,7 @@
 - The directory and `SKILL.md` frontmatter `name` must match.
 - Keep `SKILL.md` concise. Put substantial examples, references, and helpers in sibling directories and link to them.
 - When the active-skill set changes, update `README.md` and its count.
+- When removing an active skill, also remove its resource entry from the `jb-agent-env` preference registry.
 
 ## Before committing skill changes
 

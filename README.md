@@ -11,16 +11,15 @@ These skills represent workflows, tools, and patterns JB actively uses in develo
 npx skills add bjesuiter/skills --list
 
 # Install one skill
-npx skills add bjesuiter/skills --skill jb-tdd -a codex -y
+npx skills add bjesuiter/skills --skill jb-refine-code -a codex -y
 
 # Install all skills to all agents
 npx skills add bjesuiter/skills --all
 ```
 
-## Included Skills (30)
+## Included Skills (29)
 
 ### Core Development Workflows
-- `jb-tdd` — Test-driven development workflow (red-green-refactor)
 - `jb-refine-code` — Refactor pass focused on simplicity after changes
 - `jb-beansloop` — Automated workflow using beans issue tracker
 - `jb-committer` — Git commit grouping and commit message drafting
@@ -41,7 +40,7 @@ npx skills add bjesuiter/skills --all
 
 ### Deprecated Skills (not installed)
 
-[`deprecated-skills/`](deprecated-skills/) retains retired skills for reference. These are outside `skills/`, so `npx skills add … --all` does not discover or install them. `jb-pinchtab-testing` was retired in favor of Vercel's `agent-browser`; see the [deprecation note](deprecated-skills/README.md).
+[`deprecated-skills/`](deprecated-skills/) retains retired skills for reference. These are outside `skills/`, so `npx skills add … --all` does not discover or install them. `jb-pinchtab-testing` and `jb-tdd` have been superseded; see the [deprecation notes](deprecated-skills/README.md).
 
 ### Documentation & Research
 - `jb-adr` — Create and manage Markdown Architectural Decision Records (MADR)
@@ -74,7 +73,7 @@ npx skills add bjesuiter/skills --all
 npx skills add . --list
 
 # Test install
-npx skills add . --skill jb-tdd -a codex -y
+npx skills add . --skill jb-refine-code -a codex -y
 ```
 
 ## About
