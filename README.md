@@ -17,7 +17,7 @@ npx skills add bjesuiter/skills --skill jb-beans -a codex -y
 npx skills add bjesuiter/skills --all
 ```
 
-## Included Skills (24)
+## Included Skills (25)
 
 ### Core Development Workflows
 - `jb-beansloop` — Automated workflow using beans issue tracker
@@ -60,6 +60,7 @@ npx skills add bjesuiter/skills --all
 ### Utilities
 - `nb` — Git-backed note management CLI
 - `jb-agent-env` — Shared preferred agent-environment registry for Markdown skills, Pi extensions, and CLIs via GitHub Gist
+- `jb-svg` — Create and review clean, responsive, accessible SVGs
 
 ## Local Validation
 

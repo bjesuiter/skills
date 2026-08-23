@@ -1,0 +1,4 @@
+interface:
+  display_name: "JB SVG"
+  short_description: "Create clean, accessible, responsive SVGs"
+  default_prompt: "Use $jb-svg to create a polished, responsive SVG for this interface."
