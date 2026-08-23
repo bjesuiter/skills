@@ -59,7 +59,7 @@ Add motion only when requested or when it communicates state.
 - Animate transforms and opacity when they can express the effect.
 - Set `transform-origin` explicitly. For element-centered transforms, also set the appropriate `transform-box`, commonly `fill-box`.
 - For draw-on animation, measure the path with `getTotalLength()` or normalize it with `pathLength="1"`, then animate `stroke-dashoffset` against a matching `stroke-dasharray`.
-- Provide a useful static state and honor reduced-motion preferences through the mechanism that drives the animation. Override CSS animation under `@media (prefers-reduced-motion: reduce)`, omit or pause SMIL animation elements, and gate or cancel JavaScript loops with `matchMedia()`.
+- Provide a useful static state and honor reduced-motion preferences through the mechanism that drives the animation. Override CSS animations and transitions under `@media (prefers-reduced-motion: reduce)`, omit or pause SMIL animation elements, and gate or cancel JavaScript loops with `matchMedia()`.
 
 ## Cleanup and verification
 
