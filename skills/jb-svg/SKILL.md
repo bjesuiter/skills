@@ -35,7 +35,7 @@ Treat SVG as a small document with geometry, styles, semantics, and behavior. Pr
 ## Styling and reuse
 
 - Use presentation attributes for stable defaults and CSS for states, themes, and animation. CSS overrides presentation attributes.
-- Use `currentColor` when an icon should inherit its surrounding text color. Use CSS custom properties when a graphic exposes several themeable colors.
+- Use `currentColor` and host-supplied CSS custom properties for inline SVGs that should inherit surrounding styles. SVGs loaded through `<img>` or CSS image properties are separate image documents and do not inherit the host page's color, variables, states, or stylesheet. Give those files self-contained colors, provide separate variants, or handle themes inside the SVG document.
 - Put gradients, masks, clip paths, filters, and reusable shapes in `<defs>`. Reference them with `url(#id)` or `<use>`.
 - Make every referenced ID unique in the rendered document. In reusable components, namespace IDs or generate stable per-instance IDs so two copies cannot steal each other's gradient, mask, or clip path.
 - Size filter regions deliberately. Default filter bounds often crop blurs and shadows.
@@ -59,7 +59,7 @@ Add motion only when requested or when it communicates state.
 - Animate transforms and opacity when they can express the effect.
 - Set `transform-origin` explicitly. For element-centered transforms, also set the appropriate `transform-box`, commonly `fill-box`.
 - For draw-on animation, measure the path with `getTotalLength()` or normalize it with `pathLength="1"`, then animate `stroke-dashoffset` against a matching `stroke-dasharray`.
-- Provide a useful static state and disable non-essential motion under `@media (prefers-reduced-motion: reduce)`.
+- Provide a useful static state and honor reduced-motion preferences through the mechanism that drives the animation. Override CSS animation under `@media (prefers-reduced-motion: reduce)`, omit or pause SMIL animation elements, and gate or cancel JavaScript loops with `matchMedia()`.
 
 ## Cleanup and verification
 
