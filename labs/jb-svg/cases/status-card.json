@@ -1,0 +1,8 @@
+{
+  "id": "status-card",
+  "title": "Meaningful status graphic",
+  "prompt": "Create a meaningful inline SVG status graphic for the message Sync complete. Use a 160 by 48 coordinate space with a calm green treatment, a clear check symbol, rounded geometry, and an accessible name. It may be displayed from 120 to 320 CSS pixels wide and must not rely on a surrounding HTML label.",
+  "expect": {
+    "usage": "inline-meaningful"
+  }
+}

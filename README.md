@@ -72,6 +72,10 @@ npx skills add . --list
 npx skills add . --skill jb-beans -a codex -y
 ```
 
+## Skill labs
+
+- [`labs/jb-svg`](labs/jb-svg/) — Test `jb-svg`, compare it blindly against other skills, draft evidence-based improvements, and promote generated examples
+
 ## About
 
 These skills are extracted from JB's personal development environment (`jb-home/src/jb-skills`) and made publicly available for the AI coding community. They represent real workflows used in production projects.

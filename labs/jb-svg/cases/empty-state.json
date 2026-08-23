@@ -1,0 +1,8 @@
+{
+  "id": "empty-state",
+  "title": "Responsive standalone illustration",
+  "prompt": "Create a self-contained standalone SVG illustration for an empty project list. Show an open folder, two loose document sheets, and a small plus badge. Use a restrained blue and warm-gray palette, generous negative space, and a 640 by 360 landscape viewBox. It must render cleanly from 320 to 1280 CSS pixels wide without remote assets or scripts.",
+  "expect": {
+    "usage": "standalone"
+  }
+}

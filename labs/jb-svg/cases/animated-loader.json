@@ -1,0 +1,10 @@
+{
+  "id": "animated-loader",
+  "title": "Reduced-motion loader",
+  "prompt": "Create a decorative inline SVG loader for a cloud upload. Combine a simple cloud outline with a subtle upward progress motion. The normal animation should loop smoothly, while users who prefer reduced motion receive a useful static state. Use a 48 by 48 viewBox, inherit the host color, and avoid JavaScript.",
+  "expect": {
+    "usage": "inline-decorative",
+    "currentColor": true,
+    "reducedMotion": true
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "id": "icon-button",
+  "title": "Decorative download icon",
+  "prompt": "Create a polished 24 by 24 inline SVG download icon for a button that already has the visible label Download. It must remain crisp from 16 to 32 CSS pixels, inherit the button text color, contain no animation, and be decorative to assistive technology.",
+  "expect": {
+    "usage": "inline-decorative",
+    "currentColor": true
+  }
+}
