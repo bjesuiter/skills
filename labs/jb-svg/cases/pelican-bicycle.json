@@ -1,0 +1,8 @@
+{
+  "id": "pelican-bicycle",
+  "title": "Pelican riding a bicycle",
+  "prompt": "Generate an SVG of a pelican riding a bicycle",
+  "expect": {
+    "usage": "standalone"
+  }
+}

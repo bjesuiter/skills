@@ -27,6 +27,8 @@ RUNS_DIR = LAB_DIR / "runs"
 PROPOSALS_DIR = LAB_DIR / "proposals"
 EXAMPLES_DIR = LAB_DIR / "examples"
 DEFAULT_SKILL = REPO_ROOT / "skills" / "jb-svg" / "SKILL.md"
+DEFAULT_MODEL = "gpt-5.6-sol"
+DEFAULT_REASONING_EFFORT = "high"
 
 
 @dataclass(frozen=True)
@@ -131,7 +133,8 @@ def invoke_codex(
     prompt: str,
     schema: Path,
     *,
-    model: str | None,
+    model: str,
+    reasoning_effort: str,
     images: list[Path] | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     codex = shutil.which("codex")
@@ -161,9 +164,11 @@ def invoke_codex(
             str(response_path),
             "--color",
             "never",
+            "--model",
+            model,
+            "--config",
+            f"model_reasoning_effort={json.dumps(reasoning_effort)}",
         ]
-        if model:
-            command.extend(["--model", model])
         for image_path in images or []:
             command.extend(["--image", str(image_path.resolve())])
         command.append("-")
@@ -323,7 +328,10 @@ def render_svg(svg_path: Path, png_path: Path) -> dict[str, Any]:
 
 
 def create_run(
-    candidates: list[Candidate], cases: list[dict[str, Any]], model: str | None
+    candidates: list[Candidate],
+    cases: list[dict[str, Any]],
+    model: str,
+    reasoning_effort: str,
 ) -> Path:
     run_dir = RUNS_DIR / utc_stamp()
     suffix = 1
@@ -335,6 +343,7 @@ def create_run(
         "id": run_dir.name,
         "created_at": dt.datetime.now(dt.UTC).isoformat(),
         "model": model,
+        "reasoning_effort": reasoning_effort,
         "cases": [case["id"] for case in cases],
         "candidates": {},
     }
@@ -365,10 +374,11 @@ def generate_run(
     candidates: list[Candidate],
     cases: list[dict[str, Any]],
     *,
-    model: str | None,
+    model: str,
+    reasoning_effort: str,
     dry_run: bool,
 ) -> Path:
-    run_dir = create_run(candidates, cases, model)
+    run_dir = create_run(candidates, cases, model, reasoning_effort)
     for case in cases:
         for candidate in candidates:
             target = artifact_dir(run_dir, case["id"], candidate.name)
@@ -382,6 +392,7 @@ def generate_run(
                     prompt,
                     SCHEMAS_DIR / "generation.schema.json",
                     model=model,
+                    reasoning_effort=reasoning_effort,
                 )
                 svg_text = response["svg"].strip() + "\n"
                 write_text(target / "output.svg", svg_text)
@@ -486,7 +497,7 @@ def evaluation_prompt(
 """
 
 
-def evaluate_run(run_dir: Path, *, model: str | None) -> None:
+def evaluate_run(run_dir: Path, *, model: str, reasoning_effort: str) -> None:
     manifest = load_json(run_dir / "manifest.json")
     cases_by_id = {case["id"]: case for case in load_cases()}
     rubric = (LAB_DIR / "rubric.md").read_text(encoding="utf-8")
@@ -523,6 +534,7 @@ def evaluate_run(run_dir: Path, *, model: str | None) -> None:
             prompt,
             SCHEMAS_DIR / "evaluation.schema.json",
             model=model,
+            reasoning_effort=reasoning_effort,
             images=usable_images,
         )
         identity = {label: candidate_name for label, candidate_name, _ in labelled}
@@ -567,7 +579,9 @@ def write_summary(run_dir: Path, evaluations: list[dict[str, Any]]) -> None:
     )
 
 
-def improve_candidate(run_dir: Path, candidate_name: str, *, model: str | None) -> Path:
+def improve_candidate(
+    run_dir: Path, candidate_name: str, *, model: str, reasoning_effort: str
+) -> Path:
     manifest = load_json(run_dir / "manifest.json")
     if candidate_name not in manifest["candidates"]:
         raise ValueError(f"Unknown candidate {candidate_name!r}")
@@ -594,6 +608,7 @@ def improve_candidate(run_dir: Path, candidate_name: str, *, model: str | None) 
         prompt,
         SCHEMAS_DIR / "improvement.schema.json",
         model=model,
+        reasoning_effort=reasoning_effort,
     )
     proposal_dir = PROPOSALS_DIR / f"{utc_stamp()}-{slug(candidate_name)}"
     write_text(proposal_dir / "SKILL.md", response["skill_markdown"].strip() + "\n")
@@ -656,6 +671,23 @@ def doctor() -> int:
     return 0 if rows["codex"] and rows["canonical skill"] and rows["cases"] else 1
 
 
+def add_model_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--model",
+        default=DEFAULT_MODEL,
+        help=f"Codex model to record and use; default: {DEFAULT_MODEL}",
+    )
+    parser.add_argument(
+        "--reasoning-effort",
+        default=DEFAULT_REASONING_EFFORT,
+        metavar="LEVEL",
+        help=(
+            "Codex model reasoning effort to record and use; "
+            f"default: {DEFAULT_REASONING_EFFORT}"
+        ),
+    )
+
+
 def add_common_run_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--candidate", action="append", help="NAME=PATH or NAME=none; repeatable"
@@ -666,7 +698,7 @@ def add_common_run_arguments(parser: argparse.ArgumentParser) -> None:
         metavar="CASE_ID",
         help="Case id from cases/*.json, or all; repeatable",
     )
-    parser.add_argument("--model", help="Codex model override")
+    add_model_arguments(parser)
     parser.add_argument(
         "--dry-run", action="store_true", help="Write prompts without model calls"
     )
@@ -693,14 +725,14 @@ def main() -> int:
         "evaluate", help="Evaluate an existing multi-candidate run"
     )
     evaluate_parser.add_argument("run", type=Path)
-    evaluate_parser.add_argument("--model")
+    add_model_arguments(evaluate_parser)
 
     improve_parser = subparsers.add_parser(
         "improve", help="Draft a revised skill from run evidence"
     )
     improve_parser.add_argument("run", type=Path)
     improve_parser.add_argument("--candidate", default="jb-svg")
-    improve_parser.add_argument("--model")
+    add_model_arguments(improve_parser)
 
     promote_parser = subparsers.add_parser(
         "promote", help="Copy selected run outputs into examples"
@@ -732,18 +764,35 @@ def main() -> int:
             candidates = resolve_candidates(args.candidate, is_battle)
             cases = load_cases(args.case)
             run_dir = generate_run(
-                candidates, cases, model=args.model, dry_run=args.dry_run
+                candidates,
+                cases,
+                model=args.model,
+                reasoning_effort=args.reasoning_effort,
+                dry_run=args.dry_run,
             )
             if is_battle and not args.dry_run:
-                evaluate_run(run_dir, model=args.model)
+                evaluate_run(
+                    run_dir,
+                    model=args.model,
+                    reasoning_effort=args.reasoning_effort,
+                )
             print(run_dir)
             return 0
         if args.command == "evaluate":
-            evaluate_run(args.run.resolve(), model=args.model)
+            evaluate_run(
+                args.run.resolve(),
+                model=args.model,
+                reasoning_effort=args.reasoning_effort,
+            )
             return 0
         if args.command == "improve":
             print(
-                improve_candidate(args.run.resolve(), args.candidate, model=args.model)
+                improve_candidate(
+                    args.run.resolve(),
+                    args.candidate,
+                    model=args.model,
+                    reasoning_effort=args.reasoning_effort,
+                )
             )
             return 0
         if args.command == "promote":

@@ -1,3 +1,4 @@
+import io
 import importlib.util
 import sys
 import tempfile
@@ -14,6 +15,23 @@ SPEC.loader.exec_module(lab)
 
 
 class LabTests(unittest.TestCase):
+    def test_model_settings_default_to_sol_high(self):
+        with tempfile.TemporaryDirectory() as raw_temp:
+            runs = Path(raw_temp) / "runs"
+            with (
+                mock.patch.object(lab, "RUNS_DIR", runs),
+                mock.patch.object(
+                    sys,
+                    "argv",
+                    ["lab.py", "test", "--case", "icon-button", "--dry-run"],
+                ),
+                mock.patch("sys.stdout", new_callable=io.StringIO),
+            ):
+                self.assertEqual(lab.main(), 0)
+            manifest = lab.load_json(next(runs.iterdir()) / "manifest.json")
+            self.assertEqual(manifest["model"], "gpt-5.6-sol")
+            self.assertEqual(manifest["reasoning_effort"], "high")
+
     def test_cases_are_valid(self):
         cases = lab.load_cases()
         self.assertEqual(
@@ -22,6 +40,7 @@ class LabTests(unittest.TestCase):
                 "animated-loader",
                 "empty-state",
                 "icon-button",
+                "pelican-bicycle",
                 "status-card",
             },
         )
@@ -87,7 +106,12 @@ class LabTests(unittest.TestCase):
                 with mock.patch.object(
                     lab, "invoke_codex", return_value=(response, {"exit_code": 0})
                 ):
-                    proposal = lab.improve_candidate(run_dir, "jb-svg", model=None)
+                    proposal = lab.improve_candidate(
+                        run_dir,
+                        "jb-svg",
+                        model="gpt-5.6-sol",
+                        reasoning_effort="medium",
+                    )
             finally:
                 lab.PROPOSALS_DIR = old_proposals
             self.assertTrue((proposal / "SKILL.md").is_file())

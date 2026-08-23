@@ -57,16 +57,18 @@ Promoted SVGs and a gallery land in `examples/`. These files are intentionally t
 uv run lab.py battle --dry-run
 
 # Pin the same model for generation and judging
-uv run lab.py battle --model gpt-5.6-sol
+uv run lab.py battle --model gpt-5.6-sol --reasoning-effort high
 
 # Re-run the blinded judge for an existing run
-uv run lab.py evaluate runs/<id> --model gpt-5.6-sol
+uv run lab.py evaluate runs/<id> --model gpt-5.6-sol --reasoning-effort high
 
 # Check standalone SVG files without a model
 uv run lab.py check path/to/example.svg
 ```
 
 `battle` uses the same model for every candidate. Candidate names are hidden from the evaluator, and rendered previews are attached in randomized order. The evaluator is still subjective. Treat the gallery, deterministic checks, and score report as separate evidence.
+
+`test`, `battle`, `evaluate`, and `improve` default to `gpt-5.6-sol` with `high` reasoning effort. Use `--model` and `--reasoning-effort` to override either value. New runs record both settings in `manifest.json`.
 
 ## Add a case
 
