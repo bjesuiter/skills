@@ -13,7 +13,7 @@ cd labs/jb-svg
 uv run lab.py doctor
 uv run lab.py list
 
-# Test the canonical skill on one case, without an evaluator
+# Test the canonical skill using a case id from cases/*.json
 uv run lab.py test --case icon-button
 
 # Compare jb-svg against a no-skill baseline on every case
@@ -26,6 +26,8 @@ uv run lab.py battle \
 ```
 
 Every run prints its directory. Open `runs/<id>/gallery.html` for the visual comparison and `runs/<id>/summary.md` for the evaluator result.
+
+`--case` accepts a case `id`, not a free-form prompt. Run `uv run lab.py list` to see the available ids, or add a JSON case as described below.
 
 ## Improve the skill
 

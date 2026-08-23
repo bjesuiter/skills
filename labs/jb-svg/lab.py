@@ -660,7 +660,12 @@ def add_common_run_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--candidate", action="append", help="NAME=PATH or NAME=none; repeatable"
     )
-    parser.add_argument("--case", action="append", help="Case id or all; repeatable")
+    parser.add_argument(
+        "--case",
+        action="append",
+        metavar="CASE_ID",
+        help="Case id from cases/*.json, or all; repeatable",
+    )
     parser.add_argument("--model", help="Codex model override")
     parser.add_argument(
         "--dry-run", action="store_true", help="Write prompts without model calls"
@@ -702,7 +707,12 @@ def main() -> int:
     )
     promote_parser.add_argument("run", type=Path)
     promote_parser.add_argument("--candidate", required=True)
-    promote_parser.add_argument("--case", action="append")
+    promote_parser.add_argument(
+        "--case",
+        action="append",
+        metavar="CASE_ID",
+        help="Case id from the run, or all; repeatable",
+    )
 
     check_parser = subparsers.add_parser(
         "check", help="Run structural checks on SVG files"
