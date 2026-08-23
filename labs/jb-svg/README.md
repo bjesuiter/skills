@@ -76,3 +76,7 @@ Add one JSON file under `cases/` with these fields:
 - `expect`: deterministic expectations such as `usage`, `currentColor`, or `reducedMotion`
 
 Keep cases independent of `jb-svg` wording. A case should describe the desired artifact and its host context, not the implementation you expect.
+
+## Research backlog
+
+[Competitor research intake](docs/competitor-research.md) records the current candidate skills, unverified claims, safety concerns, and the steps for turning that research into a fair future benchmark.
