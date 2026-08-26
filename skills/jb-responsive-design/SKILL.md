@@ -1,7 +1,6 @@
 ---
 name: jb-responsive-design
 description: Audit and fix responsive web UI across mobile and desktop with parallel browser evidence, GitHub issues, reviewed PRs, and an integration branch.
-skill_author: bjesuiter@gmail.com
 ---
 
 # JB responsive design
