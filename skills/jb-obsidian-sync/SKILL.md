@@ -17,7 +17,7 @@ ob --version
 ob --help
 ```
 
-The verified installation is `/home/igris/.bun/bin/ob`; its resolved package entrypoint is `obsidian-headless/cli.js`. Recheck `command -v ob`, the version, and relevant `--help` output before relying on syntax after upgrades.
+Resolve the executable with `command -v ob`; do not encode a user-specific installation path. Recheck the version and relevant `--help` output before relying on syntax after upgrades.
 
 Do not use an Obsidian CLI whose purpose is merely to remote-control Obsidian Desktop. Obsidian Desktop is not required.
 
@@ -88,25 +88,27 @@ When JB asks to clone, connect, or set up a remote vault:
 2. List remote vaults with `ob sync-list-remote`.
 3. Resolve an explicit absolute target path supplied by JB or agreed for the setup.
 4. Create that exact directory only when the requested setup requires it.
-5. Connect it interactively:
+5. Use the machine hostname as the device name, which identifies this client in Obsidian Sync's version history.
+6. Connect it interactively:
 
 ```bash
+DEVICE_NAME="$(hostname)"
 ob sync-setup \
   --vault "$REMOTE_VAULT_ID" \
   --path "$VAULT_PATH" \
-  --device-name "Igris bj01-srv02"
+  --device-name "$DEVICE_NAME"
 ```
 
-6. Omit `--password`; allow `ob` to prompt for the E2E vault password.
-7. Verify configuration with `ob sync-status --path "$VAULT_PATH"`.
-8. Record the canonical name, remote ID, and absolute local path in `TOOLS.md`.
-9. Run the initial one-time synchronization:
+7. Omit `--password`; allow `ob` to prompt for the E2E vault password.
+8. Verify configuration with `ob sync-status --path "$VAULT_PATH"`.
+9. Record the canonical name, remote ID, and absolute local path in `TOOLS.md`.
+10. Run the initial one-time synchronization:
 
 ```bash
 ob sync --path "$VAULT_PATH"
 ```
 
-10. Verify the checkout contents.
+11. Verify the checkout contents.
 
 ## Safe editing and synchronization workflow
 
