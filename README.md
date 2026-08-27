@@ -17,7 +17,7 @@ npx skills add bjesuiter/skills --skill jb-beans -a codex -y
 npx skills add bjesuiter/skills --all
 ```
 
-## Included Skills (25)
+## Included Skills (26)
 
 ### Core Development Workflows
 - `jb-beansloop` — Automated workflow using beans issue tracker
@@ -34,6 +34,7 @@ npx skills add bjesuiter/skills --all
 ### Browser & Web Testing
 - `jb-browser-testing` — Browser testing workflows and patterns
 - `jb-chrome-mcp` — Chrome DevTools MCP via `mcporter` for existing Chrome tabs
+- `jb-responsive-design` — Responsive UI audits and issue-scoped fixes with browser evidence and reviewed integration PRs
 
 ### Deprecated Skills (not installed)
 
