@@ -60,6 +60,12 @@ Ask: **Picture owning this for three months: what recurring benefit will it crea
 
 Use when long-term ownership and friction matter more than the initial excitement.
 
+### 8. Waiting Test
+
+Ask: **Can you leave this for one to two weeks? If you still want or need it then, should we continue checking it or buy it deliberately? If the urge fades, do not buy it.**
+
+Use when there is no genuine deadline and a cooling-off period is feasible. Do not use it for urgent replacements, time-critical essentials, or genuinely limited opportunities that JB has independently verified.
+
 ## Output Format
 
 ```md
