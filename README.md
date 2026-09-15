@@ -17,9 +17,10 @@ npx skills add bjesuiter/skills --skill jb-beans -a codex -y
 npx skills add bjesuiter/skills --all
 ```
 
-## Included Skills (25)
+## Included Skills (26)
 
 ### Core Development Workflows
+- `jb-decision-judge` — Proportionate adversarial decision review: steelman options, pressure-test a leaning, or check a chosen direction
 - `jb-beansloop` — Automated workflow using beans issue tracker
 - `jb-committer` — Git commit grouping and commit message drafting
 - `jb-local-release` — Local release workflow; prepares version/changelog/checks/commit/tag and defers to repo-specific instructions
