@@ -19,3 +19,41 @@ skill_author: bjesuiter@gmail.com
 4. Deliver a bounded verdict: recommended option, concise rationale, confidence (low/medium/high), the one fact most likely to change the verdict, and the next evidence-gathering or execution step. For irreversible, high-cost, health, legal, financial, or relationship decisions, identify the appropriate human or primary-source verification rather than pretending the analysis is final authority. **Done when:** JB can act, defer deliberately, or gather one concrete missing fact.
 
 5. Keep the analysis proportionate. Skip this workflow for trivial or low-stakes choices, and stop once the decision has enough evidence for its stakes; do not create false complexity or reopen a settled decision without a material reason. **Done when:** the output is no more elaborate than the decision warrants.
+
+6. Match the user's language. When JB uses German, write the analysis and headings in German; when he uses English, use English. Keep the structure rather than forcing English labels. **Done when:** the response is naturally readable in JB's chosen language.
+
+## Output Format
+
+Use this compact format, omitting sections that do not apply to the selected mode:
+
+```md
+## Decision Judge — [Both Sides | Argue Against Me | Make My Case]
+
+**Decision:** [one-sentence choice]
+**What matters:** [goal, constraint, reversibility]
+
+### Case for [Option A]
+- Strongest case:
+- Weakest point:
+
+### Case for [Option B / alternative]
+- Strongest case:
+- Weakest point:
+
+## Verdict
+**Choose:** [option]
+**Why:** [2–4 sentences]
+**Confidence:** [low | medium | high]
+**Would change my mind:** [single decisive fact]
+**Next move:** [one concrete action]
+```
+
+For **Make My Case**, replace the second case with:
+
+```md
+### Biggest risk / blind spot
+- [risk]
+- Guardrail: [what prevents or detects it]
+```
+
+Use equivalent German labels when responding in German, such as `Entscheidung`, `Was zählt`, `Urteil`, `Sicherheit`, and `Nächster Schritt`.
