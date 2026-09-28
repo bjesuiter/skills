@@ -17,13 +17,14 @@ npx skills add bjesuiter/skills --skill jb-beans -a codex -y
 npx skills add bjesuiter/skills --all
 ```
 
-## Included Skills (28)
+## Included Skills (29)
 
 ### Core Development Workflows
 - `jb-buying-judge` — One-at-a-time randomized anti-impulse-buying checks that distinguish a real need from a deliberate want
 - `jb-decision-judge` — Proportionate adversarial decision review: steelman options, pressure-test a leaning, or check a chosen direction
 - `jb-beansloop` — Automated workflow using beans issue tracker
 - `jb-committer` — Git commit grouping and commit message drafting
+- `jb-git-sync` — Request-only sync of configured Git repos, starting with `~/jb-home`
 - `jb-local-release` — Local release workflow; prepares version/changelog/checks/commit/tag and defers to repo-specific instructions
 - `jb-gh-release-with-attempts` — GitHub Actions release workflow using disposable release-attempt tags before canonical version tags
 - `jb-beans` — Flat-file issue tracker stored in `.beans/` directory
