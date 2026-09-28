@@ -50,7 +50,7 @@ npx skills add bjesuiter/skills --all
 - `jb-obsidian-sync` — Clone and synchronize Obsidian Sync vaults for direct Markdown access without Obsidian Desktop
 
 ### Development Tools
-- `jb-dev-env` — Secure dev environment setup with Varlock schemas, macOS Keychain secrets, and optional SOPS/age GitOps secrets
+- `jb-dev-env` — Secure dev environments with Varlock profiles and SOPS secrets decrypted through Bitwarden's SSH agent
 - `mcporter` — MCP server/tool management CLI
 - `jb-bgproc` — Background process management via `bgproc`
 - `jb-tuna-script` — Create executable scripts for the Tuna macOS launcher

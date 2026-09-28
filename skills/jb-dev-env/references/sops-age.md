@@ -1,60 +1,31 @@
-# SOPS/age backend
+# SOPS/age with a Bitwarden SSH-agent identity
 
-Use this reference only when encrypted secrets must live in git or when reviewing an existing SOPS/age setup.
+This is JB's default encrypted storage workflow on an **interactive desktop**. Varlock owns schema, profiles, validation, redaction, and process loading. SOPS holds committed ciphertext. `age-plugin-sshagent` asks Bitwarden's SSH agent to use JB's Ed25519 key. The local plugin identity contains a key selector and derivation salt, not a private key. Approval through Bitwarden is currently unavailable on JB's VMs.
 
-## Decision rule
+## Recipient and desktop bootstrap
 
-Varlock handles schema, validation, loading, redaction, and local/provider resolution. SOPS/age handles shared encrypted files committed to git.
+1. Install `sops`, `age`, Go, and `age-plugin-sshagent`; put the Go binary directory on `PATH`. On macOS, `brew install sops age` and `go install github.com/eszio/age-plugin-sshagent@v0.1.1` match the working Ornn Forge setup.
+2. Unlock Bitwarden's SSH agent and ensure `SSH_AUTH_SOCK` reaches it. Use `age-plugin-sshagent list` to find the intended Ed25519 key fingerprint.
+3. Create a local plugin identity, for example:
 
-Do not add SOPS/age just because a project has secrets. Add it only when the encrypted secret blob itself belongs in the repo, usually for multi-recipient GitOps or shared operational config.
-
-## Recipient modes
-
-- Native age: `.sops.yaml` uses `age1...`; decrypt via `SOPS_AGE_KEY_FILE` / `SOPS_AGE_KEY`.
-- Raw SSH recipient: `.sops.yaml` uses `ssh-ed25519 ...`; decrypt via SSH private key file / `SOPS_AGE_SSH_PRIVATE_KEY_FILE` / `SOPS_AGE_SSH_PRIVATE_KEY_CMD`, not `ssh-agent`.
-- SSH-agent plugin: `.sops.yaml` uses plugin-derived `age1...`; decrypt via `age-plugin-sshagent`, local plugin identity file, `SSH_AUTH_SOCK`, and an `ssh-ed25519` key loaded in the agent.
-
-If the user wants Bitwarden/1Password SSH-agent-backed SOPS, prefer `age-plugin-sshagent`; do not use raw `ssh-ed25519 ...` recipients for that flow.
-
-## Re-key
-
-When recipients change:
-
-```fish
-sops updatekeys path/to/secrets.enc.yaml
+```sh
+age-plugin-sshagent keygen -k '<Bitwarden key fingerprint>' -o "$HOME/Library/Application Support/sops/age/keys.txt"
+chmod 600 "$HOME/Library/Application Support/sops/age/keys.txt"
 ```
 
-Verify without printing secrets:
+4. Use `age-plugin-sshagent recipient -i "$HOME/Library/Application Support/sops/age/keys.txt"` to get the recipient. Put that plugin-derived `age1...` recipient in `.sops.yaml` under the relevant `creation_rules`; commit the configuration and encrypted files. When using a non-default identity path, set `SOPS_AGE_KEY_FILE` to it. SOPS can read the default identity path shown above on macOS.
+5. Verify `sops decrypt <ciphertext> >/dev/null`, then load each affected Varlock profile with output redirected to `/dev/null`. Bitwarden may ask for approval.
 
-```fish
-sops --decrypt path/to/secrets.enc.yaml >/dev/null
-```
+Keep the identity file local even though it has no private key. Do not forward this SSH agent to untrusted hosts: a process that can request its signature may decrypt the ciphertext.
 
-## SSH / vault caveat
+## No plaintext file workflow
 
-Do not assume stock `age` can decrypt through `SSH_AUTH_SOCK` or Bitwarden's SSH agent. Verify the installed SOPS/age/plugin path with a local encrypt/decrypt smoke test.
+Use a committed `.env.<profile>` file with `exec(...)` references to individual ciphertext values. A project helper can map allowed keys to `secrets/<profile>.env` and call `sops decrypt --extract '["KEY"]' <ciphertext>`. Varlock receives the value through the process pipe. Avoid whole-file decrypts to a path, `sops edit` with an editor that writes plaintext swap/backup files, and plaintext `.env` staging files.
 
-`age-plugin-sshagent` supports `ssh-ed25519` only. Its identity file is not secret, but keep it local by default. Anyone able to talk to the SSH agent can request the needed signature, so avoid agent forwarding to untrusted hosts.
+For updates, send the value from a secure source to `sops set --value-stdin <ciphertext> '["KEY"]'`. `--value-stdin` avoids secret values in process arguments. Keep values out of shell history, logs, and terminal output. For a new ciphertext file, create a secret-free skeleton under the matching `.sops.yaml` creation rule, encrypt it, then add values through `sops set --value-stdin`. Verify decrypt and Varlock load with stdout redirected.
 
-If verified, vault-gated local keys are highly recommended because they avoid loose plaintext key files and can make unexpected decrypt attempts visible.
+When recipients change, run `sops updatekeys <ciphertext>` for each affected file, then verify decryption. Adding a recipient for CI or a VM requires a separate authorization and a separately provisioned identity; the desktop SSH-agent identity is not an unattended credential.
 
-## New-machine restore for age-plugin-sshagent
+## Other recipient modes
 
-1. Install `sops`, `age`, Go, and `age-plugin-sshagent`.
-2. Put Go bin on `PATH`.
-3. Unlock/load the SSH-agent key.
-4. Run:
-
-```fish
-age-plugin-sshagent list
-age-plugin-sshagent keygen -k "<selector>" -o ~/.config/sops/age/<project>-sshagent.txt
-age-plugin-sshagent recipient -i ~/.config/sops/age/<project>-sshagent.txt
-```
-
-5. Set `SOPS_AGE_KEY_FILE` to that identity file.
-6. Verify:
-
-```fish
-sops --decrypt <file> >/dev/null
-varlock load >/dev/null
-```
+Native age uses an `age1...` recipient with `SOPS_AGE_KEY_FILE` or `SOPS_AGE_KEY`. A raw `ssh-ed25519 ...` recipient uses an SSH private key file or `SOPS_AGE_SSH_PRIVATE_KEY_FILE` / `SOPS_AGE_SSH_PRIVATE_KEY_CMD`; it does not use `SSH_AUTH_SOCK`. For Bitwarden or another vault SSH agent, use `age-plugin-sshagent` and its plugin-derived recipient. The plugin supports Ed25519 keys only. Verify the full SOPS/plugin/agent path locally before relying on it.
