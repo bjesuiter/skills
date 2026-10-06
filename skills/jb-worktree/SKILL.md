@@ -1,16 +1,34 @@
 ---
 name: jb-worktree
-description: Use when creating, switching, bootstrapping, or cleaning Git worktrees with wtp.
-homepage: https://github.com/satococoa/wtp
-metadata: {"clawdbot":{"emoji":"🌳","requires":{"bins":["wtp"]},"install":[{"id":"brew","kind":"brew","formula":"satococoa/tap/wtp","bins":["wtp"],"label":"Install wtp (brew)"}]}}
-skill_author: bjesuiter
+description: Use when creating, switching, bootstrapping, or cleaning Git worktrees, including T3 Code worktrees.
+metadata:
+  homepage: https://github.com/satococoa/wtp
+  skill_author: bjesuiter
+  clawdbot:
+    emoji: "🌳"
+    requires:
+      bins: [wtp]
+    install:
+      - id: brew
+        kind: brew
+        formula: satococoa/tap/wtp
+        bins: [wtp]
+        label: Install wtp (brew)
 ---
 
 # wtp Git Worktrees
 
 Based on satococoa's `wtp` workflow: https://dev.to/satococoa/wtp-a-better-git-worktree-cli-tool-4i8l
 
-Use `wtp` instead of raw `git worktree` when you want predictable paths, easier branch handling, setup hooks, and fast navigation.
+Use `wtp` for worktrees it manages. For T3 Code worktrees, use the app's workspace tools for creation and the completion workflow below for cleanup.
+
+## Worktree ownership
+
+Before creating or finishing a worktree, inspect `git worktree list --porcelain` and the current app's workspace binding. Use `wtp list` to distinguish managed worktrees from external ones; a path under `~/.t3/worktrees/` is also a T3 hint.
+
+- **wtp-managed:** follow the wtp workflow below.
+- **T3-created or otherwise unmanaged:** remove directly with Git after the completion checks. Skip `wtp remove`, which cannot manage these worktrees.
+- **New T3 workspace:** use the exposed app orchestration tools to bind the thread to its workspace. Creating a directory with `wtp` or Git, or changing the shell directory, does not update T3's thread binding. Use a handoff for the current thread and an explicitly bound launch when the user requests a separate thread.
 
 ## Why use it
 
@@ -67,7 +85,7 @@ wtp remove --with-branch feature/auth
 
 ## Agent workflow
 
-When the user asks to work in a separate branch or isolated checkout:
+For wtp-managed worktrees, when the user asks to work in a separate branch or isolated checkout:
 
 1. Check whether the repo already has `.wtp.yml`; if not, prefer `wtp init`
 2. Before creating or editing hooks, choose the install command with the package-manager policy below
@@ -76,7 +94,7 @@ When the user asks to work in a separate branch or isolated checkout:
 5. Run commands inside it with either:
    - `cd "$(wtp cd <name>)" && ...`
    - `wtp exec <name> -- <command>`
-6. When the work is done and merged, clean up with `wtp remove --with-branch <name>`
+6. When the work is done and merged, follow the completion workflow below.
 
 Prefer:
 - `wtp add -b <branch>` for new work
@@ -84,6 +102,18 @@ Prefer:
 - `wtp exec <name> -- <command>` for one-off commands
 
 Avoid force removal of dirty worktrees unless the user explicitly asks.
+
+## Finish a worktree
+
+1. Inspect the target's Git status and branch. Preserve pending changes and any local files that still need to be kept. Finish only after the requested merge and push are verified; for a merge into `main`, check that the feature tip is contained in `main` and that the resulting commits are on the intended remote. A squash or cherry-pick requires checking the equivalent changes instead of ancestry.
+2. Stop only the dev servers and background processes associated with this worktree.
+3. Run removal from a surviving checkout, such as the main checkout listed by `git worktree list --porcelain`. Keep subsequent commands' working directory outside the target.
+4. Choose removal by ownership:
+   - wtp-managed: `wtp remove --with-branch <name>`, using the name or relative path reported by wtp.
+   - T3-created or otherwise unmanaged: `git worktree remove <absolute-path>`, then `git branch -d <branch>` once its merge is verified. If deletion refuses because the branch is checked out elsewhere or its merge cannot be established, retain it and report why.
+5. Verify the target is absent from `git worktree list` and report the merge, push, and cleanup result. Delete a remote branch only when requested or required by the repository's workflow.
+
+For T3, a shell-directory change leaves the thread bound to the removed workspace. Complete cleanup as the final workspace operation and tell the user which worktree was removed; new work needs a valid app workspace binding.
 
 ## `wtp init`
 
