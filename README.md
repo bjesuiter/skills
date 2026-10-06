@@ -39,6 +39,10 @@ npx skills add bjesuiter/skills --all
 - `jb-browser-testing` — Browser testing workflows and patterns
 - `jb-chrome-mcp` — Chrome DevTools MCP via `mcporter` for existing Chrome tabs
 
+### Experimental (not discovered or installable)
+
+- [`experimental/jb-determinism`](experimental/jb-determinism/) — An experiment for turning repeated mechanical agent work into deterministic commands, schemas, tests, or helpers. It is deliberately outside `skills/`; `npx skills add . --list` continues to discover the 29 included skills only.
+
 ### Deprecated Skills (not installed)
 
 [`deprecated-skills/`](deprecated-skills/) retains retired skills for reference. These are outside `skills/`, so `npx skills add … --all` does not discover or install them. `jb-pinchtab-testing` and `jb-tdd` have been superseded; see the [deprecation notes](deprecated-skills/README.md).
