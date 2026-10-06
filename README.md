@@ -53,7 +53,7 @@ npx skills add bjesuiter/skills --all
 ### Development Tools
 - `jb-dev-env` — Secure dev environments with Varlock profiles and SOPS secrets decrypted through Bitwarden's SSH agent
 - `mcporter` — MCP server/tool management CLI
-- `jb-bgproc` — Background process management via `bgproc`
+- `jb-bgproc` — Consolidated background-process workflow, validated against `bgproc` 0.3.0; replaces the separate official `bgproc` skill
 - `jb-tuna-script` — Create executable scripts for the Tuna macOS launcher
 - `jb-worktree` — Git worktree management via `wtp`
 
