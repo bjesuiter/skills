@@ -5,8 +5,10 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import functools
 import hashlib
 import html
+import http.server
 import json
 import random
 import re
@@ -14,6 +16,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from pathlib import Path
@@ -26,7 +29,7 @@ SCHEMAS_DIR = LAB_DIR / "schemas"
 RUNS_DIR = LAB_DIR / "runs"
 PROPOSALS_DIR = LAB_DIR / "proposals"
 EXAMPLES_DIR = LAB_DIR / "examples"
-DEFAULT_SKILL = REPO_ROOT / "skills" / "jb-svg" / "SKILL.md"
+DEFAULT_SKILL = REPO_ROOT / "deprecated-skills" / "jb-svg" / "SKILL.md"
 DEFAULT_MODEL = "gpt-5.6-sol"
 DEFAULT_REASONING_EFFORT = "high"
 
@@ -467,6 +470,77 @@ def build_gallery(run_dir: Path) -> Path:
     return gallery_path
 
 
+def open_gallery(run_dir: Path) -> int | None:
+    gallery = (run_dir / "gallery.html").resolve()
+    glimpse = shutil.which("glimpse")
+    if not glimpse:
+        print(f"gallery: glimpse is not installed; open {gallery}", file=sys.stderr)
+        return None
+    with (run_dir / "glimpse.log").open("w", encoding="utf-8") as log:
+        process = subprocess.Popen(
+            [
+                sys.executable,
+                str(Path(__file__).resolve()),
+                "gallery",
+                str(run_dir.resolve()),
+            ],
+            stdout=log,
+            stderr=subprocess.STDOUT,
+            start_new_session=True,
+        )
+    print(f"gallery: opened with Glimpse (pid {process.pid})", file=sys.stderr)
+    return process.pid
+
+
+class QuietRequestHandler(http.server.SimpleHTTPRequestHandler):
+    def log_message(self, format: str, *args: Any) -> None:
+        pass
+
+
+def run_gallery_session(run_dir: Path) -> int:
+    gallery = (run_dir / "gallery.html").resolve()
+    if not gallery.is_file():
+        raise ValueError(f"Run has no gallery: {gallery}")
+    glimpse = shutil.which("glimpse")
+    if not glimpse:
+        raise RuntimeError("glimpse is not installed")
+    handler = functools.partial(QuietRequestHandler, directory=str(run_dir.resolve()))
+    with http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler) as server:
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            port = server.server_address[1]
+            base_url = f"http://127.0.0.1:{port}/"
+            document = gallery.read_text(encoding="utf-8")
+            html_tag = re.search(r"<html\b[^>]*>", document, re.IGNORECASE)
+            base = f'\n<base href="{base_url}">'
+            if html_tag:
+                document = document[: html_tag.end()] + base + document[html_tag.end() :]
+            else:
+                document = base.lstrip() + "\n" + document
+            completed = subprocess.run(
+                [
+                    glimpse,
+                    "prompt",
+                    "--title",
+                    f"JB SVG battle {run_dir.name}",
+                    "--width",
+                    "1280",
+                    "--height",
+                    "800",
+                    "--allow-remote-resources",
+                    "-",
+                ],
+                input=document,
+                text=True,
+                check=False,
+            )
+            return completed.returncode
+        finally:
+            server.shutdown()
+            thread.join()
+
+
 def evaluation_prompt(
     case: dict[str, Any],
     labelled: list[tuple[str, str, Path]],
@@ -662,13 +736,14 @@ def build_examples_gallery() -> Path:
 def doctor() -> int:
     rows = {
         "codex": shutil.which("codex"),
+        "glimpse": shutil.which("glimpse"),
         "magick": shutil.which("magick"),
-        "canonical skill": str(DEFAULT_SKILL) if DEFAULT_SKILL.is_file() else None,
+        "archived skill": str(DEFAULT_SKILL) if DEFAULT_SKILL.is_file() else None,
         "cases": len(load_cases()),
     }
     for name, value in rows.items():
         print(f"{name}: {value or 'missing'}")
-    return 0 if rows["codex"] and rows["canonical skill"] and rows["cases"] else 1
+    return 0 if rows["codex"] and rows["archived skill"] and rows["cases"] else 1
 
 
 def add_model_arguments(parser: argparse.ArgumentParser) -> None:
@@ -720,6 +795,11 @@ def main() -> int:
         "battle", help="Run and blindly compare at least two skills"
     )
     add_common_run_arguments(battle_parser)
+    battle_parser.add_argument(
+        "--no-gallery",
+        action="store_true",
+        help="Do not open the finished gallery with Glimpse",
+    )
 
     evaluate_parser = subparsers.add_parser(
         "evaluate", help="Evaluate an existing multi-candidate run"
@@ -745,6 +825,11 @@ def main() -> int:
         metavar="CASE_ID",
         help="Case id from the run, or all; repeatable",
     )
+
+    gallery_parser = subparsers.add_parser(
+        "gallery", help="Open a run gallery in a one-shot Glimpse window"
+    )
+    gallery_parser.add_argument("run", type=Path)
 
     check_parser = subparsers.add_parser(
         "check", help="Run structural checks on SVG files"
@@ -776,6 +861,8 @@ def main() -> int:
                     model=args.model,
                     reasoning_effort=args.reasoning_effort,
                 )
+                if not args.no_gallery:
+                    open_gallery(run_dir)
             print(run_dir)
             return 0
         if args.command == "evaluate":
@@ -801,6 +888,8 @@ def main() -> int:
             ):
                 print(promoted)
             return 0
+        if args.command == "gallery":
+            return run_gallery_session(args.run.resolve())
         if args.command == "check":
             failed = False
             for svg_path in args.svg:

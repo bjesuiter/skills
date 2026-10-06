@@ -1,0 +1,75 @@
+{
+  "aggregate": [
+    {
+      "candidate": "jb-svg",
+      "average": 94.0,
+      "cases": 1
+    },
+    {
+      "candidate": "baseline",
+      "average": 93.0,
+      "cases": 1
+    }
+  ],
+  "evaluations": [
+    {
+      "verdict": "A wins narrowly through stronger visual polish, clearer action, and safer integration identifiers. Both are high-quality, fully recognizable SVGs.",
+      "ranking": [
+        "A",
+        "B"
+      ],
+      "scores": [
+        {
+          "label": "A",
+          "brief_compliance": 20,
+          "visual_craft": 23,
+          "geometry_scaling": 15,
+          "accessibility_integration": 13,
+          "maintainability": 13,
+          "safety_robustness": 10,
+          "total": 94,
+          "strengths": [
+            "Clear pelican-on-bicycle narrative with convincing wing, feet, pedals, and handlebar contact.",
+            "Balanced composition, cohesive palette, and refined layered strokes.",
+            "Prefixed IDs, resolved references, accessible title/description, and self-contained markup."
+          ],
+          "weaknesses": [
+            "Fixed width and height reduce host-layout flexibility.",
+            "Repeated stroke-built anatomy and limited reusable classes make editing somewhat laborious."
+          ],
+          "candidate": "jb-svg"
+        },
+        {
+          "label": "B",
+          "brief_compliance": 20,
+          "visual_craft": 22,
+          "geometry_scaling": 15,
+          "accessibility_integration": 14,
+          "maintainability": 14,
+          "safety_robustness": 8,
+          "total": 93,
+          "strengths": [
+            "Immediately recognizable subject with strong silhouette and lively coastal setting.",
+            "Responsive viewBox-only root and useful shared stroke classes.",
+            "Well-organized groups, reusable definitions, and complete accessible labeling."
+          ],
+          "weaknesses": [
+            "Leg, crank, and frame intersections are visually awkward and weaken the riding pose.",
+            "Generic IDs such as title, desc, sky, and shadow risk collisions when embedded repeatedly.",
+            "Blurred ground shadow and several heavy outlines feel less controlled than A."
+          ],
+          "candidate": "baseline"
+        }
+      ],
+      "identity": {
+        "A": "jb-svg",
+        "B": "baseline"
+      },
+      "case": "pelican-bicycle",
+      "ranking_candidates": [
+        "jb-svg",
+        "baseline"
+      ]
+    }
+  ]
+}

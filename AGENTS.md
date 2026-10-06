@@ -6,6 +6,10 @@
 - `deprecated-skills/` is historical reference only and must not be made discoverable.
 - `.agents/skills/` is local agent state, never a canonical source.
 
+## SVG work
+
+Use plain SVG until a concrete roadblock warrants a minimal custom skill. See [the accepted decision](docs/adr/0001-use-plain-svg-until-a-roadblock.md) before adding or reactivating SVG-specific guidance.
+
 ## Skill conventions
 
 - Use kebab-case names; prefer the `jb-` prefix for JB workflow skills.

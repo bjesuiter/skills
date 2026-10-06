@@ -1,0 +1,21 @@
+{
+  "id": "20260823-145049",
+  "created_at": "2026-08-23T14:50:49.725729+00:00",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "high",
+  "cases": [
+    "pelican-bicycle"
+  ],
+  "candidates": {
+    "jb-svg": {
+      "source": "/Users/bjesuiter/Develop/bjesuiter/skills/skills/jb-svg/SKILL.md",
+      "snapshot": "candidates/jb-svg/instructions.md",
+      "sha256": "9ea7473f0ba7937cbda95fdd7e54485e57fea8a07e5fbc5646ca862889a03d4f"
+    },
+    "baseline": {
+      "source": null,
+      "snapshot": "candidates/baseline/instructions.md",
+      "sha256": "b9e6d09ea42124d1dd0175c19bb95b287c039ade616a5d053655094b6de53e0e"
+    }
+  }
+}

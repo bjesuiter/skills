@@ -3,6 +3,7 @@ import importlib.util
 import sys
 import tempfile
 import unittest
+import urllib.request
 from pathlib import Path
 from unittest import mock
 
@@ -79,6 +80,59 @@ class LabTests(unittest.TestCase):
                 lab.write_json(target / "check.json", {"passed": 1, "total": 1})
             gallery = lab.build_gallery(run_dir).read_text(encoding="utf-8")
             self.assertEqual(gallery.count("<iframe"), 2)
+
+    def test_open_gallery_uses_a_one_shot_glimpse_session(self):
+        with tempfile.TemporaryDirectory() as raw_temp:
+            run_dir = Path(raw_temp) / "run-id"
+            lab.write_text(run_dir / "gallery.html", "<h1>Gallery</h1>")
+            process = mock.Mock(pid=1234)
+            with (
+                mock.patch.object(lab.shutil, "which", return_value="/bin/glimpse"),
+                mock.patch.object(lab.subprocess, "Popen", return_value=process) as popen,
+                mock.patch("sys.stderr", new_callable=io.StringIO),
+            ):
+                self.assertEqual(lab.open_gallery(run_dir), 1234)
+            command = popen.call_args.args[0]
+            self.assertEqual(command[0], sys.executable)
+            self.assertEqual(command[2], "gallery")
+            self.assertEqual(Path(command[3]), run_dir.resolve())
+            self.assertTrue(popen.call_args.kwargs["start_new_session"])
+            self.assertEqual(
+                Path(popen.call_args.kwargs["stdout"].name),
+                run_dir / "glimpse.log",
+            )
+            self.assertIs(popen.call_args.kwargs["stderr"], lab.subprocess.STDOUT)
+
+    def test_gallery_session_serves_relative_artifacts_over_http(self):
+        with tempfile.TemporaryDirectory() as raw_temp:
+            run_dir = Path(raw_temp) / "run-id"
+            lab.write_text(
+                run_dir / "gallery.html",
+                '<iframe src="artifacts/pelican/output.svg"></iframe>',
+            )
+            lab.write_text(
+                run_dir / "artifacts" / "pelican" / "output.svg",
+                '<svg xmlns="http://www.w3.org/2000/svg"/>',
+            )
+
+            def inspect_html(command, **kwargs):
+                self.assertNotIn("--url", command)
+                self.assertEqual(command[-1], "-")
+                self.assertIn("--allow-remote-resources", command)
+                document = kwargs["input"]
+                self.assertIn("<iframe", document)
+                base_url = document.split('<base href="', 1)[1].split('"', 1)[0]
+                self.assertTrue(base_url.startswith("http://127.0.0.1:"))
+                artifact_url = base_url + "artifacts/pelican/output.svg"
+                with urllib.request.urlopen(artifact_url) as response:
+                    self.assertIn(b"<svg", response.read())
+                return mock.Mock(returncode=0)
+
+            with (
+                mock.patch.object(lab.shutil, "which", return_value="/bin/glimpse"),
+                mock.patch.object(lab.subprocess, "run", side_effect=inspect_html),
+            ):
+                self.assertEqual(lab.run_gallery_session(run_dir), 0)
 
     def test_improve_writes_a_separate_proposal(self):
         with tempfile.TemporaryDirectory() as raw_temp:

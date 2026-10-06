@@ -1,0 +1,1 @@
+A self-contained, accessible side-view illustration with a clearly recognizable pelican, connected feet and pedals, detailed bicycle geometry, coastal scenery, and subtle motion cues. The artwork is stylized rather than anatomically or mechanically exact.

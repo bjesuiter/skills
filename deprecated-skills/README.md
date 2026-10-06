@@ -2,6 +2,12 @@
 
 This directory preserves retired skills as historical reference only. It is intentionally outside `skills/`, so the `skills` CLI does not discover or install its contents when users run `npx skills add … --all`.
 
+## `jb-svg`
+
+Archived on 2026-10-06 after JB preferred plain SVG generation in the pelican-bicycle comparison. Use plain SVG until a concrete roadblock warrants a small, focused custom skill. See the [decision](../docs/adr/0001-use-plain-svg-until-a-roadblock.md) and [archived lab and evidence](../research/jb-svg/README.md).
+
+The legacy skill is retained at [`jb-svg/`](jb-svg/) for research only. It is retired from active use.
+
 ## `jb-pinchtab-testing`
 
 Retired in favor of Vercel's [`agent-browser`](https://github.com/vercel-labs/agent-browser), which is now the primary browser-debugging tool through `jb-browser-testing`.

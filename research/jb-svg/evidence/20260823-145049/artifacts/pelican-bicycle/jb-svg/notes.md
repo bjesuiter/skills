@@ -1,0 +1,1 @@
+A self-contained, accessible standalone SVG using simple editable shapes, unique gradient IDs, and generous bounds. The pelican’s beak, pouch, feathers, pedaling legs, wing on the handlebars, bicycle frame, spokes, and coastal setting make the action readable. It is static and was structurally checked by inspection only; no rendered visual inspection was performed.

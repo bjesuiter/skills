@@ -17,7 +17,7 @@ npx skills add bjesuiter/skills --skill jb-beans -a codex -y
 npx skills add bjesuiter/skills --all
 ```
 
-## Included Skills (29)
+## Included Skills (28)
 
 ### Core Development Workflows
 - `jb-buying-judge` — One-at-a-time randomized anti-impulse-buying checks that distinguish a real need from a deliberate want
@@ -64,7 +64,6 @@ npx skills add bjesuiter/skills --all
 ### Utilities
 - `nb` — Git-backed note management CLI
 - `jb-agent-env` — Shared preferred agent-environment registry for Markdown skills, Pi extensions, and CLIs via GitHub Gist
-- `jb-svg` — Create and review clean, responsive, accessible SVGs
 
 ## Local Validation
 
@@ -76,9 +75,10 @@ npx skills add . --list
 npx skills add . --skill jb-beans -a codex -y
 ```
 
-## Skill labs
+## Decisions and archived research
 
-- [`labs/jb-svg`](labs/jb-svg/) — Test `jb-svg`, compare it blindly against other skills, draft evidence-based improvements, and promote generated examples
+- [Decision records](docs/adr/README.md)
+- [Archived SVG research](research/jb-svg/) preserves the retired skill evaluation lab and benchmark evidence. Current SVG work uses plain SVG; a dedicated skill will be reconsidered only for a concrete roadblock.
 
 ## About
 

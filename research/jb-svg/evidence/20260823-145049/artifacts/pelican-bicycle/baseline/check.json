@@ -1,0 +1,50 @@
+{
+  "passed": 8,
+  "total": 8,
+  "checks": [
+    {
+      "name": "xml",
+      "passed": true,
+      "detail": "Markup parses as XML"
+    },
+    {
+      "name": "root",
+      "passed": true,
+      "detail": "Root element is <svg>"
+    },
+    {
+      "name": "viewBox",
+      "passed": true,
+      "detail": "viewBox has four values and positive dimensions"
+    },
+    {
+      "name": "unique-ids",
+      "passed": true,
+      "detail": "Every id is unique"
+    },
+    {
+      "name": "resolved-references",
+      "passed": true,
+      "detail": "All local references resolve"
+    },
+    {
+      "name": "passive-markup",
+      "passed": true,
+      "detail": "No scripts or event-handler attributes"
+    },
+    {
+      "name": "self-contained",
+      "passed": true,
+      "detail": "No remote image or document references"
+    },
+    {
+      "name": "namespace",
+      "passed": true,
+      "detail": "Standalone SVG declares the SVG namespace"
+    }
+  ],
+  "render": {
+    "rendered": true,
+    "detail": "Rendered with ImageMagick"
+  }
+}
