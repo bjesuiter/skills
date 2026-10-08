@@ -1,62 +1,99 @@
 ---
 name: jb-test-audit
-description: Use when writing, changing, reviewing, or pruning tests. Gate new tests for independent behavioral value and audit low-value, implementation-coupled, duplicative tests and test-only production seams.
+description: Audit tests, remove useless or tautological tests, improve test value, or review implementation-coupled tests; also gate newly authored or changed tests for independent behavioral value.
 ---
 
 # JB Test Audit
 
-Keep tests that independently protect meaningful behavior; remove or rewrite tests that merely preserve an implementation. Optimize for confidence, not deletion count.
+**Matt Pocock’s durable minimum rule: “Tautological tests considered harmful.”**
 
-This is JB’s portable adaptation of OpenClaw’s `test-audit` skill. It retains the value bar and audit discipline while removing OpenClaw-specific commands, infrastructure, and release flow.
+Apply one value gate in every mode: each test must protect observable behavior, a credible regression, or an independently meaningful contract. Favor outside-in proof at the owner boundary. Optimize for confidence, not test count or deletion count.
 
-- Original: https://github.com/openclaw/openclaw/blob/main/.agents/skills/test-audit/SKILL.md
-- Fork intent: generic use in any repository and with any test runner.
+## Choose a Mode
 
-## Authoring Gate
+- **Authoring:** gate every proposed or changed test before writing it.
+- **Audit:** inspect a focused test surface read-only, report candidates, then edit only authorized outcomes.
+- **Campaign:** when asked to audit a whole subsystem, inventory its complete test surface, split it into coherent owner-boundary batches, and run the audit procedure on one batch at a time.
 
-Before adding or changing a test, answer all four questions:
+State the selected mode and bounded scope. Completion means the mode and ownership boundary are explicit.
 
-1. What observable behavior, invariant, or independent contract does it protect?
-2. What credible regression would make it fail?
-3. Why does existing coverage not already catch that regression? Assign each contract one primary owner at the strongest practical boundary. Add another layer only for a distinct risk, such as transport, lifecycle, persistence, or integration failure.
-4. Does it require a production-only-for-tests seam—an export, flag, wrapper, or injection hook—that production callers do not need? If so, test at a real boundary instead.
+## Inspect Before Judging
 
-If an answer is missing, do not add the test yet. Prefer extending a table-driven case or shared fixture over a near-duplicate test. A test that breaks under behavior-preserving refactoring is asserting implementation, not behavior; rewrite it at the owning boundary.
+Read repository instructions, the complete tests, their production owners, entry points, callers, callees, sibling implementations, overlapping tests, CI routing, and relevant test commands. Inspect dependency source or types when a claim depends on them. Use history when it can explain the contract or seam.
 
-A bug regression must fail against the pre-fix behavior for the intended reason and pass after the repair. One owner-boundary regression is normally enough; do not replay the same scenario at every layer it crosses.
+Keep discovery read-only and report evidence before editing. Completion means each candidate is understood in its real call and coverage context.
 
-## Low-Value Patterns
+## Apply the Value Gate
 
-Reject new tests and investigate existing tests that:
+For each new, changed, or audited test, answer:
 
-- have no meaningful assertion, self-compare, or reassert input copying;
-- grep source, imports, private call shapes, or incidental strings rather than an independent contract;
-- duplicate a stronger owner-boundary test or replay a shared helper at every provider;
-- use expected values produced by the implementation under test;
-- make a mock implement the very behavior being asserted;
-- preserve test-only exports, globals, wrappers, or dead production paths;
-- rely on fixtures that already provide the receipt, ordering, persistence, or callback they claim to verify;
-- exercise declared capability flags rather than the delivered behavior they promise;
-- pass negative controls for an unrelated guard or path; or
-- promise more in their name or fixture than their input can exercise.
+1. What observable behavior or independently meaningful contract does it protect?
+2. What credible regression would make it fail for the intended reason?
+3. Why would stronger existing proof not catch that regression?
+4. Is this the strongest practical owner boundary, tested outside-in where feasible?
+5. Does it demand a production export, flag, wrapper, injection hook, or path with no non-test caller?
 
-## Retention Bar
+In authoring mode, do not add the test until every answer supports its independent value. A bug regression must demonstrably fail against the pre-fix behavior for the intended reason and pass after the fix.
 
-Keep tests when they independently enforce a public API, protocol, config, migration, persistence, security, platform, default, generated artifact, package, release, prompt/output byte, or architecture contract. Also keep credible regressions and observable ordering guarantees.
+Flag candidates that:
 
-Static or slow is not a deletion reason. Source inspection can be valid when it is the cheapest independent guard for a user-visible key, byte, path, or generated artifact and survives identifier-only refactors. Treat a retained baseline failure as a possible product defect: reproduce and repair the owner before considering removal.
+- cannot meaningfully fail or contain no meaningful assertion;
+- self-compare, reassert copied input, or derive expected values from the implementation under test;
+- duplicate implementation logic in assertions;
+- verify mocks, call shapes, private helpers, source text, or fixture behavior instead of observable behavior;
+- fail under behavior-preserving refactors;
+- duplicate stronger proof at an owner boundary;
+- replay one shared contract at every layer or implementation without a distinct risk;
+- require test-only production seams or keep dead production paths alive; or
+- claim behavior their inputs and execution path cannot exercise.
 
-## Audit Workflow
+Do not reject a test merely because it is static, slow, or source-based. Retain independent public API, protocol, configuration, migration, persistence, security, platform, generated artifact, packaging, release, architecture, or observable ordering contracts when their failure signal is meaningful.
 
-1. **Discover read-only.** Read repository guidance, the complete test and production owner, entry points, callers, callees, sibling implementations, overlapping tests, CI routing, and relevant history. Inspect dependency source or types when a claim depends on it.
-2. **Record evidence.** For every candidate, capture the exact test, the failure it can detect, non-test callers of any seam, stronger remaining proof, why it exists, deletion unlocked, risk, and focused validation command. Missing evidence means no deletion.
-3. **Change one coherent boundary.** Remove obsolete test-only seams and dead paths rather than preserving aliases. Move retained regressions to canonical owners and consolidate repeated assertions into a generic contract. Do not create replacement tests that repeat the same implementation.
-4. **Validate proportionately.** Run the narrow owner and sibling tests first; then run required repository checks, formatting, and `git diff --check`. Inspect the final diff and distinguish production/tooling changes from test and test-support changes.
-5. **Close out honestly.** Report what was removed or retained, why, proof actually run, remaining risks, and any follow-up batch. Do not commit, push, open a PR, or land changes without authorization.
+Completion means every test passes the value gate or becomes an evidence-backed candidate.
 
-## Guardrails
+## Record Candidate Evidence
 
-- Prefer a few high-confidence candidates to a speculative mass cleanup.
-- Do not edit code or tests while the relevant test runner is actively watching the checkout.
-- Never delete a test merely because it looks coupled; prove that stronger independent proof remains or that no meaningful contract exists.
-- Stop at a coherent ownership boundary. Broader sweeps become separate follow-up changes.
+Before recommending or making any deletion, record:
+
+- exact test name and file/line reference;
+- detectable failure: what it can actually catch and whether that failure is credible;
+- non-test callers of any production or support seam;
+- stronger remaining proof at the owner boundary, or why no proof is needed;
+- relevant history when useful and the likely reason the test or seam exists;
+- maintenance and confidence risk of changing it;
+- recommended **retain**, **rewrite**, **replace**, or **delete** outcome and why;
+- production or test-support cleanup unlocked; and
+- exact focused validation command selected from repository conventions.
+
+**Never delete without evidence.** Missing evidence changes the outcome to retain or investigate, not delete. Completion means every candidate has a complete, reviewable evidence record.
+
+## Edit a Coherent Boundary
+
+After findings are reviewed or edits are authorized, apply the smallest coherent outcome:
+
+- rewrite implementation-coupled tests around observable owner behavior;
+- replace weaker duplicates only when the replacement supplies stronger independent proof;
+- consolidate repeated cases when each does not protect a distinct risk; and
+- remove obsolete test-only seams and newly dead code together with proven low-value tests.
+
+Do not add a replacement that restates the same implementation. Do not broaden a focused audit to inflate cleanup totals. Completion means the diff stays within one declared ownership boundary and preserves or improves independent proof.
+
+## Validate
+
+Run the smallest relevant owner and sibling tests first, then the repository-required formatter, linter, type checks, broader tests, and diff checks in the documented order. Use the repository’s own commands and test runner; never invent a runner. If deleting a static assertion, run the executable or generated-artifact check that now owns the contract. Inspect the final diff and distinguish production/tooling changes from test/test-support changes.
+
+Completion means every planned command has a recorded result, or a named blocker and residual risk.
+
+## Report Findings First
+
+Lead with findings, even when there are none. For each finding provide:
+
+1. severity and value impact;
+2. file/line reference and exact test;
+3. evidence and detectable failure;
+4. recommended retain/rewrite/replace/delete action; and
+5. validation command.
+
+Use severity for test-value impact: **high** for false confidence or test-driven production distortion around important behavior, **medium** for fragile or duplicative maintenance with stronger proof, and **low** for localized redundancy.
+
+After findings, report edits made, retained candidates and why, validation commands/results, remaining risks, and follow-up boundaries. Completion means the reader can evaluate every recommendation without reconstructing the audit.
