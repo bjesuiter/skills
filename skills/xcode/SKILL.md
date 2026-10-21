@@ -1,87 +1,70 @@
 ---
 name: xcode
-description: Build, test, run, inspect, or scaffold Xcode projects, Swift packages, Apple simulators, devices, and macOS apps through XcodeBuildMCP. Use when the user mentions Xcode, xcodebuild, Swift build/test, Apple-platform builds, simulators, devices, or UI testing.
+description: Build, test, run, inspect, or scaffold Xcode projects, Swift packages, Apple simulators, devices, and macOS apps. Use for Xcode, xcodebuild, Swift build/test, Apple-platform builds, device deployment, or UI testing.
 ---
 
-# XcodeBuildMCP
+# Xcode
 
-Use XcodeBuildMCP through `mcporter` for Xcode and Swift work:
+Prefer Apple's built-in Xcode MCP for project inspection, builds, tests, previews, running, and debugging. Use the installed server's live tool schema; capabilities differ by Xcode version. Apple command-line tools are the fallback when MCP is unavailable or lacks the requested operation.
 
-```bash
-bunx mcporter call --stdio "xcodebuildmcp" <tool_name> [args...]
-```
+## Connect without opening the desktop app
 
-Assume `mcporter` and `xcodebuildmcp` are installed globally. Here `bunx` runs installed binaries; it must not fetch untrusted replacements.
-
-## Discover the environment
-
-Identify the target before building:
+Use the attached Apple Xcode MCP when available. For a CLI client, its stdio command is `xcrun mcpbridge`. Codex registration:
 
 ```bash
-bunx mcporter call --stdio "xcodebuildmcp" doctor
-bunx mcporter call --stdio "xcodebuildmcp" discover_projs workspaceRoot="$(pwd)"
-bunx mcporter call --stdio "xcodebuildmcp" list_schemes
-bunx mcporter call --stdio "xcodebuildmcp" list_sims
+codex mcp add xcode -- xcrun mcpbridge
 ```
 
-For physical-device work, discover connected devices instead of assuming an identifier. Distinguish among an Xcode project, workspace, Swift package, simulator target, physical device, and macOS app; choose tools for that target family.
-
-## Set session defaults
-
-Set project/workspace, scheme, and destination defaults before most build and test calls:
+Prefer headless operation when supported by the installed Xcode:
 
 ```bash
-bunx mcporter call --stdio "xcodebuildmcp" session-set-defaults \
-  projectPath="/path/to/App.xcodeproj" \
-  scheme="App" \
-  simulatorName="<discovered simulator>"
+xcodebuild -version
+xcrun mcp-server --help
+xcrun mcp-server status --format json
 ```
 
-For a workspace, use `workspacePath`; for an exact simulator or device, use its discovered identifier. Inspect defaults when behavior is surprising:
+If headless mode needs initial setup, `sudo xcrun mcp-server enable` enables it. Retain normal agent and folder permissions; resolve any pending request identified by `status` for the intended agent or project. Reuse an enabled server. An older Xcode without headless support may require the project open in the desktop app; report that requirement before opening UI on a restricted host.
+
+If the MCP is not attached to the agent, an installed `mcporter` can access the same Apple server:
 
 ```bash
-bunx mcporter call --stdio "xcodebuildmcp" session-show-defaults
+bunx mcporter list --stdio "xcrun mcpbridge" --schema
+bunx mcporter call --stdio "xcrun mcpbridge" XcodeOpenWorkspace path="/absolute/path/App.xcodeproj"
 ```
 
-Do not reuse stale defaults across unrelated repositories or targets.
+Opening a workspace through the headless server does not require launching Xcode's desktop UI. Use the returned workspace identifier explicitly on subsequent calls. Discover schemes and destinations, then select the requested scheme and exact destination before building or running. Do not inherit an unrelated workspace's defaults.
 
-## Execute the requested workflow
+## Execute and verify
 
-After setting the target:
+- Build with `BuildProject`; inspect `GetBuildLog` on failure.
+- Run focused tests with `RunSomeTests`, or the applicable test plan with `RunAllTests`. Verify tests actually executed and report failures or skips.
+- Use `RunProject` for build and launch. For debugging, request `attachDebugger: true`, read `GetConsoleOutput`, and use `InvokeDebuggerCommand`. Check `process status` before commands requiring a stopped process.
+- Use `RenderPreview` when a SwiftUI preview answers the requested visual question.
+- Inspect the live schema for workspace, scheme, destination, scaffolding, and device-interaction tools instead of copying tool catalogs between Xcode versions.
 
-1. Select the matching simulator, device, macOS, or Swift-package tools.
-2. Build before attempting installation or launch unless a combined build-and-run tool applies.
-3. Run focused tests first, then broader tests when warranted.
-4. Preserve build output and surface actionable compiler/test failures.
-5. Use log-capture tools around reproductions when runtime evidence is needed, and stop the capture afterward.
+## Device UI
 
-For scaffolding, confirm the destination, project name, platform, and bundle identifier. Do not overwrite an existing project implicitly.
+Follow repository host restrictions for UI tests and automation, including macOS apps. Headless builds do not authorize launching or automating the app on a restricted host.
 
-## Simulator UI interaction
+When T3 Code exposes `device_*` tools, use its Device panel for simulator/emulator discovery, streaming, and screenshots, and the returned `agent-device` command for interaction. Otherwise use Apple's device-interaction tools when present in the live schema. Inspect the current accessibility hierarchy or device state before acting, prefer identifiers and labels, and refresh after layout changes. End interaction sessions and log captures when finished.
 
-Build and launch the app, then inspect the current accessibility hierarchy before every interaction sequence:
+## Command-line fallback
+
+Discover the local environment and destinations:
 
 ```bash
-bunx mcporter call --stdio "xcodebuildmcp" describe_ui
+xcodebuild -list -project /path/App.xcodeproj
+xcrun devicectl list devices
+xcrun simctl list devices available
 ```
 
-Prefer accessibility identifiers or labels. Use coordinates only from the latest hierarchy, never guessed from a screenshot or reused after the UI changes. Take screenshots when visual proof is material. Re-run `describe_ui` after navigation, dialogs, rotation, or other layout changes.
-
-## Use the live tool schema
-
-Tool names and arguments can change with XcodeBuildMCP versions. Do not rely on a copied catalog. Inspect the installed `mcporter` help and XcodeBuildMCP schema before using an unfamiliar operation:
+Use `-workspace` instead of `-project` when appropriate. For a physical iPhone, build the requested scheme with its discovered UDID, existing signing configuration, and an explicit derived-data directory:
 
 ```bash
-bunx mcporter --help
-bunx mcporter list --stdio "xcodebuildmcp" --schema
+xcodebuild -project /path/App.xcodeproj -scheme App -configuration Debug \
+  -destination 'id=<device-udid>' -derivedDataPath /tmp/app-device build
+xcrun devicectl device install app --device <device-udid> '/tmp/app-device/Build/Products/Debug-iphoneos/App.app'
+xcrun devicectl device process launch --device <device-udid> <bundle-id>
 ```
 
-Use the live schema for gestures, simulator settings, recording, logs, device operations, Swift packages, scaffolding, and utilities.
-
-## Diagnose failures
-
-- Missing project/workspace: inspect and set session defaults.
-- Unknown simulator/device: rediscover available destinations.
-- Environment or integration failure: run `doctor` and inspect the exact error.
-- Incremental-build issue: try the server's standard-xcodebuild preference only when supported by the live schema.
-- Build or test failure: diagnose the emitted compiler/test evidence rather than treating it as an MCP failure.
+Use the actual built product path and bundle identifier. Permit provisioning updates when required by the authorized signing workflow. For simulators, use `xcrun simctl` to install and launch; for Swift packages, use `swift build` or `swift test --package-path /path/to/package`. Preserve build/test output and verify installation and launch separately. Report which checks actually ran.
