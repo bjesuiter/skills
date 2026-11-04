@@ -17,7 +17,7 @@ npx skills add bjesuiter/skills --skill jb-beans -a codex -y
 npx skills add bjesuiter/skills --all
 ```
 
-## Included Skills (28)
+## Included Skills (29)
 
 ### Core Development Workflows
 - `jb-buying-judge` — One-at-a-time randomized anti-impulse-buying checks that distinguish a real need from a deliberate want
@@ -31,6 +31,7 @@ npx skills add bjesuiter/skills --all
 - `linuxserver-image-scaffold` — Scaffold LinuxServer.io-style Docker image repos (Alpine/Ubuntu/both)
 
 ### Code Review & Quality
+- `jb-verifiable-modules` — Audit, design, or improve independently executable module boundaries with behavioral evidence and measured performance tradeoffs
 - `jb-autoreview` — Structured second-model autoreview via Codex/Claude for local, branch, commit, and PR diffs
 - `jb-clawpatch-review` — Clawpatch semantic repo review, persistent findings reports, explicit fixes, and revalidation
 - `jb-test-audit` — Test-value gate and evidence-driven audit workflow for low-value, duplicative, or implementation-coupled tests
