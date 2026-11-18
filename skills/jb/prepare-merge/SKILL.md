@@ -1,9 +1,9 @@
 ---
-name: prepare-to-merge
+name: prepare-merge
 description: Use when the user says "prepare to merge" or asks you to get a GitHub PR ready for them to merge.
 ---
 
-# Prepare to Merge
+# Prepare Merge
 
 Leave the intended PR open for the user to merge. Never merge, enable
 auto-merge, enter a merge queue, push to the target branch, bypass branch
