@@ -48,7 +48,7 @@ npx skills add bjesuiter/skills --all
 
 ### Deprecated Skills (not installed)
 
-See the [retirement history](deprecated-skills/README.md) for replacements and archived versions.
+See the [retirement history](skills/deprecated/README.md) for replacements and archived versions.
 
 ### Documentation & Research
 - `jb-docs-scraper` — Scrape documentation websites into markdown

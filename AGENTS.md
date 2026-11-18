@@ -5,7 +5,7 @@
 - Keep JB-maintained skills in `skills/jb/<skill-name>/`.
 - Put imported skills maintained here in `skills/vendored/<skill-name>/`. Record the upstream source and revision and retain its license and notices.
 - Put drafts in `skills/in-progress/<skill-name>/`. The Skills CLI discovers valid drafts by default. Add `metadata.internal: true` in the frontmatter to opt out of normal discovery.
-- `deprecated-skills/` is historical reference only and must not be made discoverable.
+- Record retired skills in `skills/deprecated/README.md`. Keep this directory for documentation only.
 - `.agents/skills/` is local agent state, never a canonical source.
 
 ## SVG work
@@ -23,7 +23,7 @@ Use plain SVG until a concrete roadblock warrants a minimal custom skill. See [t
 ## Skill changes and releases
 
 - Add a Changeset for changes to distributed skills or their layout. See [the release workflow](.changeset/README.md) for bump levels and Git tags.
-- When retiring a skill, remove its directory, remove active references, and record the reason, replacement (if any), and last available revision in [the retirement history](deprecated-skills/README.md). Keep any files still used by archived research at their documented paths.
+- When retiring a skill, remove its directory and active references. Record the reason, replacement (if any), and last available revision in [the retirement history](skills/deprecated/README.md).
 - Check that the retired name is absent from CLI discovery.
 
 ## Before committing skill changes
