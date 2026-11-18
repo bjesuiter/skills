@@ -19,9 +19,11 @@ npx skills add bjesuiter/skills --all
 
 Use an explicit skill name when you want a specific skill. Installing all discoverable skills can include drafts. For a reproducible installation, [install from a Git tag](.changeset/README.md#install-a-fixed-snapshot).
 
-## Included Skills (37)
+## Included Skills (39)
 
 ### Core Development Workflows
+- [`integrate`](skills/jb/integrate/SKILL.md) — Prepare, verify, and merge a GitHub pull request
+- [`prepare-to-merge`](skills/jb/prepare-to-merge/SKILL.md) — Verify a GitHub pull request and leave it open for a human to merge. Install `integrate` alongside it for the shared workflow.
 - `jb-stack-prefs` — JB's preferred stacks by use case, repository comparisons, and preference updates
 - `jb-buying-judge` — One-at-a-time randomized anti-impulse-buying checks that distinguish a real need from a deliberate want
 - `jb-decision-judge` — Proportionate adversarial decision review: steelman options, pressure-test a leaning, or check a chosen direction
