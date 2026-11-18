@@ -14,7 +14,10 @@ Use `integrate` and `prepare-to-merge` as the names for JB's planned adaptations
 
 ### Upstream changes to successor skills
 
-When refreshing tstack, diff `full-send` and `full-stop` between the previous revision in `vendor.json5` and the incoming revision. Compare those changes with their JB successors, `skills/jb/integrate/` and `skills/jb/prepare-to-merge/`, including the shared preparation flow. Identify ideas the JB skills do not already cover and recommend which to adapt, with a short reason. Apply selected changes in the JB skills as a separate change from the vendor refresh.
+Use semantic comparison for these successors, including the shared preparation flow.
+
+- `full-send` → [`integrate`](../jb/integrate/SKILL.md)
+- `full-stop` → [`prepare-to-merge`](../jb/prepare-to-merge/SKILL.md)
 
 Keep `leaving-pr-comments` for GitHub. When another channel needs attribution, consider a shared `public-agent-attribution` skill for messages an agent sends on JB's behalf, including email. Share the verified model or harness name and sender attribution rules, and let each channel choose its own format. Keep the GitHub callout in `leaving-pr-comments`.
 

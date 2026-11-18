@@ -1,4 +1,8 @@
-.agents/
+/.agents/*
+!/.agents/skills/
+/.agents/skills/*
+!/.agents/skills/skill-merge
+!/.agents/skills/update-vendored
 .pi/
 
 node_modules/

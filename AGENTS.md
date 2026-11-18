@@ -5,12 +5,12 @@ See [Maintaining skills](docs/maintaining-skills.md) when importing upstream ski
 ## Canonical locations
 
 - Keep JB-maintained skills in `skills/jb/<skill-name>/`.
-- Put imported skills in `skills/<owner>-<repo>/<skill-name>/`. Update the source folder's [`vendor.json5`](docs/maintaining-skills.md#upstream-skills) after each import and retain the upstream license and notices.
-- Keep a `README.md` in each upstream folder. Record which skills to include or omit and consult it before refreshing the snapshot.
+- Put imported skills in `skills/<owner>-<repo>/<skill-name>/`. Update the source folder's [`vendor.json5`](.agents/skills/update-vendored/references/importing.md) after each import and retain the upstream license and notices.
+- Keep a `README.md` in each local vendor directory. Record which skills to include or omit and consult it before refreshing the snapshot.
 - Consider [giget](https://github.com/unjs/giget) for downloading upstream snapshots or subdirectories. Pin the import to a commit or release tag and include the upstream license and notices.
 - Put drafts in `skills/in-progress/<skill-name>/`. The Skills CLI discovers valid drafts by default. Add `metadata.internal: true` in the frontmatter to opt out of normal discovery.
 - Record retired skills in `skills/deprecated/README.md`. Keep this directory for documentation only.
-- `.agents/skills/` is local agent state, never a canonical source.
+- Keep repository-only workflows in `.agents/skills/` with matching links in `.claude/skills/` for Claude Code. Other entries in `.agents/skills/` are local agent state.
 
 ## SVG work
 
@@ -68,3 +68,7 @@ Use the five standard [triage labels](docs/agents/triage-labels.md).
 ### Domain docs
 
 Use the root `GLOSSARY.md` and `docs/adr/` for this single-context repository. See [the domain docs instructions](docs/agents/domain.md).
+
+### Vendored skill updates
+
+For an upstream skill update check or refresh, follow the repo-local [update-vendored skill](.agents/skills/update-vendored/SKILL.md).
