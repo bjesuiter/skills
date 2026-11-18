@@ -50,3 +50,17 @@ Verify the installed copy changed. Do not leave repo-local test installs in `.ag
 ## Runtime failures
 
 Before diagnosing a reported skill failure deeply, check whether its relevant CLIs, MCP servers, packages, or other dependencies are stale.
+
+## Agent skills
+
+### Issue tracker
+
+Use GitHub Issues in `bjesuiter/skills`. See [the issue tracker instructions](docs/agents/issue-tracker.md).
+
+### Triage labels
+
+Use the five standard [triage labels](docs/agents/triage-labels.md).
+
+### Domain docs
+
+Use the root `GLOSSARY.md` and `docs/adr/` for this single-context repository. See [the domain docs instructions](docs/agents/domain.md).
