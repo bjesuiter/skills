@@ -1,9 +1,13 @@
 # Skills Repository
 
+See [Maintaining skills](docs/maintaining-skills.md) when importing upstream skills, validating changes, or preparing a release.
+
 ## Canonical locations
 
 - Keep JB-maintained skills in `skills/jb/<skill-name>/`.
-- Put imported skills in `skills/<owner>-<repo>/<skill-name>/`. Update the source folder's [`vendor.json5`](README.md#upstream-skills) after each import and retain the upstream license and notices.
+- Put imported skills in `skills/<owner>-<repo>/<skill-name>/`. Update the source folder's [`vendor.json5`](docs/maintaining-skills.md#upstream-skills) after each import and retain the upstream license and notices.
+- Keep a `README.md` in each upstream folder. Record which skills to include or omit and consult it before refreshing the snapshot.
+- Consider [giget](https://github.com/unjs/giget) for downloading upstream snapshots or subdirectories. Pin the import to a commit or release tag and include the upstream license and notices.
 - Put drafts in `skills/in-progress/<skill-name>/`. The Skills CLI discovers valid drafts by default. Add `metadata.internal: true` in the frontmatter to opt out of normal discovery.
 - Record retired skills in `skills/deprecated/README.md`. Keep this directory for documentation only.
 - `.agents/skills/` is local agent state, never a canonical source.
