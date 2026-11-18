@@ -1,0 +1,9 @@
+{
+  repo: "humanlayer/skills",
+  url: "https://github.com/humanlayer/skills",
+  track: { type: "commit", branch: "main" },
+  snapshot: {
+    revision: "4d69d20f6e9b57b4fcf0d501ccfb1be961f0f329",
+    vendoredAt: "2026-11-18",
+  },
+}

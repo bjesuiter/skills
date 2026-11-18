@@ -19,7 +19,7 @@ npx skills add bjesuiter/skills --all
 
 Use an explicit skill name when you want a specific skill. Installing all discoverable skills can include drafts. For a reproducible installation, [install from a Git tag](.changeset/README.md#install-a-fixed-snapshot).
 
-## Included Skills (39)
+## Included Skills (40)
 
 ### Core Development Workflows
 - [`integrate`](skills/jb/integrate/SKILL.md) — Prepare, verify, and merge a GitHub pull request
@@ -76,6 +76,10 @@ Use an explicit skill name when you want a specific skill. Installing all discov
 - [`modernize`](skills/t3dotgg-tstack/modernize/SKILL.md) — Identify and address outdated code and practices
 - [`sol-loop`](skills/t3dotgg-tstack/sol-loop/SKILL.md) — Iterate on implementation with independent review
 - [`takeover`](skills/t3dotgg-tstack/takeover/SKILL.md) — Take over a pull request, branch, or agent thread
+
+### HumanLayer
+
+- [`show-me`](skills/humanlayer-skills/show-me/SKILL.md) — Explain the current topic visually with diagrams, code sketches, and focused HTML artifacts
 
 ## Retired skills
 
