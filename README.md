@@ -20,8 +20,18 @@ npx skills add bjesuiter/skills --all
 ## Repository layout
 
 - [`skills/jb/`](skills/jb/) contains JB's existing skills.
-- [`skills/vendored/`](skills/vendored/) holds upstream skills imported for local adaptation.
+- `skills/<owner>-<repo>/` holds skills from one upstream repository.
 - [`skills/in-progress/`](skills/in-progress/) holds drafts. The CLI includes drafts in `--list` and `--all` unless their frontmatter sets `metadata.internal: true`.
+
+### Upstream skills
+
+Each upstream folder has a `vendor.json5` with the GitHub repository, its HTTPS URL, and the revision to track. See [the tstack manifest](skills/t3dotgg-tstack/vendor.json5).
+
+- Use `track: { type: "commit", branch: "main" }` to check a branch tip, or `track: { type: "release" }` to check the latest GitHub release using `gh`.
+- Set `snapshot` to `null` until the first import. After importing, record `snapshot: { revision: "...", vendoredAt: "YYYY-MM-DD" }` with the full commit SHA or exact release tag that was imported.
+- Use one snapshot per upstream folder. When refreshing a folder, bring all its imported skills to the recorded revision and reapply local changes.
+
+Run `bun scripts/vendor-updates.ts` to compare each snapshot with its upstream. The check reports differing revisions for review.
 
 ## Included Skills (29)
 

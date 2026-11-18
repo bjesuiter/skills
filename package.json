@@ -8,6 +8,7 @@
     "check:skills": "bunx skills add . --list"
   },
   "devDependencies": {
-    "@changesets/cli": "3.0.3"
+    "@changesets/cli": "3.0.3",
+    "json5": "2.2.3"
   }
 }

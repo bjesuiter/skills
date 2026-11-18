@@ -1,0 +1,6 @@
+{
+  repo: "t3dotgg/tstack",
+  url: "https://github.com/t3dotgg/tstack",
+  track: { type: "commit", branch: "main" },
+  snapshot: null,
+}
