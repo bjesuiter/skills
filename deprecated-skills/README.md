@@ -1,6 +1,6 @@
 # Deprecated Skills
 
-This directory preserves retired skills as historical reference only. It is intentionally outside `skills/`, so the `skills` CLI does not discover or install its contents when users run `npx skills add … --all`.
+This page records retired skills and their replacements. Archived research assets stay here when the research references them directly.
 
 ## `jb-svg`
 
@@ -14,7 +14,7 @@ Retired in favor of Vercel's [`agent-browser`](https://github.com/vercel-labs/ag
 
 PinchTab required users and agents to select, start, and repeatedly target a profile-specific browser instance. That setup added unnecessary complexity for normal browser debugging. Agent-browser provides the workflow we need directly: headed debugging, named isolated sessions, persisted state with `--restore`, and authenticated-session support through its auth profiles, cookie import, and state files.
 
-The legacy skill is retained at [`jb-pinchtab-testing/`](jb-pinchtab-testing/) for reference only. Do not install or use it for new work.
+[Last archived version](https://github.com/bjesuiter/skills/tree/61255d7b33c60935201612240b8caf6629bb0ecc/deprecated-skills/jb-pinchtab-testing).
 
 ## `jb-adr`
 
@@ -30,4 +30,4 @@ This is a practical replacement, not exact MADR compatibility: `jb-adr` prescrib
 
 Retired in favor of Matt Pocock's [`tdd` skill](https://github.com/mattpocock/skills/tree/main/skills/engineering/tdd), which is the preferred test-driven development workflow.
 
-The legacy skill is retained at [`jb-tdd/`](jb-tdd/) for reference only. Do not install or use it for new work.
+[Last archived version](https://github.com/bjesuiter/skills/tree/61255d7b33c60935201612240b8caf6629bb0ecc/deprecated-skills/jb-tdd).

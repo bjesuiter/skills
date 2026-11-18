@@ -1,0 +1,13 @@
+{
+  "name": "jb-skills",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "changeset": "changeset",
+    "release:version": "changeset version",
+    "check:skills": "bunx skills add . --list"
+  },
+  "devDependencies": {
+    "@changesets/cli": "3.0.3"
+  }
+}

@@ -20,6 +20,12 @@ Use plain SVG until a concrete roadblock warrants a minimal custom skill. See [t
 - When the active-skill set changes, update `README.md` and its count.
 - When removing an active skill, also remove its resource entry from the `jb-agent-env` preference registry.
 
+## Skill changes and releases
+
+- Add a Changeset for changes to distributed skills or their layout. See [the release workflow](.changeset/README.md) for bump levels and Git tags.
+- When retiring a skill, remove its directory, remove active references, and record the reason, replacement (if any), and last available revision in [the retirement history](deprecated-skills/README.md). Keep any files still used by archived research at their documented paths.
+- Check that the retired name is absent from CLI discovery.
+
 ## Before committing skill changes
 
 ```bash

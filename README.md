@@ -48,7 +48,7 @@ npx skills add bjesuiter/skills --all
 
 ### Deprecated Skills (not installed)
 
-[`deprecated-skills/`](deprecated-skills/) retains retired skills for reference. These are outside `skills/`, so `npx skills add … --all` does not discover or install them. `jb-pinchtab-testing`, `jb-tdd`, and `jb-adr` have been superseded; `jb-adr` is replaced by Matt Pocock's `domain-modeling`. See the [deprecation notes](deprecated-skills/README.md).
+See the [retirement history](deprecated-skills/README.md) for replacements and archived versions.
 
 ### Documentation & Research
 - `jb-docs-scraper` — Scrape documentation websites into markdown
@@ -81,6 +81,10 @@ npx skills add . --list
 # Test install
 npx skills add . --skill jb-beans -a codex -y
 ```
+
+## Versioned releases
+
+Use Git tags to give an agent a fixed snapshot of the skills. See the [release workflow](.changeset/README.md) for recording changes, cutting a release with Bun, and installing from a tag.
 
 ## Decisions and archived research
 
