@@ -20,3 +20,7 @@ For a lightly customized copy, map upstream filenames and paths to their local e
 ## Apply
 
 Apply changes when the caller asks for a merge. Verify the resulting instructions, links, and affected helpers. Report what was applied, skipped, or left open, with reasons. The caller owns upstream revision tracking.
+
+## Feedback
+
+If these instructions cause concrete friction, follow [repo-feedback](../repo-feedback/SKILL.md). When delegated, return the observation to the caller with your review findings.
