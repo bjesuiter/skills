@@ -2,5 +2,8 @@
   repo: "t3dotgg/tstack",
   url: "https://github.com/t3dotgg/tstack",
   track: { type: "commit", branch: "main" },
-  snapshot: null,
+  snapshot: {
+    revision: "11e37a74d0a6868c121cd0910ab2b3bd9873b92a",
+    vendoredAt: "2026-11-18",
+  },
 }
