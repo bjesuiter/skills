@@ -1,1 +1,0 @@
-No additional SVG-specific skill is available.

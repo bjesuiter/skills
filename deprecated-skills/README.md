@@ -4,7 +4,7 @@ This page records retired skills and their replacements. Archived research asset
 
 ## `jb-svg`
 
-Archived on 2026-10-06 after JB preferred plain SVG generation in the pelican-bicycle comparison. Use plain SVG until a concrete roadblock warrants a small, focused custom skill. See the [decision](../docs/adr/0001-use-plain-svg-until-a-roadblock.md) and [archived lab and evidence](../research/jb-svg/README.md).
+Archived on 2026-10-06 after JB preferred plain SVG generation in the pelican-bicycle comparison. Use plain SVG until a concrete roadblock warrants a small, focused custom skill. See the [decision](../docs/adr/0001-use-plain-svg-until-a-roadblock.md) and the [last revision of the lab](https://github.com/bjesuiter/skills/blob/64e0029cd8d009857ca9579408b86e792c167305/research/jb-svg/README.md).
 
 The legacy skill is retained at [`jb-svg/`](jb-svg/) for research only. It is retired from active use.
 

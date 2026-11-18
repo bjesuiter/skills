@@ -86,10 +86,9 @@ npx skills add . --skill jb-beans -a codex -y
 
 Use Git tags to give an agent a fixed snapshot of the skills. See the [release workflow](.changeset/README.md) for recording changes, cutting a release with Bun, and installing from a tag.
 
-## Decisions and archived research
+## Decisions
 
 - [Decision records](docs/adr/README.md)
-- [Archived SVG research](research/jb-svg/) preserves the retired skill evaluation lab and benchmark evidence. Current SVG work uses plain SVG; a dedicated skill will be reconsidered only for a concrete roadblock.
 
 ## About
 
