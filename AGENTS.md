@@ -2,7 +2,9 @@
 
 ## Canonical locations
 
-- Public, installable skills belong in `skills/<skill-name>/`.
+- Keep JB-maintained skills in `skills/jb/<skill-name>/`.
+- Put imported skills maintained here in `skills/vendored/<skill-name>/`. Record the upstream source and revision and retain its license and notices.
+- Put drafts in `skills/in-progress/<skill-name>/`. The Skills CLI discovers valid drafts by default. Add `metadata.internal: true` in the frontmatter to opt out of normal discovery.
 - `deprecated-skills/` is historical reference only and must not be made discoverable.
 - `.agents/skills/` is local agent state, never a canonical source.
 

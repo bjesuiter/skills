@@ -4,27 +4,8 @@ This repo is structured to work cleanly with `npx skills`.
 
 ## 1) Required Structure
 
-Use one of these patterns:
-
-### Single-skill repo
-
-```text
-<repo>/
-└── SKILL.md
-```
-
-### Multi-skill repo (used here)
-
-```text
-<repo>/
-└── skills/
-    ├── <skill-name>/
-    │   └── SKILL.md
-    └── <another-skill>/
-        └── SKILL.md
-```
-
-> This repository uses the multi-skill layout under `skills/`.
+See [AGENTS.md](../AGENTS.md#canonical-locations) for the category layout.
+The CLI selects a skill by its frontmatter name regardless of category.
 
 ## 2) SKILL.md Requirements
 
@@ -57,17 +38,17 @@ From repository root:
 npx skills add . --list
 
 # install a specific skill to an agent
-npx skills add . --skill jb-tdd -a codex -y
+npx skills add . --skill jb-beans -a codex -y
 
 # optional: test global install
-npx skills add . --skill jb-tdd -g -a pi -y
+npx skills add . --skill jb-beans -g -a pi -y
 ```
 
 ## 5) Remote Validation (GitHub)
 
 ```bash
 npx skills add bjesuiter/skills --list
-npx skills add bjesuiter/skills --skill jb-tdd -a codex -y
+npx skills add bjesuiter/skills --skill jb-beans -a codex -y
 ```
 
 ## 6) Optional: Internal/WIP Skills

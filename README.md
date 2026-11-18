@@ -13,9 +13,15 @@ npx skills add bjesuiter/skills --list
 # Install one skill
 npx skills add bjesuiter/skills --skill jb-beans -a codex -y
 
-# Install all skills to all agents
+# Install all discoverable skills to all agents
 npx skills add bjesuiter/skills --all
 ```
+
+## Repository layout
+
+- [`skills/jb/`](skills/jb/) contains JB's existing skills.
+- [`skills/vendored/`](skills/vendored/) holds upstream skills imported for local adaptation.
+- [`skills/in-progress/`](skills/in-progress/) holds drafts. The CLI includes drafts in `--list` and `--all` unless their frontmatter sets `metadata.internal: true`.
 
 ## Included Skills (29)
 

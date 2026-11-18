@@ -35,7 +35,7 @@ Do not ask the user to configure `mcporter` manually unless the bootstrap script
 Before the first `mcporter call`, run the bundled script. From this skills repo:
 
 ```bash
-skills/jb-chrome-mcp/scripts/ensure-jb-chrome-mcp.sh
+skills/jb/jb-chrome-mcp/scripts/ensure-jb-chrome-mcp.sh
 ```
 
 From an installed skill path:
