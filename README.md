@@ -17,9 +17,10 @@ npx skills add bjesuiter/skills --skill jb-beans -a codex -y
 npx skills add bjesuiter/skills --all
 ```
 
-## Included Skills (28)
+## Included Skills (29)
 
 ### Core Development Workflows
+- `jb-stack-prefs` — JB's preferred stacks by use case, repository comparisons, and preference updates
 - `jb-buying-judge` — One-at-a-time randomized anti-impulse-buying checks that distinguish a real need from a deliberate want
 - `jb-decision-judge` — Proportionate adversarial decision review: steelman options, pressure-test a leaning, or check a chosen direction
 - `jb-beansloop` — Automated workflow using beans issue tracker
