@@ -16,7 +16,7 @@ Use `integrate` and `prepare-merge` as the names for JB's planned adaptations of
 
 Use semantic comparison for these successors, including the shared preparation flow.
 
-- `full-send` → [`integrate`](../jb/integrate/SKILL.md)
+- `full-send` → [`integrate`](../in-progress/integrate/SKILL.md)
 - `full-stop` → [`prepare-merge`](../jb/prepare-merge/SKILL.md)
 
 Keep `leaving-pr-comments` for GitHub. When another channel needs attribution, consider a shared `public-agent-attribution` skill for messages an agent sends on JB's behalf, including email. Share the verified model or harness name and sender attribution rules, and let each channel choose its own format. Keep the GitHub callout in `leaving-pr-comments`.

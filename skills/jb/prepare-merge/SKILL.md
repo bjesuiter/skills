@@ -9,7 +9,7 @@ Leave the intended PR open for the user to merge. Never merge, enable
 auto-merge, enter a merge queue, push to the target branch, bypass branch
 protection, or delegate those actions.
 
-Read [GitHub PR preparation](../integrate/references/github-pr-preparation.md)
+Read [GitHub PR preparation](../../in-progress/integrate/references/github-pr-preparation.md)
 from the installed `integrate` skill and run it in handoff mode. If the
 relative path is unavailable, locate `integrate` through the skill catalog
 and read its bundled reference. Install both skills to make this workflow
