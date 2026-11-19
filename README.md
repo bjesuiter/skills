@@ -19,7 +19,7 @@ npx skills add bjesuiter/skills --all
 
 Use an explicit skill name when you want a specific skill. Installing all discoverable skills can include drafts. For a reproducible installation, [install from a Git tag](.changeset/README.md#install-a-fixed-snapshot).
 
-## Included Skills (40)
+## Included Skills (41)
 
 ### Core Development Workflows
 - [`integrate`](skills/jb/integrate/SKILL.md) — Prepare, verify, and merge a GitHub pull request
@@ -57,6 +57,7 @@ Use an explicit skill name when you want a specific skill. Installing all discov
 - `jb-bgproc` — Consolidated background-process workflow, validated against `bgproc` 0.3.0; replaces the separate official `bgproc` skill
 - `jb-tuna-script` — Create executable scripts for the Tuna macOS launcher
 - `jb-worktree` — Git worktree management via `wtp`
+- [`finish-t3`](skills/in-progress/finish-t3/SKILL.md) (draft) — Check OpenLoops and unsaved work, then finish a T3 worktree and archive; optional deep-check covers unique ignored data
 
 ### Platform-Specific
 - `xcode` — Build, test, and manage Xcode projects and Swift packages
