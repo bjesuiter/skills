@@ -12,6 +12,10 @@ See [Maintaining skills](docs/maintaining-skills.md) when importing upstream ski
 - Record retired skills in `skills/deprecated/README.md`. Keep this directory for documentation only.
 - Keep repository-only workflows in `.agents/skills/` with matching links in `.claude/skills/` for Claude Code. Other entries in `.agents/skills/` are local agent state.
 
+## Private skills
+
+For requests about private skill previews, experiments, or personal workflows, use the separate private repository [bjesuiter/skills-private](https://github.com/bjesuiter/skills-private), cloned at `~/Develop/bjesuiter/skills-private`. Read its `AGENTS.md` before working there. Keep private skill contents and trial artifacts in that repository.
+
 ## SVG work
 
 Use plain SVG until a concrete roadblock warrants a minimal custom skill. See [the accepted decision](docs/adr/0001-use-plain-svg-until-a-roadblock.md) before adding or reactivating SVG-specific guidance.
