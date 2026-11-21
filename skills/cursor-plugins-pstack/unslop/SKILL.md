@@ -38,3 +38,4 @@ Rule numbers are stable ids that other skills cite. A removed rule leaves a gap.
 31. Use the plain word: "use", not "utilize" or "leverage".
 32. No metaphor, aphorism, personified code, or figurative verb where a literal phrase exists.
 33. Write whole sentences with their articles and verbs. Spell out arrows and abbreviations.
+34. Explain a new term or internal component in plain words the first time it appears.
