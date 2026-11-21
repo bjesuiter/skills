@@ -496,7 +496,35 @@ def looks_injected(text: str) -> bool:
     )
 
 
-def parse_codex_session(path: Path, skill_names, include_subagents: bool):
+CODEX_DEFAULT_EFFORT_RE = re.compile(r'^model_reasoning_effort\s*=\s*["\']([\w-]+)["\']', re.M)
+
+
+def codex_default_effort(codex_home: Path):
+    """Return the top-level model_reasoning_effort from config.toml, if any."""
+    try:
+        text = (codex_home / "config.toml").read_text(errors="replace")
+    except OSError:
+        return None
+    match = CODEX_DEFAULT_EFFORT_RE.search(text.split("\n[", 1)[0])
+    return match.group(1) if match else None
+
+
+def codex_turn_settings(payload, default_effort):
+    """Return (model, effort label) for one turn_context payload.
+
+    Codex records a null effort when the client sends none; the turn then runs
+    with config.toml's default. Only the current default is known, so the label
+    says so instead of claiming the value used at the time.
+    """
+    mode = (payload.get("collaboration_mode") or {}).get("settings") or {}
+    model = payload.get("model") or mode.get("model") or "unknown"
+    effort = mode.get("reasoning_effort") or payload.get("effort")
+    if not effort:
+        effort = f"{default_effort} (current config default)" if default_effort else "unset"
+    return model, effort
+
+
+def parse_codex_session(path: Path, skill_names, include_subagents: bool, default_effort=None):
     """Returns (meta, stats, entries) or None if the session should be skipped."""
     try:
         records = iter_jsonl_records(path)
@@ -510,6 +538,8 @@ def parse_codex_session(path: Path, skill_names, include_subagents: bool):
     skills_used = set()
     has_code_edits = False
     first_ts = last_ts = None
+    turn_settings = {}
+    last_settings = None
 
     for obj in records:
         ltype = obj.get("type")
@@ -521,7 +551,15 @@ def parse_codex_session(path: Path, skill_names, include_subagents: bool):
             first_ts = first_ts or ts
             last_ts = ts
 
-        if ltype == "session_meta":
+        if ltype == "turn_context":
+            # The model and effort can change between turns of one thread.
+            settings = codex_turn_settings(payload, default_effort)
+            turn_settings[settings] = turn_settings.get(settings, 0) + 1
+            if settings != last_settings:
+                entries.append(("settings", f"model {settings[0]}, effort {settings[1]}"))
+                last_settings = settings
+
+        elif ltype == "session_meta":
             # Forked and subagent rollouts repeat the parent's session_meta later in
             # the file; the first record describes this session.
             if meta:
@@ -600,6 +638,11 @@ def parse_codex_session(path: Path, skill_names, include_subagents: bool):
     stats["first_ts"] = first_ts
     stats["last_ts"] = last_ts
     stats["has_code_edits"] = has_code_edits
+    if turn_settings:
+        meta["turn_settings"] = [
+            {"model": model, "effort": effort, "turns": turns}
+            for (model, effort), turns in turn_settings.items()
+        ]
     return meta, stats, entries.finish(), sorted(skills_used)
 
 
@@ -1513,6 +1556,10 @@ def render_transcript(meta, stats, skills_used, entries) -> str:
         f"{stats['tool_calls']} tool calls ({stats['repeated_tool_calls']} repeated), "
         f"{stats['error_outputs']} error-ish outputs, code edits: {stats['has_code_edits']}",
     ]
+    if meta.get("turn_settings"):
+        lines.append("- model and effort per turn: " + ", ".join(
+            f"{s['model']} / {s['effort']} ({s['turns']} turns)" for s in meta["turn_settings"]
+        ))
     commits = getattr(entries, "commits", ())
     if commits:
         lines.append("- commits: " + ", ".join(f"{c['sha']} ({c['branch']})" for c in commits))
@@ -1690,8 +1737,9 @@ def main():
         codex_files = find_codex_session_files(codex_home, cutoff)
         sources["codex"] = {"home": str(codex_home), "records_in_window": len(codex_files)}
         scanned_count += len(codex_files)
+        default_effort = codex_default_effort(codex_home)
         for mtime, path in codex_files:
-            parsed = parse_codex_session(path, skills.keys(), args.include_subagents)
+            parsed = parse_codex_session(path, skills.keys(), args.include_subagents, default_effort)
             if parsed is None:
                 continue
             meta, stats, entries, skills_used = parsed

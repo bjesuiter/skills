@@ -18,6 +18,7 @@ from collect_sessions import (
     find_hermes_sessions,
     find_pi_session_files,
     parse_claude_session,
+    codex_default_effort,
     parse_codex_session,
     parse_grok_session,
     parse_hermes_session,
@@ -671,6 +672,39 @@ class CodexAppServerTests(unittest.TestCase):
             self.assertLessEqual(len(entries[1][1].split(" …[truncated")[0]), 160)
             self.assertEqual(entries[-1], ("assistant", "Done."))
             self.assertEqual(len(entries.commits), 1)
+
+    def test_records_model_and_effort_per_turn(self):
+        def turn(model, effort):
+            return {"type": "turn_context", "payload": {"model": model, "collaboration_mode": {
+                "mode": "default", "settings": {"model": model, "reasoning_effort": effort},
+            }}}
+
+        with tempfile.TemporaryDirectory() as tmp:
+            home = Path(tmp)
+            (home / "config.toml").write_text(
+                'model = "gpt-6.2-sol"\nmodel_reasoning_effort = "low"\n\n'
+                '[profiles.deep]\nmodel_reasoning_effort = "high"\n'
+            )
+            path = home / "codex.jsonl"
+            records = codex_app_server_records(1)
+            write_jsonl(path, records[:1] + [
+                turn("gpt-6.1-terra", "medium"), turn("gpt-6.1-terra", "medium"),
+                turn("gpt-6.2-sol", None),
+            ] + records[1:])
+
+            meta, _, entries, _ = parse_codex_session(
+                path, set(), False, codex_default_effort(home),
+            )
+
+            self.assertEqual(meta["turn_settings"], [
+                {"model": "gpt-6.1-terra", "effort": "medium", "turns": 2},
+                {"model": "gpt-6.2-sol", "effort": "low (current config default)", "turns": 1},
+            ])
+            self.assertEqual(
+                [text for role, text in entries if role == "settings"],
+                ["model gpt-6.1-terra, effort medium",
+                 "model gpt-6.2-sol, effort low (current config default)"],
+            )
 
     def test_keeps_the_first_session_meta_of_a_subagent_rollout(self):
         with tempfile.TemporaryDirectory() as tmp:
