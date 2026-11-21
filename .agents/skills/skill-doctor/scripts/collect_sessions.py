@@ -490,6 +490,15 @@ def parse_codex_session(path: Path, skill_names, include_subagents: bool):
                 stats["user_turns"] += 1
             elif ptype == "agent_message":
                 stats["assistant_turns"] += 1
+            elif ptype == "item_completed":
+                # Newer Codex app-server rollouts (e.g. T3 Code) emit completed
+                # thread items instead of user_message/agent_message events.
+                item = payload.get("item") or {}
+                item_type = item.get("type") if isinstance(item, dict) else None
+                if item_type == "UserMessage":
+                    stats["user_turns"] += 1
+                elif item_type == "AgentMessage":
+                    stats["assistant_turns"] += 1
 
         elif ltype == "response_item":
             ptype = payload.get("type")
