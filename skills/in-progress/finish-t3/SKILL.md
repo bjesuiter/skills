@@ -1,13 +1,13 @@
 ---
 name: finish-t3
-description: Check thread OpenLoops and unsaved work before finishing a T3 Code worktree and archiving its thread. Use deep-check to also inspect unique ignored files for non-reproducible data.
+description: Finish a T3 Code worktree and archive its thread. By default, check OpenLoops and unsaved work. Use deep-check to also inspect unique ignored files or no-checks or skip-checks to skip both checks.
 ---
 
 # Finish T3
 
 Check that the thread's work is accounted for, remove the finished worktree,
 then archive the thread. This skill performs no merge. Treat an invocation as
-permission to finish and archive when the checks pass.
+permission to finish and archive under the selected mode.
 
 ## 1. Identify the thread and mode
 
@@ -16,8 +16,11 @@ thread's worktree, branch, main checkout, and integration target. For another
 thread, read it with `t3_thread_read` first and retain its environment and
 workspace identity throughout.
 
-Run the standard check by default. Run the additional ignored-file check only
-when the user requests `deep-check` (for example, `finish-t3 deep-check`).
+- `no-checks` and `skip-checks` select the same mode. When explicitly requested
+  (for example, `finish-t3 no-checks`), go directly to step 4 after identifying
+  the worktree. Skip steps 2 and 3, including `deep-check`.
+- `deep-check` adds the ignored-file check to the standard checks.
+- With no mode specified, run the standard checks in steps 2 and 3.
 
 ## 2. Account for OpenLoops
 
@@ -71,8 +74,9 @@ that reference and its script unloaded in standard mode.
 
 ## 4. Finish and archive
 
-Proceed once every OpenLoop and preservation finding has a verified
-disposition. Complete repository-required finishing actions before removal.
+In standard and deep-check modes, proceed once every OpenLoop and preservation
+finding has a verified disposition. In `no-checks` mode, retain the branch.
+Complete repository-required finishing actions before removal.
 Stop only processes associated with this worktree and clear its PR watches.
 
 Run `git worktree remove <absolute-path>` from a surviving checkout; keep all
@@ -90,7 +94,8 @@ for this thread or supplying the verified thread/environment for another one.
 Archive only after cleanup succeeds. If tools are unavailable or an operation
 fails, retain the thread as active and report the incomplete step.
 
-Report the mode, OpenLoop dispositions, preservation result, removed worktree,
-retained branches, and archive outcome concisely. State that ignored files
+Report the mode, removed worktree, retained branches, and archive outcome
+concisely. In `no-checks` mode, state that OpenLoop and preservation checks
+were skipped. Otherwise report their results and state that ignored files
 were excluded in standard mode. Link mentioned artifacts and use the returned
 T3 link when naming a thread.
