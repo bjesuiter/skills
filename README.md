@@ -1,6 +1,6 @@
 # bjesuiter/skills
 
-JB's curated coding skills, compatible with the [`skills` CLI](https://github.com/vercel-labs/skills).
+JB's curated agent skills, compatible with the [`skills` CLI](https://github.com/vercel-labs/skills).
 
 These skills represent workflows, tools, and patterns JB actively uses in development. They're designed to be agent-agnostic and work with any AI coding assistant that supports the skills format.
 
@@ -23,7 +23,6 @@ Use an explicit skill name when you want a specific skill. Installing all discov
 
 ### Core Development Workflows
 - `jb-stack-prefs` — JB's preferred stacks by use case, repository comparisons, and preference updates
-- `jb-buying-judge` — One-at-a-time randomized anti-impulse-buying checks that distinguish a real need from a deliberate want
 - `jb-decision-judge` — Proportionate adversarial decision review: steelman options, pressure-test a leaning, or check a chosen direction
 - `jb-beansloop` — Automated workflow using beans issue tracker
 - `jb-committer` — Git commit grouping and commit message drafting
@@ -55,7 +54,7 @@ Use an explicit skill name when you want a specific skill. Installing all discov
 - `jb-bgproc` — Consolidated background-process workflow, validated against `bgproc` 0.3.0; replaces the separate official `bgproc` skill
 - `jb-tuna-script` — Create executable scripts for the Tuna macOS launcher
 - `jb-worktree` — Git worktree management via `wtp`
-- [`finish-t3`](skills/in-progress/finish-t3/SKILL.md) (draft) — Check OpenLoops and unsaved work, then finish a T3 worktree and archive; optional deep-check covers unique ignored data
+- [`finish-t3`](skills/jb-in-progress/finish-t3/SKILL.md) (draft) — Check OpenLoops and unsaved work, then finish a T3 worktree and archive; optional deep-check covers unique ignored data
 
 ### Platform-Specific
 - `xcode` — Build, test, and manage Xcode projects and Swift packages
@@ -64,6 +63,10 @@ Use an explicit skill name when you want a specific skill. Installing all discov
 ### Utilities
 - `nb` — Git-backed note management CLI
 - `jb-agent-env` — Shared preferred agent-environment registry for Markdown skills, Pi extensions, and CLIs via GitHub Gist
+
+### Non-coding workflows
+
+- [`jb-buying-judge`](skills/jb-non-code/jb-buying-judge/SKILL.md) — One-at-a-time randomized anti-impulse-buying checks that distinguish a real need from a deliberate want
 
 ### tstack
 
@@ -84,8 +87,8 @@ Use an explicit skill name when you want a specific skill. Installing all discov
 
 ## In progress
 
-- [`integrate`](skills/in-progress/integrate/SKILL.md) — Merge locally and push the target branch. Use `integrate pr` to merge through GitHub. Install `prepare-merge` alongside it. Awaiting testing. Discoverable through the Skills CLI.
-- [`prepare-merge`](skills/in-progress/prepare-merge/SKILL.md) — Prepare a branch locally. Use `prepare-merge pr` to prepare a GitHub PR and leave it open. Awaiting testing. Discoverable through the Skills CLI.
+- [`integrate`](skills/jb-in-progress/integrate/SKILL.md) — Merge locally and push the target branch. Use `integrate pr` to merge through GitHub. Install `prepare-merge` alongside it. Awaiting testing. Discoverable through the Skills CLI.
+- [`prepare-merge`](skills/jb-in-progress/prepare-merge/SKILL.md) — Prepare a branch locally. Use `prepare-merge pr` to prepare a GitHub PR and leave it open. Awaiting testing. Discoverable through the Skills CLI.
 
 ## Retired skills
 

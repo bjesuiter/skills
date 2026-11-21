@@ -5,8 +5,8 @@ This page records retired skills, their replacements, and links to archived vers
 ## `full-send` and `full-stop`
 
 Retired on 2026-11-21 after their workflows moved into the explicit PR modes of
-the local-first skills. Use [`integrate pr`](../in-progress/integrate/SKILL.md)
-to finish and merge a PR, or [`prepare-merge pr`](../in-progress/prepare-merge/SKILL.md)
+the local-first skills. Use [`integrate pr`](../jb-in-progress/integrate/SKILL.md)
+to finish and merge a PR, or [`prepare-merge pr`](../jb-in-progress/prepare-merge/SKILL.md)
 to finish it and hand it back for review or merge.
 
 Last available revision:

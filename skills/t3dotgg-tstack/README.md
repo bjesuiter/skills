@@ -19,8 +19,8 @@ flow. Diff these upstream paths explicitly between the pinned and incoming
 revisions during a vendor check. The scanner selects skills from local vendor
 directories, so it does not emit diffs for these retired copies.
 
-- `full-send` → [`integrate`](../in-progress/integrate/SKILL.md)
-- `full-stop` → [`prepare-merge`](../in-progress/prepare-merge/SKILL.md)
+- `full-send` → [`integrate`](../jb-in-progress/integrate/SKILL.md)
+- `full-stop` → [`prepare-merge`](../jb-in-progress/prepare-merge/SKILL.md)
 
 Keep `leaving-pr-comments` for GitHub. When another channel needs attribution, consider a shared `public-agent-attribution` skill for messages an agent sends on JB's behalf, including email. Share the verified model or harness name and sender attribution rules, and let each channel choose its own format. Keep the GitHub callout in `leaving-pr-comments`.
 
