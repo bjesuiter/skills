@@ -1,0 +1,9 @@
+{
+  repo: "cursor/plugins",
+  url: "https://github.com/cursor/plugins",
+  track: { type: "commit", branch: "main" },
+  snapshot: {
+    revision: "792440e8a560a4a3f63748cdee70491ecd412982",
+    vendoredAt: "2026-11-21",
+  },
+}
