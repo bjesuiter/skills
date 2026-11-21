@@ -43,7 +43,7 @@ find -L skills/ -type l -delete
 npx skills add . --list
 ```
 
-Confirm the listing matches the intended changes. If testing installation, use a disposable project and one of the agents configured in `jb-agent-env` (`codex`, `opencode`, and `pi`). Remove test-only local installs afterwards.
+Confirm the listing matches the intended changes. If testing installation, use a disposable project and one of the agents configured in `jb-agent-env` (`codex`, `opencode`, `pi`, and `claude-code`). Remove test-only local installs afterwards.
 
 ## After committing a JB workflow skill
 
