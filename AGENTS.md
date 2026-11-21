@@ -1,6 +1,7 @@
 # Skills Repository
 
 Use [find-new-skills](.agents/skills/find-new-skills/SKILL.md) to record upstream sources or discover candidate skills.
+Use [skill-doctor](.agents/skills/skill-doctor/SKILL.md) to evaluate how well this repo’s skills work in real agent conversations and draft evidence-based improvements.
 
 ## Canonical locations
 

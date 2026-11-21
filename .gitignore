@@ -5,6 +5,7 @@
 !/.agents/skills/repo-feedback
 !/.agents/skills/update-vendored
 !/.agents/skills/find-new-skills
+!/.agents/skills/skill-doctor
 .pi/
 
 node_modules/
