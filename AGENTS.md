@@ -1,6 +1,6 @@
 # Skills Repository
 
-Use [maintaining-skills](.agents/skills/maintaining-skills/SKILL.md) to track upstream sources, import or refresh skills, validate changes, retire skills, or prepare a release.
+Use [find-new-skills](.agents/skills/find-new-skills/SKILL.md) to record upstream sources or discover candidate skills.
 
 ## Canonical locations
 
@@ -41,7 +41,7 @@ find -L skills/ -type l -delete
 npx skills add . --list
 ```
 
-If testing installation, use only the agents configured in `jb-agent-env` (`codex`, `opencode`, and `pi`) and remove test-only local installs afterwards.
+Confirm the listing matches the intended changes. If testing installation, use a disposable project and one of the agents configured in `jb-agent-env` (`codex`, `opencode`, and `pi`). Remove test-only local installs afterwards.
 
 ## After committing a JB workflow skill
 
@@ -73,6 +73,6 @@ Use the five standard [triage labels](docs/agents/triage-labels.md).
 
 Use the root `GLOSSARY.md` and `docs/adr/` for this single-context repository. See [the domain docs instructions](docs/agents/domain.md).
 
-### Vendored skill updates
+### Vendored skills
 
-For an upstream skill update check or refresh, follow the repo-local [update-vendored skill](.agents/skills/update-vendored/SKILL.md).
+For a first import, follow the [import guide](.agents/skills/update-vendored/references/importing.md). For an upstream update check or refresh, use [update-vendored](.agents/skills/update-vendored/SKILL.md).

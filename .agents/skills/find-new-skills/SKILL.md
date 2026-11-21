@@ -1,25 +1,33 @@
 ---
 name: find-new-skills
-description: Review omitted and newly added skills in this repository's vendored upstream sources, respect recorded exclusions, and compare candidates with JB's existing skills to recommend additions or ideas to adapt.
+description: Review omitted and newly added skills in upstream skill repositories, respect recorded exclusions, and compare candidates with JB's existing skills to recommend additions or ideas to adapt.
 metadata:
   internal: true
 ---
 
 # Find new skills
 
-Find useful skills and ideas in the upstream repositories already represented by this skills repo. Produce evidence-backed recommendations; importing, installing, or changing preferences requires a request that includes those actions.
+Find useful skills and ideas in upstream repositories. Produce evidence-backed recommendations; importing, installing, or changing preferences requires a request that includes those actions.
 
 ## Establish coverage
 
-Locate the skills repository from the current workspace or the user's supplied path. Read its `AGENTS.md`, [maintaining-skills](../maintaining-skills/SKILL.md), and each upstream folder's `vendor.json5` and `README.md`. Discover sources from those manifests rather than keeping a separate source list in this skill.
+Locate the skills repository from the current workspace or the user’s supplied path. Read its `AGENTS.md`. Use the source list below and discover any additional vendored sources from their manifests. Review each repository once.
 
 Build the comparison inventory from active repo skills, discoverable drafts, and their relevant bundled references. Include skills in JB's preferred registry and the current agent's available skill catalog when accessible. Use `jb-agent-env` when available to locate and read the registry. Treat installed copies as copies of a skill, not separate capabilities; distinguish drafts and retired skills from active choices. State any missing inventory or inaccessible source so the report's scope is clear.
 
 Read descriptions to find likely overlaps, then read the matching skills' full instructions and relevant references before judging duplication. A shared topic or similar name is insufficient evidence.
 
+## Skill sources
+
+Record upstream repositories worth exploring here. For vendored sources, follow the local README for skill selection and the vendor manifest for the pinned revision.
+
+- [Warp common-skills](https://github.com/warpdotdev/common-skills/tree/main)
+- [tstack](https://github.com/t3dotgg/tstack) · [Local vendor notes](../../../skills/t3dotgg-tstack/README.md)
+- [HumanLayer skills](https://github.com/humanlayer/skills) · [Local vendor notes](../../../skills/humanlayer-skills/README.md)
+
 ## Inspect upstream candidates
 
-For each source, resolve the current tracked branch tip or latest release according to its manifest. Fetch that revision into a temporary directory and record the exact revision inspected. Keep the vendored snapshot unchanged. Enumerate `SKILL.md` files throughout the source, including nested plugin layouts, and compare them with what is already imported.
+For vendored sources, use the manifest to resolve the tracked branch tip or latest release. For other sources, resolve the linked ref or, if none is specified, the default branch tip. Fetch that revision into a temporary directory and record the exact revision inspected. Keep the vendored snapshot unchanged. Enumerate `SKILL.md` files throughout the source, including nested plugin layouts, and compare them with what is already imported.
 
 Read recorded selection decisions before evaluating omitted skills:
 
