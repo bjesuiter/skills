@@ -16,7 +16,7 @@ read the corresponding reference. Install both skills to use `integrate`.
 
 ## Local merge
 
-Complete [local preparation](../../jb/prepare-merge/references/local-preparation.md).
+Complete [local preparation](../prepare-merge/references/local-preparation.md).
 Respect required PRs, approvals and branch protections. Proceed once the selected
 candidate passes the required checks and review.
 
@@ -46,7 +46,7 @@ state. A push attempted with an unknown outcome is **publication unconfirmed**.
 
 ## GitHub PR merge
 
-Complete [GitHub PR preparation](../../jb/prepare-merge/references/github-pr-preparation.md)
+Complete [GitHub PR preparation](../prepare-merge/references/github-pr-preparation.md)
 in merge mode.
 
 After the gate passes, re-read the live head and target branch tip immediately
