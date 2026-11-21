@@ -2,6 +2,7 @@
 
 Use [find-new-skills](.agents/skills/find-new-skills/SKILL.md) to record upstream sources or discover candidate skills.
 Use [skill-doctor](.agents/skills/skill-doctor/SKILL.md) to evaluate how well this repo’s skills work in real agent conversations and draft evidence-based improvements.
+Record findings that need a change in how JB works, not an instruction change, in [human best practices](docs/human-best-practices.md).
 
 ## Canonical locations
 
