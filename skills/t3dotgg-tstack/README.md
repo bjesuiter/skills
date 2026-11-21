@@ -10,7 +10,7 @@ Keep `babysit-pr` to follow up on human and bot reviews and catch conflicts or c
 
 Keep `modernize` for stale implementation worktrees with open PRs. It checks whether the original goal still needs work and what changed on the base branch before updating the PR.
 
-Use `integrate` and `prepare-merge` as the names for JB's planned adaptations of `full-send` and `full-stop`. Both should use the same GitHub PR preparation and readiness checks. `integrate` merges once the gate passes. `prepare-merge` leaves the ready PR open for a human to merge. Tie evidence to the reviewed commits, rerun affected checks when the base advances, and request a targeted re-review if conflict resolution changes behavior.
+JB's adaptations of `full-send` and `full-stop` are the explicit PR modes of two local-first skills. Both use GitHub PR preparation from `prepare-merge`. `integrate pr` merges once the gate passes. `prepare-merge pr` leaves the PR open for a human merge. Tie evidence to the reviewed commits, rerun affected checks when the base advances, and request a targeted re-review if conflict resolution changes behavior.
 
 ### Upstream changes to successor skills
 

@@ -22,7 +22,7 @@ Use an explicit skill name when you want a specific skill. Installing all discov
 ## Included Skills (40)
 
 ### Core Development Workflows
-- [`prepare-merge`](skills/jb/prepare-merge/SKILL.md) — Verify a GitHub pull request and leave it open for a human to merge. Install `integrate` alongside it for the shared workflow.
+- [`prepare-merge`](skills/jb/prepare-merge/SKILL.md) — Prepare a branch locally. Use `prepare-merge pr` to prepare a GitHub PR and leave it open.
 - `jb-stack-prefs` — JB's preferred stacks by use case, repository comparisons, and preference updates
 - `jb-buying-judge` — One-at-a-time randomized anti-impulse-buying checks that distinguish a real need from a deliberate want
 - `jb-decision-judge` — Proportionate adversarial decision review: steelman options, pressure-test a leaning, or check a chosen direction
@@ -83,7 +83,7 @@ Use an explicit skill name when you want a specific skill. Installing all discov
 
 ## In progress
 
-- [`integrate`](skills/in-progress/integrate/SKILL.md) — Prepare, verify, and merge a GitHub pull request; awaiting testing. Discoverable through the Skills CLI.
+- [`integrate`](skills/in-progress/integrate/SKILL.md) — Merge locally and push the target branch. Use `integrate pr` to merge through GitHub. Install `prepare-merge` alongside it. Awaiting testing. Discoverable through the Skills CLI.
 
 ## Retired skills
 

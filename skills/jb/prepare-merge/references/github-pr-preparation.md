@@ -15,10 +15,7 @@ skill's auto-merge and queue checks before working on an existing PR.
 
 Inspect staged, unstaged, and outgoing changes. Finish and commit only the
 requested change, preserving unrelated work. Create a topic branch when
-starting from the target branch. Use the repo's prescribed checks and review
-workflow. Run the direct verification the change warrants within the session's
-permissions. Request independent review through the permitted workflow and
-resolve actionable findings before advancing.
+starting from the target branch. Start [verification](verification.md) with independent review before rebasing.
 
 ## Refresh, verify, and publish
 
@@ -31,13 +28,7 @@ resolve actionable findings before advancing.
    resolution. Reuse earlier review only where the reviewed patch and its
    behavior still apply. Record the original reviewed SHA and the scope of
    any follow-up review.
-2. Record the candidate head SHA and target tip SHA. Select checks and builds
-   for the final diff and affected behavior. Record each command or observed
-   result, the SHA or merge candidate it ran against, and the result or run
-   link. When either SHA changes, reassess the diff, dependencies, configuration,
-   and conflict resolutions. Rerun affected or missing checks and builds.
-   Carry forward unaffected results with their original SHAs and a brief
-   reason they still apply. Run the required full gate if impact is unclear.
+2. Complete verification on the resulting candidate and target tip.
 3. Push only the intended branch and create or update the PR with the verified
    scope and proof summary. For an authorized rewrite after rebase, use an
    explicit `--force-with-lease=<ref>:<expected-remote-sha>` against the head

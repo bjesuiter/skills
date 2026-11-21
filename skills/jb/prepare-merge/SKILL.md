@@ -1,19 +1,21 @@
 ---
 name: prepare-merge
-description: Use when the user says "prepare to merge" or asks you to get a GitHub PR ready for them to merge.
+description: Use when the user asks to prepare a branch for merge. Prepare locally by default, or prepare and leave a GitHub PR open when requested.
 ---
 
 # Prepare Merge
 
-Leave the intended PR open for the user to merge. Never merge, enable
-auto-merge, enter a merge queue, push to the target branch, bypass branch
-protection, or delegate those actions.
+For `prepare-merge` or `prepare-merge local`, complete
+[local preparation](references/local-preparation.md). Report the prepared head,
+base, checks, review and any blocker. Note when the base was verified locally
+after a failed fetch. Stop before merge or push.
 
-Read [GitHub PR preparation](../../in-progress/integrate/references/github-pr-preparation.md)
-from the installed `integrate` skill and run it in handoff mode. If the
-relative path is unavailable, locate `integrate` through the skill catalog
-and read its bundled reference. Install both skills to make this workflow
-available. The `integrate` entry point's merge authority does not apply.
+## GitHub PR mode
+
+Use this path for `prepare-merge pr` or an explicit request to prepare a pull
+request. Complete [GitHub PR preparation](references/github-pr-preparation.md)
+in handoff mode. Leave the PR open. Never merge, enable auto-merge, enter a
+merge queue, push to the target branch, or delegate those actions.
 
 Before working on an existing PR, before each push, and at handoff, check the
 live PR for auto-merge and merge queue enrollment. Disable auto-merge and
