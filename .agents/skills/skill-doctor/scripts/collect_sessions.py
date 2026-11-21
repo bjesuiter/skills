@@ -32,6 +32,14 @@ MAX_TOOL_CHARS = 500
 MAX_TRANSCRIPT_ENTRIES = 160
 TRANSCRIPT_HEAD = 100
 TRANSCRIPT_TAIL = 40
+MESSAGES_ONLY_MSG_CHARS = 20000
+MESSAGES_ONLY_TOOL_CHARS = 160
+MESSAGES_ONLY = False
+OUTPUT_ROLES = ("output", "tool_output")
+# `git commit` prints "[<branch> <sha>] <subject>"; a first commit adds "(root-commit)".
+GIT_COMMIT_LINE = re.compile(
+    r"\[(detached HEAD|[^\s\[\]]+)(?: \(root-commit\))? ([0-9a-f]{7,40})\] ([^\n\\\"]{1,200})"
+)
 
 CODE_EDIT_HINTS = ("apply_patch", "*** Begin Patch", "edit_file", "create_file", "str_replace", "write_file")
 CLAUDE_CODE_EDIT_TOOLS = {"Edit", "MultiEdit", "NotebookEdit", "Write"}
@@ -102,6 +110,11 @@ def parse_args():
     p.add_argument("--no-skill", type=int, default=4, help="max sampled sessions that used no skill")
     p.add_argument("--skills-dir", action="append", default=[], help="extra skills directory to scan (repeatable)")
     p.add_argument("--include-subagents", action="store_true", help="include subagent/child sessions")
+    p.add_argument(
+        "--messages-only",
+        action="store_true",
+        help="keep every user and assistant message, shorten tool calls to one line, and drop tool outputs",
+    )
     p.add_argument("--out", default="./skill-doctor-report")
     return p.parse_args()
 
@@ -259,6 +272,27 @@ def iter_jsonl_records(path: Path):
     return records()
 
 
+def set_messages_only(enabled: bool):
+    """Keep every message, shorten tool calls to one line, and drop tool outputs."""
+    global MESSAGES_ONLY, MAX_MSG_CHARS
+    MESSAGES_ONLY = enabled
+    MAX_MSG_CHARS = MESSAGES_ONLY_MSG_CHARS if enabled else 1500
+
+
+def find_git_commits(text: str):
+    """Return commits that `git commit` reported in one tool output."""
+    return [
+        {"sha": sha, "branch": branch, "subject": subject.strip()}
+        for branch, sha, subject in GIT_COMMIT_LINE.findall(text)
+    ]
+
+
+class TranscriptEntries(list):
+    """Transcript entries plus the commits found in the session's tool outputs."""
+
+    commits = ()
+
+
 class TranscriptBuffer:
     """Keep complete short transcripts and a bounded head/tail for long ones."""
 
@@ -266,8 +300,24 @@ class TranscriptBuffer:
         self._entries = []
         self._tail = None
         self._total = 0
+        self._commits = {}
+
+    def append_output(self, role, raw):
+        """Record a tool output; scan the untruncated text for commits first."""
+        for commit in find_git_commits(raw):
+            self._commits.setdefault(commit["sha"], commit)
+        self.append((role, truncate(raw, MAX_TOOL_CHARS)))
 
     def append(self, entry):
+        if MESSAGES_ONLY:
+            role, text = entry
+            if role in OUTPUT_ROLES:
+                return
+            if role.startswith("tool:"):
+                entry = (role, truncate(" ".join(text.split()), MESSAGES_ONLY_TOOL_CHARS))
+            self._total += 1
+            self._entries.append(entry)
+            return
         self._total += 1
         if self._tail is None:
             self._entries.append(entry)
@@ -279,11 +329,14 @@ class TranscriptBuffer:
 
     def finish(self):
         if self._tail is None:
-            return self._entries
-        omitted = self._total - TRANSCRIPT_HEAD - TRANSCRIPT_TAIL
-        return self._entries + [
-            ("note", f"[... {omitted} entries omitted ...]")
-        ] + list(self._tail)
+            entries = TranscriptEntries(self._entries)
+        else:
+            omitted = self._total - TRANSCRIPT_HEAD - TRANSCRIPT_TAIL
+            entries = TranscriptEntries(self._entries + [
+                ("note", f"[... {omitted} entries omitted ...]")
+            ] + list(self._tail))
+        entries.commits = list(self._commits.values())
+        return entries
 
 
 def detect_skill_candidates(text: str):
@@ -406,7 +459,7 @@ def parse_claude_session(path: Path, skill_names, include_subagents: bool):
                 low = result[:2000].lower()
                 if block.get("is_error") or "error" in low or "failed" in low or "traceback" in low:
                     stats["error_outputs"] += 1
-                entries.append(("output", truncate(result, MAX_TOOL_CHARS)))
+                entries.append_output("output", result)
 
         if role == "user" and has_user_text:
             stats["user_turns"] += 1
@@ -469,6 +522,10 @@ def parse_codex_session(path: Path, skill_names, include_subagents: bool):
             last_ts = ts
 
         if ltype == "session_meta":
+            # Forked and subagent rollouts repeat the parent's session_meta later in
+            # the file; the first record describes this session.
+            if meta:
+                continue
             meta = {
                 "id": payload.get("id") or payload.get("session_id") or path.stem,
                 "cwd": payload.get("cwd"),
@@ -535,7 +592,7 @@ def parse_codex_session(path: Path, skill_names, include_subagents: bool):
                 low = out[:2000].lower()
                 if "error" in low or "failed" in low or "traceback" in low:
                     stats["error_outputs"] += 1
-                entries.append(("output", truncate(out, MAX_TOOL_CHARS)))
+                entries.append_output("output", out)
 
     if not meta:
         meta = {"id": path.stem, "cwd": None, "started_at": first_ts}
@@ -824,7 +881,7 @@ def parse_hermes_session(connection, session_row, skill_names, include_subagents
             lowered = content[:200].lower()
             if "error" in lowered or "traceback" in lowered:
                 stats["error_outputs"] += 1
-            entries.append(("tool_output", truncate(content, MAX_TOOL_CHARS)))
+            entries.append_output("tool_output", content)
 
     if stats["assistant_turns"] < 1 or stats["tool_calls"] < 1:
         return None
@@ -1080,7 +1137,7 @@ def parse_warp_conversation(record, skill_names, include_subagents):
             low = payload[:2000].lower()
             if "error" in low or "failed" in low or "traceback" in low:
                 stats["error_outputs"] += 1
-            entries.append(("output", truncate(payload, MAX_TOOL_CHARS)))
+            entries.append_output("output", payload)
 
     started_at = first_ts or (first_query_at.isoformat() if first_query_at else None)
     meta = {
@@ -1180,7 +1237,7 @@ def parse_pi_session(path: Path, skill_names, include_subagents: bool):
                     or "traceback" in low
                 ):
                     stats["error_outputs"] += 1
-                entries.append(("output", truncate(result, MAX_TOOL_CHARS)))
+                entries.append_output("output", result)
             continue
 
         has_user_text = False
@@ -1326,7 +1383,7 @@ def parse_grok_session(path: Path, skill_names, include_subagents: bool):
             low = result[:2000].lower()
             if "error" in low or "failed" in low or "traceback" in low:
                 stats["error_outputs"] += 1
-            entries.append(("output", truncate(result, MAX_TOOL_CHARS)))
+            entries.append_output("output", result)
 
     meta = {
         "id": path.parent.name,
@@ -1424,7 +1481,7 @@ def parse_zcode_session(path: Path, skill_names, include_subagents: bool):
             low = result[:2000].lower()
             if "error" in low or "failed" in low or "traceback" in low:
                 stats["error_outputs"] += 1
-            entries.append(("output", truncate(result, MAX_TOOL_CHARS)))
+            entries.append_output("output", result)
 
     entries = entries.finish()
     if not entries:
@@ -1455,12 +1512,17 @@ def render_transcript(meta, stats, skills_used, entries) -> str:
         f"- stats: {stats['user_turns']} user turns, {stats['assistant_turns']} assistant turns, "
         f"{stats['tool_calls']} tool calls ({stats['repeated_tool_calls']} repeated), "
         f"{stats['error_outputs']} error-ish outputs, code edits: {stats['has_code_edits']}",
+    ]
+    commits = getattr(entries, "commits", ())
+    if commits:
+        lines.append("- commits: " + ", ".join(f"{c['sha']} ({c['branch']})" for c in commits))
+    lines += [
         "",
-        "## Condensed transcript",
+        "## Messages-only transcript" if MESSAGES_ONLY else "## Condensed transcript",
         "",
     ]
     shown = entries
-    if len(entries) > MAX_TRANSCRIPT_ENTRIES:
+    if not MESSAGES_ONLY and len(entries) > MAX_TRANSCRIPT_ENTRIES:
         omitted = len(entries) - TRANSCRIPT_HEAD - TRANSCRIPT_TAIL
         shown = entries[:TRANSCRIPT_HEAD] + [("note", f"[... {omitted} entries omitted ...]")] + entries[-TRANSCRIPT_TAIL:]
     for role, text in shown:
@@ -1547,6 +1609,7 @@ def detect_skills_from_entries(entries, skill_names):
 
 def main():
     args = parse_args()
+    set_messages_only(args.messages_only)
     if args.all_conversations and args.repo:
         print(
             "error: --all-conversations cannot be combined with --repo",
@@ -1889,6 +1952,7 @@ def main():
             tpath = transcripts_dir / f"{s['harness']}-{sid}.md"
             tpath.write_text(render_transcript(s["meta"], s["stats"], s["skills_used"], s["_entries"]))
             s["transcript_path"] = str(tpath)
+        s["commits"] = list(getattr(s["_entries"], "commits", ()))
         del s["_entries"]
         del s["_key"]
 

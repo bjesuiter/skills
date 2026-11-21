@@ -10,6 +10,7 @@ from pathlib import Path
 
 from collect_sessions import (
     detect_skills_from_entries,
+    find_git_commits,
     discover_hermes_databases,
     discover_skills,
     find_claude_session_files,
@@ -24,6 +25,7 @@ from collect_sessions import (
     parse_zcode_session,
     resolve_hermes_home,
     session_matches_repos,
+    set_messages_only,
 )
 
 PREVIOUS_FILE_LIMIT = 8 * 1024 * 1024
@@ -593,6 +595,103 @@ class StreamingSessionReadTests(unittest.TestCase):
             self.assertEqual(entries[100], ("note", "[... 61 entries omitted ...]"))
             self.assertEqual(entries[101], ("assistant", "message-161"))
             self.assertEqual(entries[-1], ("assistant", "message-200"))
+
+
+def codex_app_server_records(tool_count):
+    """Codex app-server rollout, as written by T3 Code: turns are item_completed events."""
+    records = [
+        {"type": "session_meta", "payload": {"id": "app-server", "cwd": "/tmp/repo"}},
+        {"type": "event_msg", "payload": {"type": "item_completed", "item": {"type": "UserMessage"}}},
+        {"type": "response_item", "payload": {
+            "type": "message", "role": "user",
+            "content": [{"type": "input_text", "text": "Implement it. " + "x" * 3000}],
+        }},
+    ]
+    for index in range(tool_count):
+        records.append({"type": "response_item", "payload": {
+            "type": "custom_tool_call", "name": "exec",
+            "input": f"run   step-{index}\n" + "y" * 400,
+        }})
+        records.append({"type": "response_item", "payload": {
+            "type": "custom_tool_call_output",
+            "output": "z" * 900 + "[t3/feature abc1234] Add read state\n 2 files changed",
+        }})
+    records.extend((
+        {"type": "event_msg", "payload": {"type": "item_completed", "item": {"type": "AgentMessage"}}},
+        {"type": "response_item", "payload": {
+            "type": "message", "role": "assistant",
+            "content": [{"type": "output_text", "text": "Done."}],
+        }},
+    ))
+    return records
+
+
+class CodexAppServerTests(unittest.TestCase):
+    def tearDown(self):
+        set_messages_only(False)
+
+    def test_counts_item_completed_turns(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "codex.jsonl"
+            write_jsonl(path, codex_app_server_records(1))
+
+            _, stats, _, _ = parse_codex_session(path, set(), False)
+
+            self.assertEqual(stats["user_turns"], 1)
+            self.assertEqual(stats["assistant_turns"], 1)
+
+    def test_finds_commits_beyond_the_truncated_output(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "codex.jsonl"
+            write_jsonl(path, codex_app_server_records(2))
+
+            _, _, entries, _ = parse_codex_session(path, set(), False)
+
+            self.assertEqual(
+                entries.commits,
+                [{"sha": "abc1234", "branch": "t3/feature", "subject": "Add read state"}],
+            )
+            self.assertNotIn("abc1234", entries[2][1])
+
+    def test_messages_only_keeps_messages_and_shortens_tools(self):
+        set_messages_only(True)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "codex.jsonl"
+            write_jsonl(path, codex_app_server_records(200))
+
+            _, stats, entries, _ = parse_codex_session(path, set(), False)
+
+            roles = [role for role, _ in entries]
+            self.assertEqual(stats["tool_calls"], 200)
+            self.assertEqual(len(entries), 202)
+            self.assertNotIn("output", roles)
+            self.assertNotIn("note", roles)
+            self.assertEqual(entries[0][1], "Implement it. " + "x" * 3000)
+            self.assertTrue(entries[1][1].startswith("run step-0 yyy"))
+            self.assertLessEqual(len(entries[1][1].split(" …[truncated")[0]), 160)
+            self.assertEqual(entries[-1], ("assistant", "Done."))
+            self.assertEqual(len(entries.commits), 1)
+
+    def test_keeps_the_first_session_meta_of_a_subagent_rollout(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "codex.jsonl"
+            child = {"type": "session_meta", "payload": {
+                "id": "child", "cwd": "/tmp/repo", "thread_source": "subagent",
+            }}
+            parent = {"type": "session_meta", "payload": {"id": "parent", "cwd": "/tmp/repo"}}
+            write_jsonl(path, [child, parent] + codex_app_server_records(1)[1:])
+
+            self.assertIsNone(parse_codex_session(path, set(), False))
+            meta, _, _, _ = parse_codex_session(path, set(), True)
+
+            self.assertEqual(meta["id"], "child")
+
+    def test_finds_root_and_detached_commits(self):
+        text = "[main (root-commit) 1234abcd] init\n[detached HEAD 89abcdef0] fix it"
+        self.assertEqual(
+            [(c["branch"], c["sha"]) for c in find_git_commits(text)],
+            [("main", "1234abcd"), ("detached HEAD", "89abcdef0")],
+        )
 
 
 class HermesCollectorTests(unittest.TestCase):

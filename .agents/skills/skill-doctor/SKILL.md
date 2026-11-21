@@ -86,6 +86,9 @@ Useful flags:
 - `--max-sessions N` — cap on sampled sessions (default 12).
 - `--skills-dir PATH` — nonstandard skill locations.
 - `--include-subagents` — include child or sidechain sessions.
+- `--messages-only` — keep every user and assistant message, shorten each tool call to one line, and drop tool outputs. Use it for long sessions, where the default keeps only the first 100 and last 40 entries.
+
+Each sampled session in `inventory.json` lists `commits`: the commits that `git commit` reported in its tool outputs.
 
 Read `$REPORT_DIR/inventory.json`. If `sessions_sampled` is 0, tell the user there is nothing recent to score in the selected conversation scope (suggest raising `--days` or choosing different projects) and stop. If `skills_found` is 0, continue — the report becomes a case for creating skills, and `skill_coverage` is 0.
 
@@ -98,7 +101,7 @@ Scoring is based on efficiency, code quality, procedure compliance, and verbosit
 - `$SKILL_ROOT/scorers/procedure-compliance.md`
 - `$SKILL_ROOT/scorers/verbosity.md`
 
-Instructions: For each transcript in `$REPORT_DIR/transcripts/`, read it and judge it against all four rubrics. For each scorer record: label, numeric score (from the rubric's label table), and a 1–3 sentence reason citing specifics from the transcript. Apply the code-quality scorer only where the transcript shows code changes; otherwise record `insufficient_evidence` and exclude that result from the code-quality average and failed-conversation filter.
+Instructions: For each transcript in `$REPORT_DIR/transcripts/`, read it and judge it against all four rubrics. For each scorer record: label, numeric score (from the rubric's label table), and a 1–3 sentence reason citing specifics from the transcript. Apply the code-quality scorer only where the session shows code changes. When the session lists `commits`, judge the code from git (`git -C <cwd or its repository> show <sha>`) instead of from the transcript, and compare it with the spec or issue the session implemented. If neither the transcript nor git shows the change, record `insufficient_evidence` and exclude that result from the code-quality average and failed-conversation filter.
 
 ## Step 3: Aggregate
 
