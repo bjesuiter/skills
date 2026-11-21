@@ -90,6 +90,8 @@ Useful flags:
 
 Each sampled session in `inventory.json` lists `commits`: the commits that `git commit` reported in its tool outputs.
 
+Codex sessions also list `meta.turn_settings` (model, reasoning effort, and turn count), and their transcripts mark each change with a `[settings]` line. Attribute behavior to the settings of the turn it happened in, not to the thread. An effort labeled `(current config default)` was recorded as null; it reflects today's `config.toml`, which may differ from the value when the session ran.
+
 Read `$REPORT_DIR/inventory.json`. If `sessions_sampled` is 0, tell the user there is nothing recent to score in the selected conversation scope (suggest raising `--days` or choosing different projects) and stop. If `skills_found` is 0, continue — the report becomes a case for creating skills, and `skill_coverage` is 0.
 
 ## Step 2: Score each sampled transcript
