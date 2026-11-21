@@ -1,6 +1,8 @@
 ---
 name: find-new-skills
 description: Review omitted and newly added skills in this repository's vendored upstream sources, respect recorded exclusions, and compare candidates with JB's existing skills to recommend additions or ideas to adapt.
+metadata:
+  internal: true
 ---
 
 # Find new skills
@@ -9,7 +11,7 @@ Find useful skills and ideas in the upstream repositories already represented by
 
 ## Establish coverage
 
-Locate the skills repository from the current workspace or the user's supplied path. Read its `AGENTS.md`, `docs/maintaining-skills.md`, and each upstream folder's `vendor.json5` and `README.md`. Discover sources from those manifests rather than keeping a separate source list in this skill.
+Locate the skills repository from the current workspace or the user's supplied path. Read its `AGENTS.md`, [maintaining-skills](../maintaining-skills/SKILL.md), and each upstream folder's `vendor.json5` and `README.md`. Discover sources from those manifests rather than keeping a separate source list in this skill.
 
 Build the comparison inventory from active repo skills, discoverable drafts, and their relevant bundled references. Include skills in JB's preferred registry and the current agent's available skill catalog when accessible. Use `jb-agent-env` when available to locate and read the registry. Treat installed copies as copies of a skill, not separate capabilities; distinguish drafts and retired skills from active choices. State any missing inventory or inaccessible source so the report's scope is clear.
 

@@ -1,6 +1,6 @@
 # Skills Repository
 
-See [Maintaining skills](docs/maintaining-skills.md) when importing upstream skills, validating changes, or preparing a release.
+Use [maintaining-skills](.agents/skills/maintaining-skills/SKILL.md) to track upstream sources, import or refresh skills, validate changes, retire skills, or prepare a release.
 
 ## Canonical locations
 
