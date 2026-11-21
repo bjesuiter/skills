@@ -2,6 +2,17 @@
 
 This page records retired skills, their replacements, and links to archived versions in Git.
 
+## `full-send` and `full-stop`
+
+Retired on 2026-11-21 after their workflows moved into the explicit PR modes of
+the local-first skills. Use [`integrate pr`](../in-progress/integrate/SKILL.md)
+to finish and merge a PR, or [`prepare-merge pr`](../in-progress/prepare-merge/SKILL.md)
+to finish it and hand it back for review or merge.
+
+Last available revision:
+[`full-send`](https://github.com/bjesuiter/skills/tree/305f2f5d6bd72dfe10be1c9c3ce11f9eaddc4b93/skills/t3dotgg-tstack/full-send)
+and [`full-stop`](https://github.com/bjesuiter/skills/tree/305f2f5d6bd72dfe10be1c9c3ce11f9eaddc4b93/skills/t3dotgg-tstack/full-stop).
+
 ## `jb-svg`
 
 Archived on 2026-10-06 after JB preferred plain SVG generation in the pelican-bicycle comparison. Use plain SVG until a concrete roadblock warrants a small, focused custom skill. See the [decision](../../docs/adr/0001-use-plain-svg-until-a-roadblock.md) and the [last revision of the lab](https://github.com/bjesuiter/skills/blob/64e0029cd8d009857ca9579408b86e792c167305/research/jb-svg/README.md).

@@ -2,7 +2,7 @@
 
 Skills from [t3dotgg/tstack](https://github.com/t3dotgg/tstack). The pinned upstream revision and import date are in [vendor.json5](vendor.json5).
 
-Include `babysit-pr`, `file-pr`, `full-send`, `full-stop`, `leaving-pr-comments`, `modernize`, `sol-loop`, and `takeover` when refreshing this import.
+Include `babysit-pr`, `file-pr`, `leaving-pr-comments`, `modernize`, `sol-loop`, and `takeover` when refreshing this import. Exclude the retired `full-send` and `full-stop` skills. See the [retirement history](../deprecated/README.md).
 
 Keep `takeover` for agent-assisted work on open-source projects. JB uses it infrequently today.
 
@@ -14,7 +14,10 @@ JB's adaptations of `full-send` and `full-stop` are the explicit PR modes of two
 
 ### Upstream changes to successor skills
 
-Use semantic comparison for these successors, including the shared preparation flow.
+Use semantic comparison for these successors, including the shared preparation
+flow. Diff these upstream paths explicitly between the pinned and incoming
+revisions during a vendor check. The scanner selects skills from local vendor
+directories, so it does not emit diffs for these retired copies.
 
 - `full-send` → [`integrate`](../in-progress/integrate/SKILL.md)
 - `full-stop` → [`prepare-merge`](../in-progress/prepare-merge/SKILL.md)

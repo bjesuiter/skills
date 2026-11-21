@@ -37,6 +37,8 @@ proof, review outcomes, and remaining risks. Use the actual GitHub state:
 - **Blocked** when anything else prevents readiness. State what you tried and
   what remains.
 - **Already merged** if GitHub reports that someone else merged it.
+- **Draft handoff** when the user asked to keep the PR in draft. Report the
+  verification performed and the live checks or reviews still pending.
 
 Adapted from Theo Browne's [full-stop](https://github.com/t3dotgg/tstack) under
 the [MIT License](LICENSE).

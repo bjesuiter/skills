@@ -19,7 +19,7 @@ npx skills add bjesuiter/skills --all
 
 Use an explicit skill name when you want a specific skill. Installing all discoverable skills can include drafts. For a reproducible installation, [install from a Git tag](.changeset/README.md#install-a-fixed-snapshot).
 
-## Included Skills (39)
+## Included Skills (37)
 
 ### Core Development Workflows
 - `jb-stack-prefs` — JB's preferred stacks by use case, repository comparisons, and preference updates
@@ -69,8 +69,6 @@ Use an explicit skill name when you want a specific skill. Installing all discov
 
 - [`babysit-pr`](skills/t3dotgg-tstack/babysit-pr/SKILL.md) — Monitor pull requests through review and CI
 - [`file-pr`](skills/t3dotgg-tstack/file-pr/SKILL.md) — Open a concise pull request
-- [`full-send`](skills/t3dotgg-tstack/full-send/SKILL.md) — Drive a change through delivery
-- [`full-stop`](skills/t3dotgg-tstack/full-stop/SKILL.md) — Prepare a pull request and leave the merge to you. Install `full-send` alongside it.
 - [`leaving-pr-comments`](skills/t3dotgg-tstack/leaving-pr-comments/SKILL.md) — Write GitHub pull request comments
 - [`modernize`](skills/t3dotgg-tstack/modernize/SKILL.md) — Identify and address outdated code and practices
 - [`sol-loop`](skills/t3dotgg-tstack/sol-loop/SKILL.md) — Iterate on implementation with independent review
