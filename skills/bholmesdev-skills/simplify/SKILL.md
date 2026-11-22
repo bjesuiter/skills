@@ -1,8 +1,13 @@
 ---
 name: simplify
-description: Use this skill automatically when you feel your code is ready for human review, and whenever writing or reviewing code comments. Ready means the code works and achieves a stated goal, verified by your own tests and/or, if you deem it necessary, human testing.
+description: Review a finished code diff for names, comments, structure, and overfitting. Use automatically once code works and passes its checks, before you commit or hand it off for human review. Do not load it before writing code, or for docs, prose, or config-only changes.
 ---
-Review changes in the current branch, or in the scope the user specifies. Apply these criteria without changing behavior. Only touch code in that scope, and run the relevant existing checks after changes.
+Review changes in the current branch, or in the scope the user specifies. Apply these criteria without changing behavior. Only touch code in that scope.
+
+1. Read the diff (`git diff`, or `git diff <base>...HEAD` for committed work). Do not review from memory.
+2. Check each section below against that diff and make the edits.
+3. Run the relevant existing checks after changes.
+4. Report each edit in one line, or "no change" with the reason. Do not claim a simplify pass without steps 1 and 4.
 
 ## Word choice in code and comments
 
