@@ -19,7 +19,7 @@ npx skills add bjesuiter/skills --all
 
 Use an explicit skill name when you want a specific skill. Installing all discoverable skills can include drafts. For a reproducible installation, [install from a Git tag](.changeset/README.md#install-a-fixed-snapshot).
 
-## Included Skills (38)
+## Included Skills (39)
 
 ### Core Development Workflows
 - `jb-stack-prefs` — JB's preferred stacks by use case, repository comparisons, and preference updates
@@ -84,6 +84,10 @@ Use an explicit skill name when you want a specific skill. Installing all discov
 ### Cursor pstack
 
 - [`unslop`](skills/cursor-plugins-pstack/unslop/SKILL.md) — Remove common AI writing patterns while preserving meaning and tone
+
+### bholmesdev skills
+
+- [`simplify`](skills/bholmesdev-skills/simplify/SKILL.md) — Review a finished code diff for names, comments, structure, and overfitting
 
 ## In progress
 
