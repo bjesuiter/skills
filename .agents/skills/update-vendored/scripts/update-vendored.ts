@@ -7,6 +7,8 @@ type Vendor = {
   repo: string;
   url: string;
   upstreamSubdirectory?: string;
+  /** Local skill name → upstream skill directory, for skills renamed on import. */
+  upstreamNames?: Record<string, string>;
   gist?: { id: string; files: Record<string, string> };
   track: { type: "release" } | { type: "commit"; branch: string };
   snapshot: { revision: string; vendoredAt: string } | null;
@@ -88,7 +90,7 @@ async function skillDiffs(vendor: Vendor, directory: string, previous: string | 
     const changes = [];
     for (const skill of selected.sort()) {
       const gistFile = vendor.gist?.files[skill];
-      const upstreamPath = gistFile ?? `${upstreamSkills}/${skill}`;
+      const upstreamPath = gistFile ?? `${upstreamSkills}/${vendor.upstreamNames?.[skill] ?? skill}`;
       const selectedPath = `:(literal)${upstreamPath}`;
       const diff = await git(
         "diff", "--binary", "--no-ext-diff", "--no-textconv", "--no-color", "--find-renames",
@@ -117,7 +119,16 @@ function readVendor(source: string, directory: string): Vendor {
     throw new Error("Expected repo in owner/repo form.");
   }
 
-  const { gist, upstreamSubdirectory, track, snapshot } = vendor;
+  const { gist, upstreamSubdirectory, upstreamNames, track, snapshot } = vendor;
+  if (
+    upstreamNames !== undefined &&
+    (gist !== undefined || !upstreamNames || typeof upstreamNames !== "object" || Array.isArray(upstreamNames) ||
+      Object.entries(upstreamNames).some(([local, upstream]) =>
+        !/^[a-z0-9-]+$/.test(local) || typeof upstream !== "string" || !/^[\w-][\w.-]*$/.test(upstream)))
+  ) {
+    throw new Error("Expected upstreamNames to map local skill names to upstream skill directories.");
+  }
+
   if (
     upstreamSubdirectory !== undefined &&
     (gist !== undefined || typeof upstreamSubdirectory !== "string" ||
@@ -178,7 +189,7 @@ function readVendor(source: string, directory: string): Vendor {
     throw new Error("Expected snapshot: null or a revision and a YYYY-MM-DD vendoredAt date.");
   }
 
-  return { repo: vendor.repo, url: vendor.url, gist, upstreamSubdirectory, track, snapshot };
+  return { repo: vendor.repo, url: vendor.url, gist, upstreamSubdirectory, upstreamNames, track, snapshot };
 }
 
 async function upstreamRevision(vendor: Vendor): Promise<string> {

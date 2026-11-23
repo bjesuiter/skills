@@ -87,7 +87,7 @@ Use an explicit skill name when you want a specific skill. Installing all discov
 
 ### bholmesdev skills
 
-- [`simplify`](skills/bholmesdev-skills/simplify/SKILL.md) — Review a finished code diff for names, comments, structure, and overfitting
+- [`jb-simplify`](skills/bholmesdev-skills/jb-simplify/SKILL.md) — Review a finished code diff for names, comments, structure, efficiency, fix depth, and overfitting
 
 ### Jamon Holmgren gists
 

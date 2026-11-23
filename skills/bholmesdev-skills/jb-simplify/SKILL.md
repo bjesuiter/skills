@@ -1,13 +1,13 @@
 ---
-name: simplify
-description: Review a finished code diff for names, comments, structure, and overfitting. Use automatically once code works and passes its checks, before you commit or hand it off for human review. Do not load it before writing code, or for docs, prose, or config-only changes.
+name: jb-simplify
+description: Review a finished code diff for names, comments, structure, efficiency, fix depth, and overfitting. Use automatically once code works and passes its checks, before you commit or hand it off for human review. Do not load it before writing code, or for docs, prose, or config-only changes.
 ---
 Review changes in the current branch, or in the scope the user specifies. Apply these criteria without changing behavior. Only touch code in that scope.
 
 1. Read the diff (`git diff`, or `git diff <base>...HEAD` for committed work). Do not review from memory.
 2. Check each section below against that diff and make the edits.
 3. Run the relevant existing checks after changes.
-4. Report each edit in one line, or "no change" with the reason. Do not claim a simplify pass without steps 1 and 4.
+4. Report each edit in one line, or "no change" with the reason. Do not claim a jb-simplify pass without steps 1 and 4.
 
 ## Word choice in code and comments
 
@@ -48,6 +48,14 @@ State, in plain English, the constraint the code cannot show: why the **non-obvi
 3. **Combine overlapping concepts.** If two types, functions, or constants overlap significantly, merge them. The fewer distinct concepts a reader must hold in their head, the better.
 4. **Use shared code.** Common utilities (ex. file path parsing) may exist in the codebase already. Check for library or utility functions before inlining.
 5. **Derivability.** If a value can be computed from values already in scope, don't pass or store it separately. Removing derivable state often simplifies signatures, types, and control flow in one move. Example: an `isDirty` parameter that is always `editorContent !== baseline` can be dropped.
+
+## Efficiency
+
+Flag wasted work the diff adds: repeated computation or I/O, independent operations run one after another, and blocking work on startup or hot paths. Name the cheaper form.
+
+## Altitude
+
+Fix the root cause at the right depth, not the symptom. A special case added to shared code is a sign the fix is too shallow. Prefer one general change to the underlying mechanism.
 
 ## Overfitting
 

@@ -4,6 +4,8 @@ Each local vendor directory (`skills/<owner>-<repo>/`) has a `vendor.json5` with
 
 When upstream keeps its `skills/` folder below the repository root, set `upstreamSubdirectory` to the relative path that contains it. A local vendor folder may append that path to its name, with slashes replaced by hyphens. For example, [the Cursor manifest](../../../../skills/cursor-plugins-pstack/vendor.json5) sets `upstreamSubdirectory: "pstack"` and tracks skills under `pstack/skills/`.
 
+When a skill is renamed on import, set `upstreamNames` to map the local skill name to its upstream directory, for example `upstreamNames: { "jb-simplify": "simplify" }`. The update check then diffs the upstream directory.
+
 Keep the selection and reasons for omissions in the local vendor directory's `README.md`. Check that file before choosing what to export for an update.
 
 - Fetch the pinned revision into a temporary Git repository. Use `git archive` to export the selected skill directories and upstream license and notices. Copy whole skill directories so bundled files and executable modes carry over.

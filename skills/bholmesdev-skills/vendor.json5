@@ -1,6 +1,7 @@
 {
   repo: "bholmesdev/skills",
   url: "https://github.com/bholmesdev/skills",
+  upstreamNames: { "jb-simplify": "simplify" },
   track: { type: "commit", branch: "main" },
   snapshot: {
     revision: "81be8791eee5a43f016efcb9230bdceca0ff7e77",
