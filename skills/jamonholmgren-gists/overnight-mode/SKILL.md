@@ -1,6 +1,7 @@
 ---
 name: overnight-mode
-description: Carry out unattended work using reversible defaults and a morning handoff. Use when asked to start or stop overnight mode, work overnight, or hand off an overnight run.
+description: Carry out unattended work using reversible defaults and a morning handoff.
+disable-model-invocation: true
 ---
 
 # Overnight mode
