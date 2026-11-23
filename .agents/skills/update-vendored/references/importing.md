@@ -2,6 +2,8 @@
 
 Each local vendor directory (`skills/<owner>-<repo>/`) has a `vendor.json5` with the GitHub repository, its HTTPS URL, and the revision to track. See [the tstack manifest](../../../../skills/t3dotgg-tstack/vendor.json5).
 
+When upstream keeps its `skills/` folder below the repository root, set `upstreamSubdirectory` to the relative path that contains it. A local vendor folder may append that path to its name, with slashes replaced by hyphens. For example, [the Cursor manifest](../../../../skills/cursor-plugins-pstack/vendor.json5) sets `upstreamSubdirectory: "pstack"` and tracks skills under `pstack/skills/`.
+
 Keep the selection and reasons for omissions in the local vendor directory's `README.md`. Check that file before choosing what to export for an update.
 
 - Fetch the pinned revision into a temporary Git repository. Use `git archive` to export the selected skill directories and upstream license and notices. Copy whole skill directories so bundled files and executable modes carry over.

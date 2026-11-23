@@ -6,6 +6,7 @@ import JSON5 from "json5";
 type Vendor = {
   repo: string;
   url: string;
+  upstreamSubdirectory?: string;
   gist?: { id: string; files: Record<string, string> };
   track: { type: "release" } | { type: "commit"; branch: string };
   snapshot: { revision: string; vendoredAt: string } | null;
@@ -33,7 +34,7 @@ for (const directory of directories) {
     if (includeDiffs) {
       const previous = vendor.snapshot?.revision ?? null;
       const changed = previous !== latest;
-      const changes = changed ? await skillDiffs(vendor, previous, latest) : [];
+      const changes = changed ? await skillDiffs(vendor, directory.name, previous, latest) : [];
       console.log(JSON.stringify({
         status: previous === null ? "unimported" : changed ? "changed" : "unchanged",
         repo: vendor.repo,
@@ -62,8 +63,7 @@ for (const directory of directories) {
 
 if (!checked && !includeDiffs) console.log("No vendor manifests found.");
 
-async function skillDiffs(vendor: Vendor, previous: string | null, latest: string) {
-  const directory = vendor.repo.replace("/", "-");
+async function skillDiffs(vendor: Vendor, directory: string, previous: string | null, latest: string) {
   const localFolder = join(skills, directory);
   const entries = await readdir(localFolder, { withFileTypes: true });
   const selected: string[] = [];
@@ -84,10 +84,11 @@ async function skillDiffs(vendor: Vendor, previous: string | null, latest: strin
     await git("fetch", "--quiet", "--depth=1", "--no-tags", "--", vendor.url, ...refs);
     const base = previous === null ? await git("mktree") : "refs/vendor/base^{tree}";
     const incoming = "refs/vendor/incoming^{tree}";
+    const upstreamSkills = vendor.upstreamSubdirectory ? `${vendor.upstreamSubdirectory}/skills` : "skills";
     const changes = [];
     for (const skill of selected.sort()) {
       const gistFile = vendor.gist?.files[skill];
-      const upstreamPath = gistFile ?? `skills/${skill}`;
+      const upstreamPath = gistFile ?? `${upstreamSkills}/${skill}`;
       const selectedPath = `:(literal)${upstreamPath}`;
       const diff = await git(
         "diff", "--binary", "--no-ext-diff", "--no-textconv", "--no-color", "--find-renames",
@@ -111,13 +112,27 @@ function readVendor(source: string, directory: string): Vendor {
   const vendor = JSON5.parse(source) as Partial<Vendor> | null;
   if (
     typeof vendor?.repo !== "string" ||
-    !/^[\w.-]+\/[\w.-]+$/.test(vendor.repo) ||
-    directory !== vendor.repo.replace("/", "-")
+    !/^[\w.-]+\/[\w.-]+$/.test(vendor.repo)
   ) {
-    throw new Error("Expected repo owner/repo matching the owner-repo directory.");
+    throw new Error("Expected repo in owner/repo form.");
   }
 
-  const { gist, track, snapshot } = vendor;
+  const { gist, upstreamSubdirectory, track, snapshot } = vendor;
+  if (
+    upstreamSubdirectory !== undefined &&
+    (gist !== undefined || typeof upstreamSubdirectory !== "string" ||
+      !/^[\w.-]+(?:\/[\w.-]+)*$/.test(upstreamSubdirectory) ||
+      upstreamSubdirectory.split("/").some((part) => part === "." || part === ".."))
+  ) {
+    throw new Error("Expected upstreamSubdirectory to be a relative directory in a GitHub repository.");
+  }
+
+  const repoDirectory = vendor.repo.replace("/", "-");
+  const subdirectorySuffix = upstreamSubdirectory?.replaceAll("/", "-");
+  if (directory !== repoDirectory && (!subdirectorySuffix || directory !== `${repoDirectory}-${subdirectorySuffix}`)) {
+    throw new Error("Expected the owner-repo directory, optionally suffixed with upstreamSubdirectory.");
+  }
+
   if (gist !== undefined) {
     const [owner, repo] = vendor.repo.split("/");
     if (
@@ -163,7 +178,7 @@ function readVendor(source: string, directory: string): Vendor {
     throw new Error("Expected snapshot: null or a revision and a YYYY-MM-DD vendoredAt date.");
   }
 
-  return { repo: vendor.repo, url: vendor.url, gist, track, snapshot };
+  return { repo: vendor.repo, url: vendor.url, gist, upstreamSubdirectory, track, snapshot };
 }
 
 async function upstreamRevision(vendor: Vendor): Promise<string> {
