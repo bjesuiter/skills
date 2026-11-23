@@ -6,6 +6,7 @@ import JSON5 from "json5";
 type Vendor = {
   repo: string;
   url: string;
+  gist?: { id: string; files: Record<string, string> };
   track: { type: "release" } | { type: "commit"; branch: string };
   snapshot: { revision: string; vendoredAt: string } | null;
 };
@@ -85,13 +86,14 @@ async function skillDiffs(vendor: Vendor, previous: string | null, latest: strin
     const incoming = "refs/vendor/incoming^{tree}";
     const changes = [];
     for (const skill of selected.sort()) {
-      const upstreamPath = `skills/${skill}`;
+      const gistFile = vendor.gist?.files[skill];
+      const upstreamPath = gistFile ?? `skills/${skill}`;
       const selectedPath = `:(literal)${upstreamPath}`;
       const diff = await git(
         "diff", "--binary", "--no-ext-diff", "--no-textconv", "--no-color", "--find-renames",
         base, incoming, "--", selectedPath,
       );
-      const entrypoint = `:(literal)${upstreamPath}/SKILL.md`;
+      const entrypoint = gistFile ? selectedPath : `${selectedPath}/SKILL.md`;
       const oldEntrypoint = await git("ls-tree", "-r", "--name-only", base, "--", entrypoint);
       const newEntrypoint = await git("ls-tree", "-r", "--name-only", incoming, "--", entrypoint);
       const status = newEntrypoint ? "changed" : oldEntrypoint ? "removed" : "missing";
@@ -115,14 +117,32 @@ function readVendor(source: string, directory: string): Vendor {
     throw new Error("Expected repo owner/repo matching the owner-repo directory.");
   }
 
-  if (
+  const { gist, track, snapshot } = vendor;
+  if (gist !== undefined) {
+    const [owner, repo] = vendor.repo.split("/");
+    if (
+      repo !== "gists" ||
+      typeof gist?.id !== "string" ||
+      !/^[a-f0-9]{32}$/.test(gist.id) ||
+      vendor.url !== `https://gist.github.com/${owner}/${gist.id}.git` ||
+      track?.type !== "commit" ||
+      !gist.files ||
+      typeof gist.files !== "object" ||
+      Array.isArray(gist.files) ||
+      !Object.keys(gist.files).length ||
+      Object.entries(gist.files).some(([skill, filename]) =>
+        !/^[a-z0-9-]+$/.test(skill) || typeof filename !== "string" ||
+        !/^[\w.-]+\.md$/i.test(filename))
+    ) {
+      throw new Error("Expected a GitHub Gist URL, commit tracking, and a skill-to-file map.");
+    }
+  } else if (
     vendor.url !== `https://github.com/${vendor.repo}` &&
     vendor.url !== `https://github.com/${vendor.repo}.git`
   ) {
     throw new Error("Expected the HTTPS GitHub URL for repo.");
   }
 
-  const { track, snapshot } = vendor;
   if (
     track?.type !== "release" &&
     (track?.type !== "commit" || typeof track.branch !== "string" || !track.branch.trim())
@@ -143,7 +163,7 @@ function readVendor(source: string, directory: string): Vendor {
     throw new Error("Expected snapshot: null or a revision and a YYYY-MM-DD vendoredAt date.");
   }
 
-  return { repo: vendor.repo, url: vendor.url, track, snapshot };
+  return { repo: vendor.repo, url: vendor.url, gist, track, snapshot };
 }
 
 async function upstreamRevision(vendor: Vendor): Promise<string> {

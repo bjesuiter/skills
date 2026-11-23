@@ -9,3 +9,5 @@ Keep the selection and reasons for omissions in the local vendor directory's `RE
 - Use `track: { type: "commit", branch: "main" }` to check a branch tip, or `track: { type: "release" }` to check the latest GitHub release using `gh`.
 - Set `snapshot` to `null` until the first import. After importing, record `snapshot: { revision: "...", vendoredAt: "YYYY-MM-DD" }` with the full commit SHA or exact release tag that was imported.
 - Use one snapshot per local vendor directory. When refreshing a folder, bring all its imported skills to the recorded revision and reapply local changes.
+
+For GitHub Gists, use `<owner>-gists` as the folder and `<owner>/gists` as the manifest's `repo`. Set `url` to the gist's HTTPS Git clone URL and add `gist: { id: "...", files: { "<skill-name>": "<gist-filename>.md" } }`. Track the gist branch by commit. The checker diffs the mapped source file. Adapt changes into the local skill using the source folder's README.

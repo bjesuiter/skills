@@ -1,0 +1,13 @@
+{
+  repo: "jamonholmgren/gists",
+  url: "https://gist.github.com/jamonholmgren/caf41394d6643be4ceecbaa7c22f90b8.git",
+  gist: {
+    id: "caf41394d6643be4ceecbaa7c22f90b8",
+    files: { "overnight-mode": "Overnight-mode.md" },
+  },
+  track: { type: "commit", branch: "main" },
+  snapshot: {
+    revision: "1d7718f0fd90d493480ba952c37b2f978fb83cb8",
+    vendoredAt: "2026-11-23",
+  },
+}
